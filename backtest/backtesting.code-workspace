@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../download"
+		}
+	],
+	"settings": {
+		"github.copilot.chat.search.semanticTextResults": true,
+		"github.copilot.chat.experimental.inlineChatCompletionTrigger.enabled": true,
+		"github.copilot.chat.experimental.inlineChatHint.enabled": true
+	}
+}

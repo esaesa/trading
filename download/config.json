@@ -1,0 +1,36 @@
+{
+    "download": {
+        "apiKey": "wpE20V7nXk6QrKjtfPAI7ItPTNKTRljGC9mbGmvkx151NY5XhqtHrc0Q4uSDAz3W",
+        "apiSecret": "p6v7oRvv8SxgWVRnvmMIzCUsgo4OsGr1NWtV2TlBhaitopO9XUpJS91sOYoyGi0H",
+        "exchange": "binance",
+        "timezone": "UTC",
+        "timeframes": [
+
+            "1d","1h","1m","30m"
+   
+        ],
+        "alltimes":[
+            "1m",
+           
+            "1h"
+        
+        ],
+        "symbols": [
+            "DOGE/USDT:USDT",
+            "1000PEPE/USDT:USDT"
+        ],
+        "all_symbol":[
+        "AIXBT/USDT:USDT",
+        "BTC/USDT:USDT",
+        "BNB/USDT:USDT",
+        "DOGE/USDT:USDT",
+        "1000PEPE/USDT:USDT",
+        "XRP/USDT:USDT",
+        "1000SHIB/USDT:USDT",
+        "ENA/USDT:USDT"
+    ],
+        "start_date": "2021-01-01 00:00:00",
+        "end_date": "2026-02-11 00:11:00",
+        "data_path": "data"
+    }
+}

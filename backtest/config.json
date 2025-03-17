@@ -1,0 +1,202 @@
+{
+    "backtest_params": {
+        "symbols": [
+            "1000PEPEUSDTUSDT"
+        ],
+        "timeframes": [
+            "30m"
+        ],
+        "data_folder": "../download/data",
+        "enable_optimization": false,
+        "debug": true,
+        "debug_loop": false,
+        "start_date": "2021-01-24 00:00:00",
+        "end_date":   "2025-03-25 23:59:59",
+    
+        "cash": 1000,
+        "commission": 0.0005,
+        "show_optimization_graphs": false,
+        "slippage_probability": 0.0,
+        "enable_quantstats_analysis": false
+    },
+    "strategy_params": {
+        "max_dca_levels": 15,
+        "take_profit_percentage": 0.9,
+        "entry_fraction": 0.01,
+        "so_size_multiplier": 3.0,
+        "first_safety_order_multiplier": 2.3,
+        "initial_deviation_percent": 2.8,
+        "price_multiplier": 1.2,
+        "rsi_threshold": 37,
+        "rsi_window": 17,
+        "enable_rsi_calculation": true,
+        "require_rsi_reset": false,
+        "safety_order_price_mode": "dynamic",
+        "safety_order_mode":"value",
+        "price_growth_type": "exponential",
+        "size_growth_type": "exponential",
+        "minimum_notional": 5.0,
+        "enable_atr_calculation": false,
+        "atr_window": 14,
+        "atr_resample_interval": "1h",  
+        "enable_ema_calculation": false,
+        "ema_resample_interval": "1h", 
+        "rsi_resample_interval": "1h",
+    
+        "enable_cv_calculation": false,
+        "enable_laguere_calculation": false,
+        "start_trading_time" : "2020-01-15 00:00:00",
+        "debug": {
+            "trade": false,
+            "loop": false,
+            "process": false
+          },
+          "show_indicators": {
+            "rsi": true,
+            "bbw": false,
+            "atr": false,
+            "ema": false,
+            "laguerre": false,
+            "cv": false
+    }
+
+    
+    },
+    "optimization_params": {
+        "take_profit_percentage": {
+            "values": [
+                0.7,
+                0.8
+            ],
+            "scaling_factor": 10,
+            "type": "float"
+        },
+        "entry_fraction": {
+            "values": [
+                0.01,
+                0.02
+            ],
+            "scaling_factor": 100,
+            "type": "float"
+        },
+        "so_size_multiplier": {
+            "values": [
+                0.9,
+                5.0
+            ],
+            "scaling_factor": 10,
+            "type": "float"
+        },
+        
+        "first_safety_order_multiplier": {
+            "values": [
+                0.9,
+                4.0
+            ],
+            "scaling_factor": 10,
+            "type": "float"
+        },
+        "initial_deviation_percent": {
+            "values": [
+                0.9,
+                5.0
+            ],
+            "scaling_factor": 10,
+            "type": "float"
+        },
+        "price_multiplier": {
+            "values": [
+                0.8,
+                5.0
+            ],
+            "scaling_factor": 10,
+            "type": "float"
+        },
+        "rsi_threshold": {
+            "values": [
+                10,
+                50
+            ],
+            "type": "int"
+        },
+        "rsi_window": {
+            "values": [
+                14,
+                50
+            ],
+            "type": "int"
+        }
+    },
+    "optimization_params1": {
+        
+        "entry_fraction": {
+            "values": [
+                0.01,
+                0.11
+            ],
+            "scaling_factor": 100,
+            "type": "float"
+        },
+        "so_size_multiplier": {
+            "values": [
+                1.0,
+                3.0
+            ],
+            "scaling_factor": 10,
+            "type": "float"
+        },
+        "max_dca_levels": {
+            "values": [
+                5,
+                11
+            ],
+            "type": "int"
+        },
+        "take_profit_percentage": {
+            "values": [
+                0.7,
+                1.1
+            ],
+            "scaling_factor": 10,
+            "type": "float"
+        },
+        "first_safety_order_multiplier": {
+            "values": [
+                3.0,
+                6.0
+            ],
+            "scaling_factor": 10,
+            "type": "float"
+        },
+        "initial_deviation_percent": {
+            "values": [
+                1.0,
+                6.0
+            ],
+            "scaling_factor": 10,
+            "type": "float"
+        },
+        "price_multiplier": {
+            "values": [
+                1.0,
+                6.0
+            ],
+            "scaling_factor": 10,
+            "type": "float"
+        },
+        "rsi_threshold": {
+            "values": [
+                20,
+                50
+            ],
+            "type": "int"
+        },
+        "rsi_window": {
+            "values": [
+                7,
+                28
+            ],
+            "type": "int"
+        }
+    }
+}

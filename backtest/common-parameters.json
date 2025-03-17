@@ -1,0 +1,185 @@
+{
+    "VERY SAFE":{
+    "backtest_params": {
+        "symbols": [
+            "BNBUSDTUSDT"
+        ],
+        "timeframes": [
+            "1h"
+        ],
+        "data_folder": "../binance-download/data",
+        "enable_optimization": false,
+        "debug": true,
+        "debug_loop": false,
+        "start_date": "2022-02-26 00:00:00",
+        "end_date":   "2023-11-21 23:59:59",
+    
+        "cash": 6000000,
+        "commission": 0.0005,
+        "show_optimization_graphs": false,
+        "slippage_probability": 0.0,
+        "enable_quantstats_analysis": false
+    },
+    "strategy_params": {
+        "max_dca_levels": 20,
+        "take_profit_percentage": 1.0,
+        "entry_fraction": 0.01,
+        "so_size_multiplier": 1.0,
+        "first_safety_order_multiplier": 5.0,
+        "initial_deviation_percent": 5.0,
+        "price_multiplier": 1.0,
+        "rsi_threshold": 50,
+        "rsi_window": 40,
+        "ema_resample_window": 250,
+        "enable_rsi_calculation": true,
+        "require_rsi_reset": false,
+        "safety_order_price_mode": "static",
+        "safety_order_mode":"value",
+        "price_growth_type": "exponential",
+        "size_growth_type": "exponential",
+        "first_safety_order_calculation_type": "Multiplier",
+        "exchange_minimum_notional": 0.0,
+        "enable_atr_calculation": false,
+        "atr_window": 14,
+        "atr_resample_interval": "d",  
+        "enable_ema_calculation": false,
+        "ema_resample_interval": "1h", 
+        "rsi_resample_interval": "1h",
+        "show_rsi": true  ,
+        "start_trading_time" : "2020-01-01 00:00:00",
+        "debug": {
+            "trade": false,
+            "loop": false,
+            "process": true
+          }
+
+    
+    }
+},
+    "Very safe valid for btc xrp peppe doge": {
+        "max_dca_levels": 5,
+        "price_multiplier": 1.0,
+        "so_size_multiplier": 4.0,
+        "entry_fraction": 0.01,
+        "take_profit_percentage": 0.7331989589684095,
+        "first_safety_order_multiplier": 0.1,
+        "initial_deviation_percent": 4.755604708895543
+    },
+    "3 yrs of 1h doge without rest":{    "take_profit_percentage": 0.7,
+    "entry_fraction": 0.01,
+    "so_size_multiplier": 2.9,
+    "first_safety_order_multiplier": 2.5,
+    "initial_deviation_percent": 2.4,
+    "price_multiplier": 1.3,
+    "rsi_threshold": 31,
+    "rsi_window": 39}
+    ,
+    "doge/PEPE years 1h with rsi rest ":{
+        "take_profit_percentage": 0.8,
+        "entry_fraction": 0.02,
+        "so_size_multiplier": 3.2,
+        "first_safety_order_multiplier": 1.9,
+        "initial_deviation_percent": 3.2,
+        "price_multiplier": 1.0,
+        "rsi_threshold": 38,
+        "rsi_window": 26
+    },
+    "doge long term 1h with rsi safety":{
+        "take_profit_percentage": 0.8,
+        "entry_fraction": 0.01,
+        "so_size_multiplier": 3.5,
+        "first_safety_order_multiplier": 4.1,
+        "initial_deviation_percent": 5.0,
+        "price_multiplier": 1.0,
+        "rsi_threshold": 29,
+        "rsi_window": 32
+    },
+    "From AIXBT": {
+        "max_dca_levels": 6,
+        "price_multiplier": 1.5084314429512236,
+        "so_size_multiplier": 2.775137505108216,
+        "entry_fraction": 0.025090463485640056,
+        "take_profit_percentage": 0.8076240352634508,
+        "first_safety_order_multiplier": 1.0088737343882366,
+        "initial_deviation_percent": 4.6487586022093055
+    },
+    "From SUI": {
+        "max_dca_levels": 5,
+        "price_multiplier": 1.0,
+        "so_size_multiplier": 4.0,
+        "entry_fraction": 0.010758245427182253,
+        "take_profit_percentage": 0.7,
+        "first_safety_order_multiplier": 0.7584942744503523,
+        "initial_deviation_percent": 2.650867252553116
+    },
+    "From ENA": {
+        "max_dca_levels": 5,
+        "price_multiplier": 1.3704646504723679,
+        "so_size_multiplier": 2.203778502410826,
+        "entry_fraction": 0.04787874251908142,
+        "take_profit_percentage": 0.7199229860442542,
+        "first_safety_order_multiplier": 1.8960729136102512,
+        "initial_deviation_percent": 4.412698387459844
+    },
+    "After Integer/Float": {
+        "max_dca_levels": 7,
+        "price_multiplier": 1.34,
+        "so_size_multiplier": 2.64,
+        "entry_fraction": 0.03,
+        "take_profit_percentage": 1.34,
+        "first_safety_order_multiplier": 1.57,
+        "initial_deviation_percent": 4.4,
+        "rsi_threshold": 30,
+        "rsi_window": 36,
+        "price_growth_type": "exponential",
+        "size_growth_type": "exponential",
+        "first_safety_order_calculation_type": "Multiplier",
+        "minimum_notional": 0.0
+        },
+        "more":{
+            "entry_fraction": 1,
+            "so_size_multiplier": 475,
+            "max_dca_levels": 5,
+            "take_profit_percentage": 200,
+            "first_safety_order_multiplier": 257,
+            "initial_deviation_percent": 500,
+            "price_multiplier": 135,
+            "rsi_threshold": 40,
+            "rsi_window": 40
+        },
+        "good":{
+            "entry_fraction": 0.01,
+            "so_size_multiplier": 2.46,
+            "max_dca_levels": 8,
+            "take_profit_percentage": 1.91,
+            "first_safety_order_multiplier": 3.45,
+            "initial_deviation_percent": 5.0,
+            "price_multiplier": 1.08,
+            "rsi_threshold": 16,
+            "rsi_window": 7
+        },
+        "Safe and return":{
+            "entry_fraction": 0.05,
+            "so_size_multiplier": 3.94,
+            "max_dca_levels": 7,
+            "take_profit_percentage": 0.88,
+            "first_safety_order_multiplier": 2.64,
+            "initial_deviation_percent": 1.03,
+            "price_multiplier": 1.11,
+            "rsi_threshold": 16,
+            "rsi_window": 7
+        },
+        "Perfect":{
+            "entry_fraction": 0.01,
+            "max_dca_levels": 40,
+            "take_profit_percentage": 0.8,
+            "so_size_multiplier": 1.0,
+            "first_safety_order_multiplier": 3.7,
+            "initial_deviation_percent": 1.0,
+            "price_multiplier": 1.0,
+            "rsi_threshold": 41,
+            "rsi_window": 11
+        }
+
+
+}

@@ -1,0 +1,14 @@
+logs/*
+!logs/.gitkeep
+data/
+backtest_results/
+
+# Ignore all __pycache__ directories everywhere
+__pycache__/
+**/__pycache__/
+
+# Ignore CSV files matching a pattern
+*_*.csv
+
+# Ignore HTML files
+*.html
