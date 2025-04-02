@@ -6,18 +6,17 @@
         "timezone": "UTC",
         "timeframes": [
 
-            "1d","1h","1m","30m"
+           "30m"
    
         ],
         "alltimes":[
-            "1m",
-           
-            "1h"
+            "30m"
         
         ],
         "symbols": [
             "DOGE/USDT:USDT",
-            "1000PEPE/USDT:USDT"
+            "1000PEPE/USDT:USDT",
+            "WIF/USDT:USDT"
         ],
         "all_symbol":[
         "AIXBT/USDT:USDT",

@@ -24,6 +24,10 @@ class DCAStrategy(Strategy):
     rsi_threshold = strategy_params.get("rsi_threshold")
     rsi_window = strategy_params.get("rsi_window")
     require_rsi_reset = strategy_params.get("require_rsi_reset")
+    rsi_reset_percnetage = strategy_params.get("rsi_reset_percnetage")
+    rsi_dynamic_threshold = strategy_params.get("rsi_dynamic_threshold", True)
+    rsi_dynamic_window = strategy_params.get("rsi_dynamic_window", rsi_window *4)
+    rsi_percentile = strategy_params.get("rsi_percentile", 0.005)
     safety_order_price_mode = strategy_params.get("safety_order_price_mode")
     start_trading_time = datetime.strptime(
         strategy_params.get("start_trading_time", "2025-02-01 00:00:00"),
@@ -119,6 +123,19 @@ class DCAStrategy(Strategy):
                 )
                 if self.show_indicators.get('rsi', False):
                     self.I(lambda _: self.rsi_values, self.data.Close, name="RSI")
+                    
+        # Compute dynamic RSI threshold if enabled            
+        if self.enable_rsi_calculation and self.rsi_dynamic_threshold:
+            self.rsi_dynamic_threshold_series = (
+                self.rsi_values.rolling(window=self.rsi_dynamic_window)
+                .quantile(self.rsi_percentile)
+            )
+            if self.show_indicators.get('dynamic_rsi_threshold', True):
+                self.I(
+                    lambda _: self.rsi_dynamic_threshold_series,
+                    self.data.Close,
+                    name="Dynamic RSI Threshold"
+                )
                     
         if calculate_ema:
             ema_series = self.indicators.compute_ema(window=self.ema_window, resample_interval='1h')
@@ -619,7 +636,7 @@ class DCAStrategy(Strategy):
                 rsi_val = self.rsi_values.iloc[-1]  # Fallback to positional
         else:
             rsi_val = np.nan
-        if np.isnan(rsi_val) or rsi_val >= self.rsi_threshold * 1.1:
+        if np.isnan(rsi_val) or rsi_val >= self.rsi_threshold * (1 + self.rsi_reset_percnetage/100):
             self.rsi_reset = True
         self.debug_loop_info(price, rsi_val, current_time)
         if self.position:
