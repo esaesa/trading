@@ -26,7 +26,7 @@ class DCAStrategy(Strategy):
     require_rsi_reset = strategy_params.get("require_rsi_reset")
     rsi_reset_percnetage = strategy_params.get("rsi_reset_percnetage")
     rsi_dynamic_threshold = strategy_params.get("rsi_dynamic_threshold", True)
-    rsi_dynamic_window = strategy_params.get("rsi_dynamic_window", rsi_window *4)
+    rsi_dynamic_window = strategy_params.get("rsi_dynamic_window", rsi_window *10)
     rsi_percentile = strategy_params.get("rsi_percentile", 0.005)
     safety_order_price_mode = strategy_params.get("safety_order_price_mode")
     start_trading_time = datetime.strptime(
