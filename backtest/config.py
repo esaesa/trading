@@ -73,7 +73,7 @@ def maximize_func(stats):
     score = calmar_weight * norm_calmar + alpha_weight * norm_alpha
     
     # SAMBO-specific penalty for drawdowns
-    if stats["Max. Drawdown [%]"] < -25 or darwdown_days > 48:
+    if stats["Max. Drawdown [%]"] < -25 or darwdown_days > 30:
         score -= 0.5  # Maintains gradient continuity vs multiplicative penalties
     
     return np.clip(score, -1.0, 1.0)  # Final clamp

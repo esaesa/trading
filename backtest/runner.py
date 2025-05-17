@@ -132,8 +132,8 @@ def run_backtest(symbol, timeframe):
             **scaled_optimization_params,
             # constraint=constraint_func,
             maximize=maximize_func,
-            max_tries=1000,
-            random_state=5,
+            max_tries=2000,
+            random_state=0,
             method="sambo",
             # return_heatmap=False,
             # return_optimization=False

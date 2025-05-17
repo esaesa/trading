@@ -99,6 +99,7 @@ class DCAStrategy(Strategy):
         self.rsi_reset = True
         self.last_filled_price = None
         self.base_order_value = None
+        self.rsi_values = None
         
         # ----------------------
         # Initialize Indicators
@@ -643,6 +644,8 @@ class DCAStrategy(Strategy):
             if self.process_exit(current_high, current_time):  # Exit condition met
                 return  # Skip further processing in this process
             else:
+                if not self.enable_rsi_calculation: # Value may be a number in other cases i.e visualization only
+                    rsi_val = np.nan
                 self.process_dca(current_low, rsi_val, current_time)
         else:
             self.process_entry(price, current_time)

@@ -202,3 +202,1280 @@
 2025-04-02 02:44:14,375 [INFO] logger_config: ✅ Downloaded 21094 new rows. (From 2024-01-18 14:00:00 to 2025-04-02 00:30:00)
 2025-04-02 02:44:14,486 [INFO] logger_config: ✅ Full dataset saved to c:\src\trading\download\data\binance_WIFUSDTUSDT_30m.csv
 2025-04-02 02:44:14,487 [INFO] logger_config: ✨ All data download tasks completed.
+2025-05-09 13:50:06,700 [INFO] logger_config: Starting data download...
+2025-05-09 13:50:06,702 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-05-09 13:50:06,713 [INFO] logger_config: Converted local startt 2021-01-01 00:00:00 (UTC) to UTC start: 2021-01-01 00:00:00
+2025-05-09 13:50:06,713 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 30m...
+2025-05-09 13:50:06,714 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [30m]: 2020-07-10 09:00:00+00:00
+2025-05-09 13:50:06,715 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-09 13:50:06,922 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-04-02 00:30:00
+2025-05-09 13:50:06,924 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-04-02 00:30:00, UTC end: 2026-02-11 00:11:00
+2025-05-09 13:50:06,926 [INFO] logger_config: 🔄 Fetching new data from 2025-04-02 00:30:00 to 2026-02-11 00:11:00
+2025-05-09 13:50:06,927 [INFO] logger_config: 🔍 Fetching data from 2025-04-02 00:30:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [30m]...
+2025-05-09 13:50:07,577 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1743553800000: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 574, in fetch
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error:  for url: https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1746787806953&recvWindow=10000&signature=138e3652203792919291eafcb3ed874f76871482a0e2146167944a06dc6f6ed8
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 164, in fetch_new_binance_ohlcv
+    ohlcv = exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1509, in load_markets
+    currencies = self.fetch_currencies()
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 2992, in fetch_currencies
+    promises = [self.sapiGetCapitalConfigGetall(params)]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 590, in fetch
+    skip_further_error_handling = self.handle_errors(http_status_code, http_status_text, url, method, headers, http_response, json_response, request_headers, request_body)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11453, in handle_errors
+    self.throw_exactly_matched_exception(self.exceptions['exact'], error, feedback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4757, in throw_exactly_matched_exception
+    raise exact[string](message)
+ccxt.base.errors.InvalidNonce: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+2025-05-09 13:50:07,608 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-09 13:50:07,618 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-09 13:50:07,619 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 30m...
+2025-05-09 13:50:07,619 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [30m]: 2023-05-05 16:30:00+00:00
+2025-05-09 13:50:07,620 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-09 13:50:07,690 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-04-02 00:30:00
+2025-05-09 13:50:07,691 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-09 13:50:07,692 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-04-02 00:30:00, UTC end: 2026-02-11 00:11:00
+2025-05-09 13:50:07,693 [INFO] logger_config: 🔄 Fetching new data from 2025-04-02 00:30:00 to 2026-02-11 00:11:00
+2025-05-09 13:50:07,693 [INFO] logger_config: 🔍 Fetching data from 2025-04-02 00:30:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [30m]...
+2025-05-09 13:50:07,999 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1743553800000: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 574, in fetch
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error:  for url: https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1746787807694&recvWindow=10000&signature=d1c98c8eb030e5737d04f6bf9db1b27bfe780ead7c6460705a6af92a59cbcc77
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 164, in fetch_new_binance_ohlcv
+    ohlcv = exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1509, in load_markets
+    currencies = self.fetch_currencies()
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 2992, in fetch_currencies
+    promises = [self.sapiGetCapitalConfigGetall(params)]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 590, in fetch
+    skip_further_error_handling = self.handle_errors(http_status_code, http_status_text, url, method, headers, http_response, json_response, request_headers, request_body)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11453, in handle_errors
+    self.throw_exactly_matched_exception(self.exceptions['exact'], error, feedback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4757, in throw_exactly_matched_exception
+    raise exact[string](message)
+ccxt.base.errors.InvalidNonce: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+2025-05-09 13:50:08,011 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-09 13:50:08,013 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-09 13:50:08,014 [INFO] logger_config: 🚀 Processing WIF/USDT:USDT with timeframe 30m...
+2025-05-09 13:50:08,015 [INFO] logger_config: 📌 Found cached oldest timestamp for WIF/USDT:USDT [30m]: 2024-01-18 14:00:00+00:00
+2025-05-09 13:50:08,016 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_WIFUSDTUSDT_30m.csv
+2025-05-09 13:50:08,067 [INFO] logger_config: 🕒 Existing data range: 2024-01-18 14:00:00+00:00 to 2025-04-02 00:30:00
+2025-05-09 13:50:08,068 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2024-01-18 14:00:00+00:00.
+2025-05-09 13:50:08,069 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-04-02 00:30:00, UTC end: 2026-02-11 00:11:00
+2025-05-09 13:50:08,069 [INFO] logger_config: 🔄 Fetching new data from 2025-04-02 00:30:00 to 2026-02-11 00:11:00
+2025-05-09 13:50:08,069 [INFO] logger_config: 🔍 Fetching data from 2025-04-02 00:30:00 to 2026-02-11 00:11:00 for WIF/USDT:USDT [30m]...
+2025-05-09 13:50:08,393 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1743553800000: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 574, in fetch
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error:  for url: https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1746787808070&recvWindow=10000&signature=f99276bb6d6a2c16ac1dc799e3f02cebb537b8d70405c652f1f80074c81fc289
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 164, in fetch_new_binance_ohlcv
+    ohlcv = exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1509, in load_markets
+    currencies = self.fetch_currencies()
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 2992, in fetch_currencies
+    promises = [self.sapiGetCapitalConfigGetall(params)]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 590, in fetch
+    skip_further_error_handling = self.handle_errors(http_status_code, http_status_text, url, method, headers, http_response, json_response, request_headers, request_body)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11453, in handle_errors
+    self.throw_exactly_matched_exception(self.exceptions['exact'], error, feedback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4757, in throw_exactly_matched_exception
+    raise exact[string](message)
+ccxt.base.errors.InvalidNonce: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+2025-05-09 13:50:08,404 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-09 13:50:08,406 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-09 13:50:08,406 [INFO] logger_config: ✨ All data download tasks completed.
+2025-05-09 13:52:37,979 [INFO] logger_config: Starting data download...
+2025-05-09 13:52:37,981 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-05-09 13:52:37,991 [INFO] logger_config: Converted local startt 2021-01-01 00:00:00 (UTC) to UTC start: 2021-01-01 00:00:00
+2025-05-09 13:52:37,992 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 30m...
+2025-05-09 13:52:37,993 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [30m]: 2020-07-10 09:00:00+00:00
+2025-05-09 13:52:37,994 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-09 13:52:38,137 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-04-02 00:30:00
+2025-05-09 13:52:38,138 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-04-02 00:30:00, UTC end: 2026-02-11 00:11:00
+2025-05-09 13:52:38,139 [INFO] logger_config: 🔄 Fetching new data from 2025-04-02 00:30:00 to 2026-02-11 00:11:00
+2025-05-09 13:52:38,140 [INFO] logger_config: 🔍 Fetching data from 2025-04-02 00:30:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [30m]...
+2025-05-09 13:52:43,009 [INFO] logger_config: ✅ Downloaded 1797 new rows. (From 2025-04-02 00:30:00 to 2025-05-09 10:30:00)
+2025-05-09 13:52:43,023 [INFO] logger_config: 📊 Final dataset size after merge: 76294 rows
+2025-05-09 13:52:43,392 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-09 13:52:43,394 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 30m...
+2025-05-09 13:52:43,395 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [30m]: 2023-05-05 16:30:00+00:00
+2025-05-09 13:52:43,395 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-09 13:52:43,453 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-04-02 00:30:00
+2025-05-09 13:52:43,453 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-09 13:52:43,455 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-04-02 00:30:00, UTC end: 2026-02-11 00:11:00
+2025-05-09 13:52:43,456 [INFO] logger_config: 🔄 Fetching new data from 2025-04-02 00:30:00 to 2026-02-11 00:11:00
+2025-05-09 13:52:43,456 [INFO] logger_config: 🔍 Fetching data from 2025-04-02 00:30:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [30m]...
+2025-05-09 13:52:44,990 [INFO] logger_config: ✅ Downloaded 1797 new rows. (From 2025-04-02 00:30:00 to 2025-05-09 10:30:00)
+2025-05-09 13:52:44,994 [INFO] logger_config: 📊 Final dataset size after merge: 35269 rows
+2025-05-09 13:52:45,178 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-09 13:52:45,179 [INFO] logger_config: 🚀 Processing WIF/USDT:USDT with timeframe 30m...
+2025-05-09 13:52:45,180 [INFO] logger_config: 📌 Found cached oldest timestamp for WIF/USDT:USDT [30m]: 2024-01-18 14:00:00+00:00
+2025-05-09 13:52:45,181 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_WIFUSDTUSDT_30m.csv
+2025-05-09 13:52:45,214 [INFO] logger_config: 🕒 Existing data range: 2024-01-18 14:00:00+00:00 to 2025-04-02 00:30:00
+2025-05-09 13:52:45,214 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2024-01-18 14:00:00+00:00.
+2025-05-09 13:52:45,216 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-04-02 00:30:00, UTC end: 2026-02-11 00:11:00
+2025-05-09 13:52:45,216 [INFO] logger_config: 🔄 Fetching new data from 2025-04-02 00:30:00 to 2026-02-11 00:11:00
+2025-05-09 13:52:45,217 [INFO] logger_config: 🔍 Fetching data from 2025-04-02 00:30:00 to 2026-02-11 00:11:00 for WIF/USDT:USDT [30m]...
+2025-05-09 13:52:46,749 [INFO] logger_config: ✅ Downloaded 1797 new rows. (From 2025-04-02 00:30:00 to 2025-05-09 10:30:00)
+2025-05-09 13:52:46,753 [INFO] logger_config: 📊 Final dataset size after merge: 22890 rows
+2025-05-09 13:52:46,865 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_WIFUSDTUSDT_30m.csv
+2025-05-09 13:52:46,866 [INFO] logger_config: ✨ All data download tasks completed.
+2025-05-09 13:55:45,649 [INFO] logger_config: Starting data download...
+2025-05-09 13:55:45,650 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-05-09 13:55:45,659 [INFO] logger_config: Converted local startt 2021-01-01 00:00:00 (UTC) to UTC start: 2021-01-01 00:00:00
+2025-05-09 13:55:45,660 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-05-09 13:55:45,661 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-05-09 13:55:45,662 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-09 13:55:48,901 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-04-02 00:42:00
+2025-05-09 13:55:48,903 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-04-02 00:42:00, UTC end: 2026-02-11 00:11:00
+2025-05-09 13:55:48,903 [INFO] logger_config: 🔄 Fetching new data from 2025-04-02 00:42:00 to 2026-02-11 00:11:00
+2025-05-09 13:55:48,904 [INFO] logger_config: 🔍 Fetching data from 2025-04-02 00:42:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-05-09 13:56:28,658 [INFO] logger_config: ✅ Downloaded 53894 new rows. (From 2025-04-02 00:42:00 to 2025-05-09 10:55:00)
+2025-05-09 13:56:28,821 [INFO] logger_config: 📊 Final dataset size after merge: 2288816 rows
+2025-05-09 13:56:40,027 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-09 13:56:40,028 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 30m...
+2025-05-09 13:56:40,029 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [30m]: 2020-07-10 09:00:00+00:00
+2025-05-09 13:56:40,030 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-09 13:56:40,142 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-09 10:30:00
+2025-05-09 13:56:40,144 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-09 10:30:00, UTC end: 2026-02-11 00:11:00
+2025-05-09 13:56:40,144 [INFO] logger_config: 🔄 Fetching new data from 2025-05-09 10:30:00 to 2026-02-11 00:11:00
+2025-05-09 13:56:40,145 [INFO] logger_config: 🔍 Fetching data from 2025-05-09 10:30:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [30m]...
+2025-05-09 13:56:40,675 [INFO] logger_config: ✅ Downloaded 1 new rows. (From 2025-05-09 10:30:00 to 2025-05-09 10:30:00)
+2025-05-09 13:56:40,677 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-09 13:56:40,678 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 1m...
+2025-05-09 13:56:40,679 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [1m]: 2023-05-05 16:30:00+00:00
+2025-05-09 13:56:40,680 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-09 13:56:42,220 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-04-02 00:42:00
+2025-05-09 13:56:42,221 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-09 13:56:42,222 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-04-02 00:42:00, UTC end: 2026-02-11 00:11:00
+2025-05-09 13:56:42,222 [INFO] logger_config: 🔄 Fetching new data from 2025-04-02 00:42:00 to 2026-02-11 00:11:00
+2025-05-09 13:56:42,223 [INFO] logger_config: 🔍 Fetching data from 2025-04-02 00:42:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [1m]...
+2025-05-09 13:57:13,123 [INFO] logger_config: ✅ Downloaded 53895 new rows. (From 2025-04-02 00:42:00 to 2025-05-09 10:56:00)
+2025-05-09 13:57:13,282 [INFO] logger_config: 📊 Final dataset size after merge: 1058067 rows
+2025-05-09 13:57:19,343 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-09 13:57:19,344 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 30m...
+2025-05-09 13:57:19,345 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [30m]: 2023-05-05 16:30:00+00:00
+2025-05-09 13:57:19,346 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-09 13:57:19,411 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-09 10:30:00
+2025-05-09 13:57:19,412 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-09 13:57:19,414 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-09 10:30:00, UTC end: 2026-02-11 00:11:00
+2025-05-09 13:57:19,414 [INFO] logger_config: 🔄 Fetching new data from 2025-05-09 10:30:00 to 2026-02-11 00:11:00
+2025-05-09 13:57:19,415 [INFO] logger_config: 🔍 Fetching data from 2025-05-09 10:30:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [30m]...
+2025-05-09 13:57:19,969 [INFO] logger_config: ✅ Downloaded 1 new rows. (From 2025-05-09 10:30:00 to 2025-05-09 10:30:00)
+2025-05-09 13:57:19,971 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-09 13:57:19,971 [INFO] logger_config: 🚀 Processing WIF/USDT:USDT with timeframe 1m...
+2025-05-09 13:57:19,972 [INFO] logger_config: 📌 Found cached oldest timestamp for WIF/USDT:USDT [1m]: 2024-01-18 14:15:00+00:00
+2025-05-09 13:57:19,973 [INFO] logger_config: 🆕 No existing dataset found. Downloading full dataset...
+2025-05-09 13:57:19,974 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2024-01-18 14:15:00+00:00.
+2025-05-09 13:57:19,975 [INFO] logger_config: 🔍 Fetching data from 2024-01-18 14:15:00 to 2026-02-11 00:11:00 for WIF/USDT:USDT [1m]...
+2025-05-09 14:02:13,400 [INFO] logger_config: ✅ Downloaded 686683 new rows. (From 2024-01-18 14:15:00 to 2025-05-09 10:57:00)
+2025-05-09 14:02:17,180 [INFO] logger_config: ✅ Full dataset saved to c:\src\trading\download\data\binance_WIFUSDTUSDT_1m.csv
+2025-05-09 14:02:17,181 [INFO] logger_config: 🚀 Processing WIF/USDT:USDT with timeframe 30m...
+2025-05-09 14:02:17,182 [INFO] logger_config: 📌 Found cached oldest timestamp for WIF/USDT:USDT [30m]: 2024-01-18 14:00:00+00:00
+2025-05-09 14:02:17,182 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_WIFUSDTUSDT_30m.csv
+2025-05-09 14:02:17,228 [INFO] logger_config: 🕒 Existing data range: 2024-01-18 14:00:00+00:00 to 2025-05-09 10:30:00
+2025-05-09 14:02:17,229 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2024-01-18 14:00:00+00:00.
+2025-05-09 14:02:17,229 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-09 10:30:00, UTC end: 2026-02-11 00:11:00
+2025-05-09 14:02:17,230 [INFO] logger_config: 🔄 Fetching new data from 2025-05-09 10:30:00 to 2026-02-11 00:11:00
+2025-05-09 14:02:17,230 [INFO] logger_config: 🔍 Fetching data from 2025-05-09 10:30:00 to 2026-02-11 00:11:00 for WIF/USDT:USDT [30m]...
+2025-05-09 14:02:17,807 [INFO] logger_config: ✅ Downloaded 2 new rows. (From 2025-05-09 10:30:00 to 2025-05-09 11:00:00)
+2025-05-09 14:02:17,820 [INFO] logger_config: 📊 Final dataset size after merge: 22891 rows
+2025-05-09 14:02:17,941 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_WIFUSDTUSDT_30m.csv
+2025-05-09 14:02:17,942 [INFO] logger_config: ✨ All data download tasks completed.
+2025-05-09 14:25:47,254 [INFO] logger_config: Starting data download...
+2025-05-09 14:25:47,256 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-05-09 14:25:47,265 [INFO] logger_config: Converted local startt 2021-01-01 00:00:00 (UTC) to UTC start: 2021-01-01 00:00:00
+2025-05-09 14:25:47,265 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-05-09 14:25:47,266 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-05-09 14:25:47,267 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-09 14:25:50,330 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-09 10:55:00
+2025-05-09 14:25:50,332 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-09 10:55:00, UTC end: 2026-02-11 00:11:00
+2025-05-09 14:25:50,333 [INFO] logger_config: 🔄 Fetching new data from 2025-05-09 10:55:00 to 2026-02-11 00:11:00
+2025-05-09 14:25:50,333 [INFO] logger_config: 🔍 Fetching data from 2025-05-09 10:55:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-05-09 14:25:55,300 [INFO] logger_config: ✅ Downloaded 31 new rows. (From 2025-05-09 10:55:00 to 2025-05-09 11:25:00)
+2025-05-09 14:25:55,429 [INFO] logger_config: 📊 Final dataset size after merge: 2288846 rows
+2025-05-09 14:26:07,091 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-09 14:26:07,092 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 15m...
+2025-05-09 14:26:07,360 [INFO] logger_config: 📌 Found first available Binance data: 2020-07-10 09:00:00+00:00
+2025-05-09 14:26:07,362 [INFO] logger_config: 🆕 No existing dataset found. Downloading full dataset...
+2025-05-09 14:26:07,363 [INFO] logger_config: 🔍 Fetching data from 2021-01-01 00:00:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [15m]...
+2025-05-09 14:26:55,497 [INFO] logger_config: ✅ Downloaded 152590 new rows. (From 2021-01-01 00:00:00 to 2025-05-09 11:15:00)
+2025-05-09 14:26:56,363 [INFO] logger_config: ✅ Full dataset saved to c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-05-09 14:26:56,364 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 30m...
+2025-05-09 14:26:56,365 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [30m]: 2020-07-10 09:00:00+00:00
+2025-05-09 14:26:56,366 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-09 14:26:56,489 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-09 10:30:00
+2025-05-09 14:26:56,490 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-09 10:30:00, UTC end: 2026-02-11 00:11:00
+2025-05-09 14:26:56,491 [INFO] logger_config: 🔄 Fetching new data from 2025-05-09 10:30:00 to 2026-02-11 00:11:00
+2025-05-09 14:26:56,491 [INFO] logger_config: 🔍 Fetching data from 2025-05-09 10:30:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [30m]...
+2025-05-09 14:26:57,052 [INFO] logger_config: ✅ Downloaded 2 new rows. (From 2025-05-09 10:30:00 to 2025-05-09 11:00:00)
+2025-05-09 14:26:57,079 [INFO] logger_config: 📊 Final dataset size after merge: 76295 rows
+2025-05-09 14:26:57,493 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-09 14:26:57,494 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 1m...
+2025-05-09 14:26:57,495 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [1m]: 2023-05-05 16:30:00+00:00
+2025-05-09 14:26:57,496 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-09 14:26:59,145 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-09 10:56:00
+2025-05-09 14:26:59,146 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-09 14:26:59,147 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-09 10:56:00, UTC end: 2026-02-11 00:11:00
+2025-05-09 14:26:59,148 [INFO] logger_config: 🔄 Fetching new data from 2025-05-09 10:56:00 to 2026-02-11 00:11:00
+2025-05-09 14:26:59,149 [INFO] logger_config: 🔍 Fetching data from 2025-05-09 10:56:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [1m]...
+2025-05-09 14:26:59,774 [INFO] logger_config: ✅ Downloaded 31 new rows. (From 2025-05-09 10:56:00 to 2025-05-09 11:26:00)
+2025-05-09 14:26:59,845 [INFO] logger_config: 📊 Final dataset size after merge: 1058097 rows
+2025-05-09 14:27:05,939 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-09 14:27:05,940 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 15m...
+2025-05-09 14:27:06,224 [INFO] logger_config: 📌 Found first available Binance data: 2023-05-05 16:30:00+00:00
+2025-05-09 14:27:06,226 [INFO] logger_config: 🆕 No existing dataset found. Downloading full dataset...
+2025-05-09 14:27:06,226 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-09 14:27:06,227 [INFO] logger_config: 🔍 Fetching data from 2023-05-05 16:30:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [15m]...
+2025-05-09 14:27:28,554 [INFO] logger_config: ✅ Downloaded 70540 new rows. (From 2023-05-05 16:30:00 to 2025-05-09 11:15:00)
+2025-05-09 14:27:28,971 [INFO] logger_config: ✅ Full dataset saved to c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_15m.csv
+2025-05-09 14:27:28,972 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 30m...
+2025-05-09 14:27:28,973 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [30m]: 2023-05-05 16:30:00+00:00
+2025-05-09 14:27:28,973 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-09 14:27:29,037 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-09 10:30:00
+2025-05-09 14:27:29,038 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-09 14:27:29,039 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-09 10:30:00, UTC end: 2026-02-11 00:11:00
+2025-05-09 14:27:29,040 [INFO] logger_config: 🔄 Fetching new data from 2025-05-09 10:30:00 to 2026-02-11 00:11:00
+2025-05-09 14:27:29,041 [INFO] logger_config: 🔍 Fetching data from 2025-05-09 10:30:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [30m]...
+2025-05-09 14:27:29,577 [INFO] logger_config: ✅ Downloaded 2 new rows. (From 2025-05-09 10:30:00 to 2025-05-09 11:00:00)
+2025-05-09 14:27:29,592 [INFO] logger_config: 📊 Final dataset size after merge: 35270 rows
+2025-05-09 14:27:29,798 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-09 14:27:29,799 [INFO] logger_config: 🚀 Processing WIF/USDT:USDT with timeframe 1m...
+2025-05-09 14:27:29,800 [INFO] logger_config: 📌 Found cached oldest timestamp for WIF/USDT:USDT [1m]: 2024-01-18 14:15:00+00:00
+2025-05-09 14:27:29,801 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_WIFUSDTUSDT_1m.csv
+2025-05-09 14:27:30,785 [INFO] logger_config: 🕒 Existing data range: 2024-01-18 14:15:00+00:00 to 2025-05-09 10:57:00
+2025-05-09 14:27:30,786 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2024-01-18 14:15:00+00:00.
+2025-05-09 14:27:30,787 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-09 10:57:00, UTC end: 2026-02-11 00:11:00
+2025-05-09 14:27:30,788 [INFO] logger_config: 🔄 Fetching new data from 2025-05-09 10:57:00 to 2026-02-11 00:11:00
+2025-05-09 14:27:30,789 [INFO] logger_config: 🔍 Fetching data from 2025-05-09 10:57:00 to 2026-02-11 00:11:00 for WIF/USDT:USDT [1m]...
+2025-05-09 14:27:31,360 [INFO] logger_config: ✅ Downloaded 31 new rows. (From 2025-05-09 10:57:00 to 2025-05-09 11:27:00)
+2025-05-09 14:27:31,408 [INFO] logger_config: 📊 Final dataset size after merge: 686713 rows
+2025-05-09 14:27:35,102 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_WIFUSDTUSDT_1m.csv
+2025-05-09 14:27:35,104 [INFO] logger_config: 🚀 Processing WIF/USDT:USDT with timeframe 15m...
+2025-05-09 14:27:35,373 [INFO] logger_config: 📌 Found first available Binance data: 2024-01-18 14:15:00+00:00
+2025-05-09 14:27:35,375 [INFO] logger_config: 🆕 No existing dataset found. Downloading full dataset...
+2025-05-09 14:27:35,376 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2024-01-18 14:15:00+00:00.
+2025-05-09 14:27:35,377 [INFO] logger_config: 🔍 Fetching data from 2024-01-18 14:15:00 to 2026-02-11 00:11:00 for WIF/USDT:USDT [15m]...
+2025-05-09 14:27:49,772 [INFO] logger_config: ✅ Downloaded 45781 new rows. (From 2024-01-18 14:15:00 to 2025-05-09 11:15:00)
+2025-05-09 14:27:50,040 [INFO] logger_config: ✅ Full dataset saved to c:\src\trading\download\data\binance_WIFUSDTUSDT_15m.csv
+2025-05-09 14:27:50,041 [INFO] logger_config: 🚀 Processing WIF/USDT:USDT with timeframe 30m...
+2025-05-09 14:27:50,042 [INFO] logger_config: 📌 Found cached oldest timestamp for WIF/USDT:USDT [30m]: 2024-01-18 14:00:00+00:00
+2025-05-09 14:27:50,042 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_WIFUSDTUSDT_30m.csv
+2025-05-09 14:27:50,082 [INFO] logger_config: 🕒 Existing data range: 2024-01-18 14:00:00+00:00 to 2025-05-09 11:00:00
+2025-05-09 14:27:50,083 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2024-01-18 14:00:00+00:00.
+2025-05-09 14:27:50,084 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-09 11:00:00, UTC end: 2026-02-11 00:11:00
+2025-05-09 14:27:50,085 [INFO] logger_config: 🔄 Fetching new data from 2025-05-09 11:00:00 to 2026-02-11 00:11:00
+2025-05-09 14:27:50,085 [INFO] logger_config: 🔍 Fetching data from 2025-05-09 11:00:00 to 2026-02-11 00:11:00 for WIF/USDT:USDT [30m]...
+2025-05-09 14:27:50,627 [INFO] logger_config: ✅ Downloaded 1 new rows. (From 2025-05-09 11:00:00 to 2025-05-09 11:00:00)
+2025-05-09 14:27:50,629 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-09 14:27:50,630 [INFO] logger_config: ✨ All data download tasks completed.
+2025-05-14 22:27:13,923 [INFO] logger_config: Starting data download...
+2025-05-14 22:27:13,926 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-05-14 22:27:13,935 [INFO] logger_config: Converted local startt 2021-01-01 00:00:00 (UTC) to UTC start: 2021-01-01 00:00:00
+2025-05-14 22:27:13,935 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-05-14 22:27:13,937 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-05-14 22:27:13,939 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-14 22:27:17,401 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-09 11:25:00
+2025-05-14 22:27:17,403 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-09 11:25:00, UTC end: 2026-02-11 00:11:00
+2025-05-14 22:27:17,404 [INFO] logger_config: 🔄 Fetching new data from 2025-05-09 11:25:00 to 2026-02-11 00:11:00
+2025-05-14 22:27:17,405 [INFO] logger_config: 🔍 Fetching data from 2025-05-09 11:25:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-05-14 22:27:26,925 [INFO] logger_config: ✅ Downloaded 7683 new rows. (From 2025-05-09 11:25:00 to 2025-05-14 19:27:00)
+2025-05-14 22:27:27,108 [INFO] logger_config: 📊 Final dataset size after merge: 2296528 rows
+2025-05-14 22:27:40,806 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-14 22:27:40,807 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 15m...
+2025-05-14 22:27:40,808 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [15m]: 2020-07-10 09:00:00+00:00
+2025-05-14 22:27:40,809 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-05-14 22:27:41,099 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-09 11:15:00
+2025-05-14 22:27:41,101 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-09 11:15:00, UTC end: 2026-02-11 00:11:00
+2025-05-14 22:27:41,102 [INFO] logger_config: 🔄 Fetching new data from 2025-05-09 11:15:00 to 2026-02-11 00:11:00
+2025-05-14 22:27:41,103 [INFO] logger_config: 🔍 Fetching data from 2025-05-09 11:15:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [15m]...
+2025-05-14 22:27:41,887 [INFO] logger_config: ✅ Downloaded 513 new rows. (From 2025-05-09 11:15:00 to 2025-05-14 19:15:00)
+2025-05-14 22:27:41,932 [INFO] logger_config: 📊 Final dataset size after merge: 153102 rows
+2025-05-14 22:27:42,960 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-05-14 22:27:42,961 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 30m...
+2025-05-14 22:27:42,962 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [30m]: 2020-07-10 09:00:00+00:00
+2025-05-14 22:27:42,963 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-14 22:27:43,133 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-09 11:00:00
+2025-05-14 22:27:43,134 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-09 11:00:00, UTC end: 2026-02-11 00:11:00
+2025-05-14 22:27:43,134 [INFO] logger_config: 🔄 Fetching new data from 2025-05-09 11:00:00 to 2026-02-11 00:11:00
+2025-05-14 22:27:43,135 [INFO] logger_config: 🔍 Fetching data from 2025-05-09 11:00:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [30m]...
+2025-05-14 22:27:43,710 [INFO] logger_config: ✅ Downloaded 257 new rows. (From 2025-05-09 11:00:00 to 2025-05-14 19:00:00)
+2025-05-14 22:27:43,720 [INFO] logger_config: 📊 Final dataset size after merge: 76551 rows
+2025-05-14 22:27:44,207 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-14 22:27:44,208 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 1m...
+2025-05-14 22:27:44,209 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [1m]: 2023-05-05 16:30:00+00:00
+2025-05-14 22:27:44,211 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-14 22:27:46,455 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-09 11:26:00
+2025-05-14 22:27:46,456 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-14 22:27:46,457 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-09 11:26:00, UTC end: 2026-02-11 00:11:00
+2025-05-14 22:27:46,458 [INFO] logger_config: 🔄 Fetching new data from 2025-05-09 11:26:00 to 2026-02-11 00:11:00
+2025-05-14 22:27:46,459 [INFO] logger_config: 🔍 Fetching data from 2025-05-09 11:26:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [1m]...
+2025-05-14 22:27:49,257 [INFO] logger_config: ✅ Downloaded 7682 new rows. (From 2025-05-09 11:26:00 to 2025-05-14 19:27:00)
+2025-05-14 22:27:49,347 [INFO] logger_config: 📊 Final dataset size after merge: 1065778 rows
+2025-05-14 22:27:56,307 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-14 22:27:56,308 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 15m...
+2025-05-14 22:27:56,309 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [15m]: 2023-05-05 16:30:00+00:00
+2025-05-14 22:27:56,309 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_15m.csv
+2025-05-14 22:27:56,454 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-09 11:15:00
+2025-05-14 22:27:56,454 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-14 22:27:56,455 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-09 11:15:00, UTC end: 2026-02-11 00:11:00
+2025-05-14 22:27:56,456 [INFO] logger_config: 🔄 Fetching new data from 2025-05-09 11:15:00 to 2026-02-11 00:11:00
+2025-05-14 22:27:56,456 [INFO] logger_config: 🔍 Fetching data from 2025-05-09 11:15:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [15m]...
+2025-05-14 22:27:57,017 [INFO] logger_config: ✅ Downloaded 513 new rows. (From 2025-05-09 11:15:00 to 2025-05-14 19:15:00)
+2025-05-14 22:27:57,033 [INFO] logger_config: 📊 Final dataset size after merge: 71052 rows
+2025-05-14 22:27:57,535 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_15m.csv
+2025-05-14 22:27:57,536 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 30m...
+2025-05-14 22:27:57,538 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [30m]: 2023-05-05 16:30:00+00:00
+2025-05-14 22:27:57,539 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-14 22:27:57,627 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-09 11:00:00
+2025-05-14 22:27:57,627 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-14 22:27:57,629 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-09 11:00:00, UTC end: 2026-02-11 00:11:00
+2025-05-14 22:27:57,629 [INFO] logger_config: 🔄 Fetching new data from 2025-05-09 11:00:00 to 2026-02-11 00:11:00
+2025-05-14 22:27:57,630 [INFO] logger_config: 🔍 Fetching data from 2025-05-09 11:00:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [30m]...
+2025-05-14 22:27:58,414 [INFO] logger_config: ✅ Downloaded 257 new rows. (From 2025-05-09 11:00:00 to 2025-05-14 19:00:00)
+2025-05-14 22:27:58,420 [INFO] logger_config: 📊 Final dataset size after merge: 35526 rows
+2025-05-14 22:27:58,664 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-14 22:27:58,665 [INFO] logger_config: 🚀 Processing WIF/USDT:USDT with timeframe 1m...
+2025-05-14 22:27:58,666 [INFO] logger_config: 📌 Found cached oldest timestamp for WIF/USDT:USDT [1m]: 2024-01-18 14:15:00+00:00
+2025-05-14 22:27:58,668 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_WIFUSDTUSDT_1m.csv
+2025-05-14 22:27:59,771 [INFO] logger_config: 🕒 Existing data range: 2024-01-18 14:15:00+00:00 to 2025-05-09 11:27:00
+2025-05-14 22:27:59,771 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2024-01-18 14:15:00+00:00.
+2025-05-14 22:27:59,772 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-09 11:27:00, UTC end: 2026-02-11 00:11:00
+2025-05-14 22:27:59,773 [INFO] logger_config: 🔄 Fetching new data from 2025-05-09 11:27:00 to 2026-02-11 00:11:00
+2025-05-14 22:27:59,773 [INFO] logger_config: 🔍 Fetching data from 2025-05-09 11:27:00 to 2026-02-11 00:11:00 for WIF/USDT:USDT [1m]...
+2025-05-14 22:28:04,274 [INFO] logger_config: ✅ Downloaded 7681 new rows. (From 2025-05-09 11:27:00 to 2025-05-14 19:27:00)
+2025-05-14 22:28:04,335 [INFO] logger_config: 📊 Final dataset size after merge: 694393 rows
+2025-05-14 22:28:08,657 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_WIFUSDTUSDT_1m.csv
+2025-05-14 22:28:08,658 [INFO] logger_config: 🚀 Processing WIF/USDT:USDT with timeframe 15m...
+2025-05-14 22:28:08,659 [INFO] logger_config: 📌 Found cached oldest timestamp for WIF/USDT:USDT [15m]: 2024-01-18 14:15:00+00:00
+2025-05-14 22:28:08,660 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_WIFUSDTUSDT_15m.csv
+2025-05-14 22:28:08,762 [INFO] logger_config: 🕒 Existing data range: 2024-01-18 14:15:00+00:00 to 2025-05-09 11:15:00
+2025-05-14 22:28:08,762 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2024-01-18 14:15:00+00:00.
+2025-05-14 22:28:08,763 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-09 11:15:00, UTC end: 2026-02-11 00:11:00
+2025-05-14 22:28:08,764 [INFO] logger_config: 🔄 Fetching new data from 2025-05-09 11:15:00 to 2026-02-11 00:11:00
+2025-05-14 22:28:08,764 [INFO] logger_config: 🔍 Fetching data from 2025-05-09 11:15:00 to 2026-02-11 00:11:00 for WIF/USDT:USDT [15m]...
+2025-05-14 22:28:09,562 [INFO] logger_config: ✅ Downloaded 513 new rows. (From 2025-05-09 11:15:00 to 2025-05-14 19:15:00)
+2025-05-14 22:28:09,573 [INFO] logger_config: 📊 Final dataset size after merge: 46293 rows
+2025-05-14 22:28:09,831 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_WIFUSDTUSDT_15m.csv
+2025-05-14 22:28:09,832 [INFO] logger_config: 🚀 Processing WIF/USDT:USDT with timeframe 30m...
+2025-05-14 22:28:09,833 [INFO] logger_config: 📌 Found cached oldest timestamp for WIF/USDT:USDT [30m]: 2024-01-18 14:00:00+00:00
+2025-05-14 22:28:09,834 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_WIFUSDTUSDT_30m.csv
+2025-05-14 22:28:09,885 [INFO] logger_config: 🕒 Existing data range: 2024-01-18 14:00:00+00:00 to 2025-05-09 11:00:00
+2025-05-14 22:28:09,885 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2024-01-18 14:00:00+00:00.
+2025-05-14 22:28:09,886 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-09 11:00:00, UTC end: 2026-02-11 00:11:00
+2025-05-14 22:28:09,887 [INFO] logger_config: 🔄 Fetching new data from 2025-05-09 11:00:00 to 2026-02-11 00:11:00
+2025-05-14 22:28:09,887 [INFO] logger_config: 🔍 Fetching data from 2025-05-09 11:00:00 to 2026-02-11 00:11:00 for WIF/USDT:USDT [30m]...
+2025-05-14 22:28:10,452 [INFO] logger_config: ✅ Downloaded 257 new rows. (From 2025-05-09 11:00:00 to 2025-05-14 19:00:00)
+2025-05-14 22:28:10,455 [INFO] logger_config: 📊 Final dataset size after merge: 23147 rows
+2025-05-14 22:28:10,614 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_WIFUSDTUSDT_30m.csv
+2025-05-14 22:28:10,615 [INFO] logger_config: ✨ All data download tasks completed.
+2025-05-17 20:27:49,869 [INFO] logger_config: Starting data download...
+2025-05-17 20:27:49,871 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-05-17 20:27:49,884 [INFO] logger_config: Converted local startt 2021-01-01 00:00:00 (UTC) to UTC start: 2021-01-01 00:00:00
+2025-05-17 20:27:49,885 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-05-17 20:27:49,886 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-05-17 20:27:49,887 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-17 20:27:53,271 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-14 19:27:00
+2025-05-17 20:27:53,272 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-14 19:27:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 20:27:53,273 [INFO] logger_config: 🔄 Fetching new data from 2025-05-14 19:27:00 to 2026-02-11 00:11:00
+2025-05-17 20:27:53,274 [INFO] logger_config: 🔍 Fetching data from 2025-05-14 19:27:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-05-17 20:28:00,549 [INFO] logger_config: ✅ Downloaded 4201 new rows. (From 2025-05-14 19:27:00 to 2025-05-17 17:27:00)
+2025-05-17 20:28:00,692 [INFO] logger_config: 📊 Final dataset size after merge: 2300728 rows
+2025-05-17 20:28:12,502 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-17 20:28:12,503 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 15m...
+2025-05-17 20:28:12,504 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [15m]: 2020-07-10 09:00:00+00:00
+2025-05-17 20:28:12,504 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-05-17 20:28:12,751 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-14 19:15:00
+2025-05-17 20:28:12,752 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-14 19:15:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 20:28:12,753 [INFO] logger_config: 🔄 Fetching new data from 2025-05-14 19:15:00 to 2026-02-11 00:11:00
+2025-05-17 20:28:12,753 [INFO] logger_config: 🔍 Fetching data from 2025-05-14 19:15:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [15m]...
+2025-05-17 20:28:13,343 [INFO] logger_config: ✅ Downloaded 281 new rows. (From 2025-05-14 19:15:00 to 2025-05-17 17:15:00)
+2025-05-17 20:28:13,370 [INFO] logger_config: 📊 Final dataset size after merge: 153382 rows
+2025-05-17 20:28:14,189 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-05-17 20:28:14,190 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 30m...
+2025-05-17 20:28:14,191 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [30m]: 2020-07-10 09:00:00+00:00
+2025-05-17 20:28:14,191 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-17 20:28:14,306 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-14 19:00:00
+2025-05-17 20:28:14,308 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-14 19:00:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 20:28:14,309 [INFO] logger_config: 🔄 Fetching new data from 2025-05-14 19:00:00 to 2026-02-11 00:11:00
+2025-05-17 20:28:14,309 [INFO] logger_config: 🔍 Fetching data from 2025-05-14 19:00:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [30m]...
+2025-05-17 20:28:14,863 [INFO] logger_config: ✅ Downloaded 141 new rows. (From 2025-05-14 19:00:00 to 2025-05-17 17:00:00)
+2025-05-17 20:28:14,869 [INFO] logger_config: 📊 Final dataset size after merge: 76691 rows
+2025-05-17 20:28:15,264 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-17 20:28:15,265 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 1m...
+2025-05-17 20:28:15,265 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [1m]: 2023-05-05 16:30:00+00:00
+2025-05-17 20:28:15,266 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-17 20:28:17,660 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-14 19:27:00
+2025-05-17 20:28:17,661 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 20:28:17,662 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-14 19:27:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 20:28:17,663 [INFO] logger_config: 🔄 Fetching new data from 2025-05-14 19:27:00 to 2026-02-11 00:11:00
+2025-05-17 20:28:17,664 [INFO] logger_config: 🔍 Fetching data from 2025-05-14 19:27:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [1m]...
+2025-05-17 20:28:19,470 [INFO] logger_config: ✅ Downloaded 4202 new rows. (From 2025-05-14 19:27:00 to 2025-05-17 17:28:00)
+2025-05-17 20:28:19,541 [INFO] logger_config: 📊 Final dataset size after merge: 1069979 rows
+2025-05-17 20:28:25,428 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-17 20:28:25,429 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 15m...
+2025-05-17 20:28:25,429 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [15m]: 2023-05-05 16:30:00+00:00
+2025-05-17 20:28:25,430 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_15m.csv
+2025-05-17 20:28:25,551 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-14 19:15:00
+2025-05-17 20:28:25,552 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 20:28:25,553 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-14 19:15:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 20:28:25,553 [INFO] logger_config: 🔄 Fetching new data from 2025-05-14 19:15:00 to 2026-02-11 00:11:00
+2025-05-17 20:28:25,554 [INFO] logger_config: 🔍 Fetching data from 2025-05-14 19:15:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [15m]...
+2025-05-17 20:28:26,108 [INFO] logger_config: ✅ Downloaded 281 new rows. (From 2025-05-14 19:15:00 to 2025-05-17 17:15:00)
+2025-05-17 20:28:26,122 [INFO] logger_config: 📊 Final dataset size after merge: 71332 rows
+2025-05-17 20:28:26,543 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_15m.csv
+2025-05-17 20:28:26,543 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 30m...
+2025-05-17 20:28:26,544 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [30m]: 2023-05-05 16:30:00+00:00
+2025-05-17 20:28:26,545 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-17 20:28:26,616 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-14 19:00:00
+2025-05-17 20:28:26,617 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 20:28:26,618 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-14 19:00:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 20:28:26,619 [INFO] logger_config: 🔄 Fetching new data from 2025-05-14 19:00:00 to 2026-02-11 00:11:00
+2025-05-17 20:28:26,619 [INFO] logger_config: 🔍 Fetching data from 2025-05-14 19:00:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [30m]...
+2025-05-17 20:28:27,166 [INFO] logger_config: ✅ Downloaded 141 new rows. (From 2025-05-14 19:00:00 to 2025-05-17 17:00:00)
+2025-05-17 20:28:27,172 [INFO] logger_config: 📊 Final dataset size after merge: 35666 rows
+2025-05-17 20:28:27,397 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-17 20:28:27,398 [INFO] logger_config: ✨ All data download tasks completed.
+2025-05-17 21:03:48,864 [INFO] logger_config: Starting data download...
+2025-05-17 21:03:48,865 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-05-17 21:03:48,876 [INFO] logger_config: Converted local startt 2021-01-01 00:00:00 (UTC) to UTC start: 2021-01-01 00:00:00
+2025-05-17 21:03:48,876 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-05-17 21:03:48,877 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:03:48,879 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-17 21:03:52,245 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 17:27:00
+2025-05-17 21:03:52,246 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:27:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:03:52,247 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:27:00 to 2026-02-11 00:11:00
+2025-05-17 21:03:52,248 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:27:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-05-17 21:03:52,255 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747502820000: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 159, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+TypeError: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 21:03:52,270 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-17 21:03:52,351 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:03:52,352 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 15m...
+2025-05-17 21:03:52,353 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [15m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:03:52,354 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-05-17 21:03:52,593 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 17:15:00
+2025-05-17 21:03:52,594 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:15:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:03:52,595 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:15:00 to 2026-02-11 00:11:00
+2025-05-17 21:03:52,596 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:15:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [15m]...
+2025-05-17 21:03:52,598 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747502100000: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 159, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+TypeError: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 21:03:52,603 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-17 21:03:52,606 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:03:52,607 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 30m...
+2025-05-17 21:03:52,608 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [30m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:03:52,609 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-17 21:03:52,729 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 17:00:00
+2025-05-17 21:03:52,730 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:00:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:03:52,731 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:00:00 to 2026-02-11 00:11:00
+2025-05-17 21:03:52,731 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:00:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [30m]...
+2025-05-17 21:03:52,733 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747501200000: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 159, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+TypeError: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 21:03:52,738 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-17 21:03:52,740 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:03:52,741 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 1m...
+2025-05-17 21:03:52,742 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [1m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:03:52,743 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-17 21:03:54,339 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 17:28:00
+2025-05-17 21:03:54,339 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:03:54,340 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:28:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:03:54,341 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:28:00 to 2026-02-11 00:11:00
+2025-05-17 21:03:54,341 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:28:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [1m]...
+2025-05-17 21:03:54,342 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747502880000: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 159, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+TypeError: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 21:03:54,345 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-17 21:03:54,377 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:03:54,377 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 15m...
+2025-05-17 21:03:54,378 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [15m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:03:54,379 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_15m.csv
+2025-05-17 21:03:54,505 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 17:15:00
+2025-05-17 21:03:54,506 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:03:54,508 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:15:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:03:54,508 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:15:00 to 2026-02-11 00:11:00
+2025-05-17 21:03:54,509 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:15:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [15m]...
+2025-05-17 21:03:54,511 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747502100000: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 159, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+TypeError: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 21:03:54,515 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-17 21:03:54,517 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:03:54,518 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 30m...
+2025-05-17 21:03:54,519 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [30m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:03:54,519 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-17 21:03:54,589 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 17:00:00
+2025-05-17 21:03:54,590 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:03:54,591 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:00:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:03:54,592 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:00:00 to 2026-02-11 00:11:00
+2025-05-17 21:03:54,592 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:00:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [30m]...
+2025-05-17 21:03:54,594 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747501200000: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 159, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+TypeError: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 21:03:54,597 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-17 21:03:54,598 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:03:54,599 [INFO] logger_config: ✨ All data download tasks completed.
+2025-05-17 21:04:20,524 [INFO] logger_config: Starting data download...
+2025-05-17 21:04:20,526 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-05-17 21:04:20,537 [INFO] logger_config: Converted local startt 2021-01-01 00:00:00 (UTC) to UTC start: 2021-01-01 00:00:00
+2025-05-17 21:04:20,538 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-05-17 21:04:20,539 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:04:20,540 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-17 21:04:23,836 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 17:27:00
+2025-05-17 21:04:23,837 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:27:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:04:23,838 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:27:00 to 2026-02-11 00:11:00
+2025-05-17 21:04:23,838 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:27:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-05-17 21:04:23,846 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747502820000: safe_fetch_ohlcv() missing 1 required positional argument: 'timeframe'
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 159, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol, timeframe, since_ms=since_ms, limit=limit)
+TypeError: safe_fetch_ohlcv() missing 1 required positional argument: 'timeframe'
+2025-05-17 21:04:23,851 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-17 21:04:23,934 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:04:23,935 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 15m...
+2025-05-17 21:04:23,936 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [15m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:04:23,937 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-05-17 21:04:24,186 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 17:15:00
+2025-05-17 21:04:24,188 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:15:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:04:24,188 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:15:00 to 2026-02-11 00:11:00
+2025-05-17 21:04:24,189 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:15:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [15m]...
+2025-05-17 21:04:24,190 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747502100000: safe_fetch_ohlcv() missing 1 required positional argument: 'timeframe'
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 159, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol, timeframe, since_ms=since_ms, limit=limit)
+TypeError: safe_fetch_ohlcv() missing 1 required positional argument: 'timeframe'
+2025-05-17 21:04:24,194 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-17 21:04:24,198 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:04:24,199 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 30m...
+2025-05-17 21:04:24,199 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [30m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:04:24,200 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-17 21:04:24,324 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 17:00:00
+2025-05-17 21:04:24,326 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:00:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:04:24,326 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:00:00 to 2026-02-11 00:11:00
+2025-05-17 21:04:24,327 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:00:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [30m]...
+2025-05-17 21:04:24,329 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747501200000: safe_fetch_ohlcv() missing 1 required positional argument: 'timeframe'
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 159, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol, timeframe, since_ms=since_ms, limit=limit)
+TypeError: safe_fetch_ohlcv() missing 1 required positional argument: 'timeframe'
+2025-05-17 21:04:24,333 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-17 21:04:24,336 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:04:24,337 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 1m...
+2025-05-17 21:04:24,338 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [1m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:04:24,339 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-17 21:04:25,929 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 17:28:00
+2025-05-17 21:04:25,930 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:04:25,931 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:28:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:04:25,931 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:28:00 to 2026-02-11 00:11:00
+2025-05-17 21:04:25,932 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:28:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [1m]...
+2025-05-17 21:04:25,933 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747502880000: safe_fetch_ohlcv() missing 1 required positional argument: 'timeframe'
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 159, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol, timeframe, since_ms=since_ms, limit=limit)
+TypeError: safe_fetch_ohlcv() missing 1 required positional argument: 'timeframe'
+2025-05-17 21:04:25,938 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-17 21:04:25,972 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:04:25,973 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 15m...
+2025-05-17 21:04:25,974 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [15m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:04:25,974 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_15m.csv
+2025-05-17 21:04:26,097 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 17:15:00
+2025-05-17 21:04:26,098 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:04:26,099 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:15:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:04:26,100 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:15:00 to 2026-02-11 00:11:00
+2025-05-17 21:04:26,100 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:15:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [15m]...
+2025-05-17 21:04:26,102 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747502100000: safe_fetch_ohlcv() missing 1 required positional argument: 'timeframe'
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 159, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol, timeframe, since_ms=since_ms, limit=limit)
+TypeError: safe_fetch_ohlcv() missing 1 required positional argument: 'timeframe'
+2025-05-17 21:04:26,106 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-17 21:04:26,109 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:04:26,109 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 30m...
+2025-05-17 21:04:26,110 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [30m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:04:26,111 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-17 21:04:26,176 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 17:00:00
+2025-05-17 21:04:26,177 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:04:26,178 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:00:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:04:26,179 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:00:00 to 2026-02-11 00:11:00
+2025-05-17 21:04:26,179 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:00:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [30m]...
+2025-05-17 21:04:26,181 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747501200000: safe_fetch_ohlcv() missing 1 required positional argument: 'timeframe'
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 159, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol, timeframe, since_ms=since_ms, limit=limit)
+TypeError: safe_fetch_ohlcv() missing 1 required positional argument: 'timeframe'
+2025-05-17 21:04:26,185 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-17 21:04:26,186 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:04:26,187 [INFO] logger_config: ✨ All data download tasks completed.
+2025-05-17 21:04:59,894 [INFO] logger_config: Starting data download...
+2025-05-17 21:04:59,895 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-05-17 21:04:59,906 [INFO] logger_config: Converted local startt 2021-01-01 00:00:00 (UTC) to UTC start: 2021-01-01 00:00:00
+2025-05-17 21:04:59,907 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-05-17 21:04:59,908 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:04:59,909 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-17 21:05:03,516 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 17:27:00
+2025-05-17 21:05:03,518 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:27:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:05:03,519 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:27:00 to 2026-02-11 00:11:00
+2025-05-17 21:05:03,519 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:27:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-05-17 21:05:03,526 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747502820000: safe_fetch_ohlcv() missing 1 required positional argument: 'symbol'
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 159, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+TypeError: safe_fetch_ohlcv() missing 1 required positional argument: 'symbol'
+2025-05-17 21:05:03,531 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-17 21:05:03,616 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:05:03,617 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 15m...
+2025-05-17 21:05:03,618 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [15m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:05:03,619 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-05-17 21:05:03,898 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 17:15:00
+2025-05-17 21:05:03,899 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:15:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:05:03,900 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:15:00 to 2026-02-11 00:11:00
+2025-05-17 21:05:03,901 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:15:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [15m]...
+2025-05-17 21:05:03,901 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747502100000: safe_fetch_ohlcv() missing 1 required positional argument: 'symbol'
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 159, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+TypeError: safe_fetch_ohlcv() missing 1 required positional argument: 'symbol'
+2025-05-17 21:05:03,906 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-17 21:05:03,911 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:05:03,912 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 30m...
+2025-05-17 21:05:03,913 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [30m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:05:03,913 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-17 21:05:04,053 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 17:00:00
+2025-05-17 21:05:04,054 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:00:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:05:04,055 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:00:00 to 2026-02-11 00:11:00
+2025-05-17 21:05:04,056 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:00:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [30m]...
+2025-05-17 21:05:04,057 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747501200000: safe_fetch_ohlcv() missing 1 required positional argument: 'symbol'
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 159, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+TypeError: safe_fetch_ohlcv() missing 1 required positional argument: 'symbol'
+2025-05-17 21:05:04,061 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-17 21:05:04,063 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:05:04,064 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 1m...
+2025-05-17 21:05:04,064 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [1m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:05:04,065 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-17 21:05:05,697 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 17:28:00
+2025-05-17 21:05:05,698 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:05:05,699 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:28:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:05:05,699 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:28:00 to 2026-02-11 00:11:00
+2025-05-17 21:05:05,700 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:28:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [1m]...
+2025-05-17 21:05:05,701 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747502880000: safe_fetch_ohlcv() missing 1 required positional argument: 'symbol'
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 159, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+TypeError: safe_fetch_ohlcv() missing 1 required positional argument: 'symbol'
+2025-05-17 21:05:05,705 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-17 21:05:05,742 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:05:05,742 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 15m...
+2025-05-17 21:05:05,743 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [15m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:05:05,744 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_15m.csv
+2025-05-17 21:05:05,866 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 17:15:00
+2025-05-17 21:05:05,867 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:05:05,868 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:15:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:05:05,869 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:15:00 to 2026-02-11 00:11:00
+2025-05-17 21:05:05,870 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:15:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [15m]...
+2025-05-17 21:05:05,872 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747502100000: safe_fetch_ohlcv() missing 1 required positional argument: 'symbol'
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 159, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+TypeError: safe_fetch_ohlcv() missing 1 required positional argument: 'symbol'
+2025-05-17 21:05:05,876 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-17 21:05:05,878 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:05:05,879 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 30m...
+2025-05-17 21:05:05,880 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [30m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:05:05,881 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-17 21:05:05,948 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 17:00:00
+2025-05-17 21:05:05,949 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:05:05,950 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:00:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:05:05,951 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:00:00 to 2026-02-11 00:11:00
+2025-05-17 21:05:05,952 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:00:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [30m]...
+2025-05-17 21:05:05,953 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747501200000: safe_fetch_ohlcv() missing 1 required positional argument: 'symbol'
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 159, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+TypeError: safe_fetch_ohlcv() missing 1 required positional argument: 'symbol'
+2025-05-17 21:05:05,957 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-17 21:05:05,958 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:05:05,959 [INFO] logger_config: ✨ All data download tasks completed.
+2025-05-17 21:05:16,046 [INFO] logger_config: Starting data download...
+2025-05-17 21:05:16,048 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-05-17 21:05:16,058 [INFO] logger_config: Converted local startt 2021-01-01 00:00:00 (UTC) to UTC start: 2021-01-01 00:00:00
+2025-05-17 21:05:16,058 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-05-17 21:05:16,059 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:05:16,060 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-17 21:05:19,390 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 17:27:00
+2025-05-17 21:05:19,392 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:27:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:05:19,392 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:27:00 to 2026-02-11 00:11:00
+2025-05-17 21:05:19,393 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:27:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-05-17 21:05:19,400 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747502820000: safe_fetch_ohlcv() missing 1 required positional argument: 'exchange'
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 159, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+TypeError: safe_fetch_ohlcv() missing 1 required positional argument: 'exchange'
+2025-05-17 21:05:19,406 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-17 21:05:19,493 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:05:19,494 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 15m...
+2025-05-17 21:05:19,495 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [15m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:05:19,496 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-05-17 21:05:19,740 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 17:15:00
+2025-05-17 21:05:19,741 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:15:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:05:19,741 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:15:00 to 2026-02-11 00:11:00
+2025-05-17 21:05:19,742 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:15:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [15m]...
+2025-05-17 21:05:19,743 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747502100000: safe_fetch_ohlcv() missing 1 required positional argument: 'exchange'
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 159, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+TypeError: safe_fetch_ohlcv() missing 1 required positional argument: 'exchange'
+2025-05-17 21:05:19,748 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-17 21:05:19,752 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:05:19,752 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 30m...
+2025-05-17 21:05:19,754 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [30m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:05:19,754 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-17 21:05:19,869 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 17:00:00
+2025-05-17 21:05:19,870 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:00:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:05:19,870 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:00:00 to 2026-02-11 00:11:00
+2025-05-17 21:05:19,871 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:00:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [30m]...
+2025-05-17 21:05:19,872 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747501200000: safe_fetch_ohlcv() missing 1 required positional argument: 'exchange'
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 159, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+TypeError: safe_fetch_ohlcv() missing 1 required positional argument: 'exchange'
+2025-05-17 21:05:19,877 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-17 21:05:19,880 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:05:19,880 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 1m...
+2025-05-17 21:05:19,881 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [1m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:05:19,882 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-17 21:05:21,588 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 17:28:00
+2025-05-17 21:05:21,589 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:05:21,590 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:28:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:05:21,591 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:28:00 to 2026-02-11 00:11:00
+2025-05-17 21:05:21,591 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:28:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [1m]...
+2025-05-17 21:05:21,592 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747502880000: safe_fetch_ohlcv() missing 1 required positional argument: 'exchange'
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 159, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+TypeError: safe_fetch_ohlcv() missing 1 required positional argument: 'exchange'
+2025-05-17 21:05:21,596 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-17 21:05:21,637 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:05:21,637 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 15m...
+2025-05-17 21:05:21,638 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [15m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:05:21,639 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_15m.csv
+2025-05-17 21:05:21,768 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 17:15:00
+2025-05-17 21:05:21,769 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:05:21,769 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:15:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:05:21,770 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:15:00 to 2026-02-11 00:11:00
+2025-05-17 21:05:21,770 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:15:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [15m]...
+2025-05-17 21:05:21,772 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747502100000: safe_fetch_ohlcv() missing 1 required positional argument: 'exchange'
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 159, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+TypeError: safe_fetch_ohlcv() missing 1 required positional argument: 'exchange'
+2025-05-17 21:05:21,776 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-17 21:05:21,778 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:05:21,779 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 30m...
+2025-05-17 21:05:21,780 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [30m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:05:21,781 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-17 21:05:21,844 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 17:00:00
+2025-05-17 21:05:21,845 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:05:21,846 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:00:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:05:21,847 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:00:00 to 2026-02-11 00:11:00
+2025-05-17 21:05:21,848 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:00:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [30m]...
+2025-05-17 21:05:21,850 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747501200000: safe_fetch_ohlcv() missing 1 required positional argument: 'exchange'
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 159, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+TypeError: safe_fetch_ohlcv() missing 1 required positional argument: 'exchange'
+2025-05-17 21:05:21,854 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-17 21:05:21,856 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:05:21,856 [INFO] logger_config: ✨ All data download tasks completed.
+2025-05-17 21:05:45,859 [INFO] logger_config: Starting data download...
+2025-05-17 21:05:45,861 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-05-17 21:05:45,872 [INFO] logger_config: Converted local startt 2021-01-01 00:00:00 (UTC) to UTC start: 2021-01-01 00:00:00
+2025-05-17 21:05:45,872 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-05-17 21:05:45,874 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:05:45,874 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-17 21:05:49,293 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 17:27:00
+2025-05-17 21:05:49,295 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:27:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:05:49,295 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:27:00 to 2026-02-11 00:11:00
+2025-05-17 21:05:49,296 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:27:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-05-17 21:05:54,404 [INFO] logger_config: ✅ Downloaded 39 new rows. (From 2025-05-17 17:27:00 to 2025-05-17 18:05:00)
+2025-05-17 21:05:54,477 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=2300728, df_new=38
+2025-05-17 21:05:54,551 [INFO] logger_config: 📊 Final dataset size after merge: 2300766 rows
+2025-05-17 21:06:06,384 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-17 21:06:06,385 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 15m...
+2025-05-17 21:06:06,387 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [15m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:06:06,387 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-05-17 21:06:06,649 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 17:15:00
+2025-05-17 21:06:06,651 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:15:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:06:06,651 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:15:00 to 2026-02-11 00:11:00
+2025-05-17 21:06:06,652 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:15:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [15m]...
+2025-05-17 21:06:07,384 [INFO] logger_config: ✅ Downloaded 4 new rows. (From 2025-05-17 17:15:00 to 2025-05-17 18:00:00)
+2025-05-17 21:06:07,399 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=153382, df_new=3
+2025-05-17 21:06:07,414 [INFO] logger_config: 📊 Final dataset size after merge: 153385 rows
+2025-05-17 21:06:08,315 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-05-17 21:06:08,316 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 30m...
+2025-05-17 21:06:08,317 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [30m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:06:08,318 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-17 21:06:08,447 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 17:00:00
+2025-05-17 21:06:08,448 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:00:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:06:08,449 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:00:00 to 2026-02-11 00:11:00
+2025-05-17 21:06:08,449 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:00:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [30m]...
+2025-05-17 21:06:09,187 [INFO] logger_config: ✅ Downloaded 3 new rows. (From 2025-05-17 17:00:00 to 2025-05-17 18:00:00)
+2025-05-17 21:06:09,190 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=76691, df_new=2
+2025-05-17 21:06:09,195 [INFO] logger_config: 📊 Final dataset size after merge: 76693 rows
+2025-05-17 21:06:09,606 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-17 21:06:09,608 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 1m...
+2025-05-17 21:06:09,609 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [1m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:06:09,609 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-17 21:06:11,148 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 17:28:00
+2025-05-17 21:06:11,148 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:06:11,149 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:28:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:06:11,150 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:28:00 to 2026-02-11 00:11:00
+2025-05-17 21:06:11,151 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:28:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [1m]...
+2025-05-17 21:06:11,889 [INFO] logger_config: ✅ Downloaded 39 new rows. (From 2025-05-17 17:28:00 to 2025-05-17 18:06:00)
+2025-05-17 21:06:11,920 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=1069979, df_new=38
+2025-05-17 21:06:11,950 [INFO] logger_config: 📊 Final dataset size after merge: 1070017 rows
+2025-05-17 21:06:17,964 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-17 21:06:17,966 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 15m...
+2025-05-17 21:06:17,967 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [15m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:06:17,968 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_15m.csv
+2025-05-17 21:06:18,080 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 17:15:00
+2025-05-17 21:06:18,081 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:06:18,082 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:15:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:06:18,083 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:15:00 to 2026-02-11 00:11:00
+2025-05-17 21:06:18,083 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:15:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [15m]...
+2025-05-17 21:06:18,817 [INFO] logger_config: ✅ Downloaded 4 new rows. (From 2025-05-17 17:15:00 to 2025-05-17 18:00:00)
+2025-05-17 21:06:18,824 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=71332, df_new=3
+2025-05-17 21:06:18,832 [INFO] logger_config: 📊 Final dataset size after merge: 71335 rows
+2025-05-17 21:06:19,240 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_15m.csv
+2025-05-17 21:06:19,241 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 30m...
+2025-05-17 21:06:19,243 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [30m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:06:19,243 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-17 21:06:19,304 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 17:00:00
+2025-05-17 21:06:19,305 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:06:19,306 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 17:00:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:06:19,307 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 17:00:00 to 2026-02-11 00:11:00
+2025-05-17 21:06:19,308 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 17:00:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [30m]...
+2025-05-17 21:06:20,102 [INFO] logger_config: ✅ Downloaded 3 new rows. (From 2025-05-17 17:00:00 to 2025-05-17 18:00:00)
+2025-05-17 21:06:20,104 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=35666, df_new=2
+2025-05-17 21:06:20,107 [INFO] logger_config: 📊 Final dataset size after merge: 35668 rows
+2025-05-17 21:06:20,301 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-17 21:06:20,302 [INFO] logger_config: ✨ All data download tasks completed.
+2025-05-17 21:09:42,670 [INFO] logger_config: Starting data download...
+2025-05-17 21:09:42,672 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-05-17 21:09:42,682 [INFO] logger_config: Converted local startt 2021-01-01 00:00:00 (UTC) to UTC start: 2021-01-01 00:00:00
+2025-05-17 21:09:42,683 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-05-17 21:09:42,685 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:09:42,686 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-17 21:09:45,823 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 18:05:00
+2025-05-17 21:09:45,825 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:05:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:09:45,825 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:05:00 to 2026-02-11 00:11:00
+2025-05-17 21:09:45,826 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:05:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-05-17 21:09:51,028 [INFO] logger_config: ✅ Downloaded 5 new rows. (From 2025-05-17 18:05:00 to 2025-05-17 18:09:00)
+2025-05-17 21:09:51,107 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=2300766, df_new=4
+2025-05-17 21:09:51,171 [INFO] logger_config: 📊 Final dataset size after merge: 2300770 rows
+2025-05-17 21:10:02,820 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-17 21:10:02,821 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 15m...
+2025-05-17 21:10:02,822 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [15m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:10:02,823 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-05-17 21:10:03,054 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 18:00:00
+2025-05-17 21:10:03,055 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:00:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:10:03,056 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00
+2025-05-17 21:10:03,057 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [15m]...
+2025-05-17 21:10:03,799 [INFO] logger_config: ✅ Downloaded 1 new rows. (From 2025-05-17 18:00:00 to 2025-05-17 18:00:00)
+2025-05-17 21:10:03,803 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:10:03,804 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 30m...
+2025-05-17 21:10:03,805 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [30m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:10:03,806 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-17 21:10:03,928 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 18:00:00
+2025-05-17 21:10:03,929 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:00:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:10:03,930 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00
+2025-05-17 21:10:03,930 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [30m]...
+2025-05-17 21:10:04,672 [INFO] logger_config: ✅ Downloaded 1 new rows. (From 2025-05-17 18:00:00 to 2025-05-17 18:00:00)
+2025-05-17 21:10:04,675 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:10:04,676 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 1m...
+2025-05-17 21:10:04,677 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [1m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:10:04,678 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-17 21:10:06,428 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 18:06:00
+2025-05-17 21:10:06,429 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:10:06,431 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:06:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:10:06,431 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:06:00 to 2026-02-11 00:11:00
+2025-05-17 21:10:06,432 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:06:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [1m]...
+2025-05-17 21:10:07,666 [INFO] logger_config: ✅ Downloaded 5 new rows. (From 2025-05-17 18:06:00 to 2025-05-17 18:10:00)
+2025-05-17 21:10:07,709 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=1070017, df_new=4
+2025-05-17 21:10:07,751 [INFO] logger_config: 📊 Final dataset size after merge: 1070021 rows
+2025-05-17 21:10:13,743 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-17 21:10:13,744 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 15m...
+2025-05-17 21:10:13,745 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [15m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:10:13,746 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_15m.csv
+2025-05-17 21:10:13,865 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 18:00:00
+2025-05-17 21:10:13,866 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:10:13,867 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:00:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:10:13,868 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00
+2025-05-17 21:10:13,869 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [15m]...
+2025-05-17 21:10:14,597 [INFO] logger_config: ✅ Downloaded 1 new rows. (From 2025-05-17 18:00:00 to 2025-05-17 18:00:00)
+2025-05-17 21:10:14,599 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:10:14,600 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 30m...
+2025-05-17 21:10:14,601 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [30m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:10:14,602 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-17 21:10:14,664 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 18:00:00
+2025-05-17 21:10:14,665 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:10:14,666 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:00:00, UTC end: 2026-02-11 00:11:00
+2025-05-17 21:10:14,667 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00
+2025-05-17 21:10:14,667 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [30m]...
+2025-05-17 21:10:15,400 [INFO] logger_config: ✅ Downloaded 1 new rows. (From 2025-05-17 18:00:00 to 2025-05-17 18:00:00)
+2025-05-17 21:10:15,401 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:10:15,402 [INFO] logger_config: ✨ All data download tasks completed.
+2025-05-17 21:24:19,209 [INFO] logger_config: Starting data download...
+2025-05-17 21:24:19,211 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-05-17 21:24:19,221 [INFO] logger_config: Converted local startt 2021-01-01 00:00:00 (UTC) to UTC start: 2021-01-01 00:00:00
+2025-05-17 21:24:19,222 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-05-17 21:24:19,223 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:24:19,224 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-17 21:24:22,415 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 18:09:00
+2025-05-17 21:24:22,419 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:09:00, New since: 2025-05-17 18:09:00
+2025-05-17 21:24:22,420 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:09:00 to 2026-02-11 00:11:00
+2025-05-17 21:24:22,420 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:09:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-05-17 21:24:27,135 [INFO] logger_config: ✅ Downloaded 16 new rows. (From 2025-05-17 18:09:00 to 2025-05-17 18:24:00)
+2025-05-17 21:24:27,212 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=2300770, df_new=15
+2025-05-17 21:24:27,285 [INFO] logger_config: 📊 Final dataset size after merge: 2300785 rows
+2025-05-17 21:24:38,862 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-17 21:24:38,863 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 15m...
+2025-05-17 21:24:38,865 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [15m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:24:38,865 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-05-17 21:24:39,099 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 18:00:00
+2025-05-17 21:24:39,100 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:00:00, New since: 2025-05-17 18:00:00
+2025-05-17 21:24:39,101 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00
+2025-05-17 21:24:39,102 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [15m]...
+2025-05-17 21:24:39,833 [INFO] logger_config: ✅ Downloaded 2 new rows. (From 2025-05-17 18:00:00 to 2025-05-17 18:15:00)
+2025-05-17 21:24:39,845 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=153385, df_new=1
+2025-05-17 21:24:39,861 [INFO] logger_config: 📊 Final dataset size after merge: 153386 rows
+2025-05-17 21:24:40,665 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-05-17 21:24:40,666 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 30m...
+2025-05-17 21:24:40,667 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [30m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:24:40,668 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-17 21:24:40,787 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 18:00:00
+2025-05-17 21:24:40,788 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:00:00, New since: 2025-05-17 18:00:00
+2025-05-17 21:24:40,789 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00
+2025-05-17 21:24:40,789 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [30m]...
+2025-05-17 21:24:41,516 [INFO] logger_config: ✅ Downloaded 1 new rows. (From 2025-05-17 18:00:00 to 2025-05-17 18:00:00)
+2025-05-17 21:24:41,518 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:24:41,519 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 1m...
+2025-05-17 21:24:41,520 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [1m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:24:41,521 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-17 21:24:43,089 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 18:10:00
+2025-05-17 21:24:43,090 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:24:43,091 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:10:00, New since: 2025-05-17 18:10:00
+2025-05-17 21:24:43,092 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:10:00 to 2026-02-11 00:11:00
+2025-05-17 21:24:43,093 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:10:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [1m]...
+2025-05-17 21:24:43,836 [INFO] logger_config: ✅ Downloaded 15 new rows. (From 2025-05-17 18:10:00 to 2025-05-17 18:24:00)
+2025-05-17 21:24:43,872 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=1070021, df_new=14
+2025-05-17 21:24:43,908 [INFO] logger_config: 📊 Final dataset size after merge: 1070035 rows
+2025-05-17 21:24:49,679 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-17 21:24:49,680 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 15m...
+2025-05-17 21:24:49,681 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [15m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:24:49,682 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_15m.csv
+2025-05-17 21:24:49,802 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 18:00:00
+2025-05-17 21:24:49,802 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:24:49,804 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:00:00, New since: 2025-05-17 18:00:00
+2025-05-17 21:24:49,804 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00
+2025-05-17 21:24:49,805 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [15m]...
+2025-05-17 21:24:50,541 [INFO] logger_config: ✅ Downloaded 2 new rows. (From 2025-05-17 18:00:00 to 2025-05-17 18:15:00)
+2025-05-17 21:24:50,548 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=71335, df_new=1
+2025-05-17 21:24:50,556 [INFO] logger_config: 📊 Final dataset size after merge: 71336 rows
+2025-05-17 21:24:50,942 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_15m.csv
+2025-05-17 21:24:50,943 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 30m...
+2025-05-17 21:24:50,945 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [30m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:24:50,945 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-17 21:24:51,008 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 18:00:00
+2025-05-17 21:24:51,009 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:24:51,010 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:00:00, New since: 2025-05-17 18:00:00
+2025-05-17 21:24:51,011 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00
+2025-05-17 21:24:51,012 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [30m]...
+2025-05-17 21:24:51,741 [INFO] logger_config: ✅ Downloaded 1 new rows. (From 2025-05-17 18:00:00 to 2025-05-17 18:00:00)
+2025-05-17 21:24:51,743 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:24:51,744 [INFO] logger_config: ✨ All data download tasks completed.
+2025-05-17 21:24:55,053 [INFO] logger_config: Starting data download...
+2025-05-17 21:24:55,055 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-05-17 21:24:55,065 [INFO] logger_config: Converted local startt 2021-01-01 00:00:00 (UTC) to UTC start: 2021-01-01 00:00:00
+2025-05-17 21:24:55,066 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-05-17 21:24:55,067 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:24:55,067 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-17 21:24:58,535 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 18:24:00
+2025-05-17 21:24:58,536 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:24:00, New since: 2025-05-17 18:24:00
+2025-05-17 21:24:58,537 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:24:00 to 2026-02-11 00:11:00
+2025-05-17 21:24:58,537 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:24:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-05-17 21:25:03,753 [INFO] logger_config: ✅ Downloaded 1 new rows. (From 2025-05-17 18:24:00 to 2025-05-17 18:24:00)
+2025-05-17 21:25:03,841 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:25:03,842 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 15m...
+2025-05-17 21:25:03,843 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [15m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:25:03,843 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-05-17 21:25:04,101 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 18:15:00
+2025-05-17 21:25:04,103 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:15:00, New since: 2025-05-17 18:15:00
+2025-05-17 21:25:04,104 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:15:00 to 2026-02-11 00:11:00
+2025-05-17 21:25:04,104 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:15:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [15m]...
+2025-05-17 21:25:04,832 [INFO] logger_config: ✅ Downloaded 1 new rows. (From 2025-05-17 18:15:00 to 2025-05-17 18:15:00)
+2025-05-17 21:25:04,835 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:25:04,836 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 30m...
+2025-05-17 21:25:04,837 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [30m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:25:04,838 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-17 21:25:04,967 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 18:00:00
+2025-05-17 21:25:04,969 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:00:00, New since: 2025-05-17 18:00:00
+2025-05-17 21:25:04,970 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00
+2025-05-17 21:25:04,971 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [30m]...
+2025-05-17 21:25:05,697 [INFO] logger_config: ✅ Downloaded 1 new rows. (From 2025-05-17 18:00:00 to 2025-05-17 18:00:00)
+2025-05-17 21:25:05,700 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:25:05,701 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 1m...
+2025-05-17 21:25:05,702 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [1m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:25:05,702 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-17 21:25:07,325 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 18:24:00
+2025-05-17 21:25:07,326 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:25:07,328 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:24:00, New since: 2025-05-17 18:24:00
+2025-05-17 21:25:07,329 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:24:00 to 2026-02-11 00:11:00
+2025-05-17 21:25:07,330 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:24:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [1m]...
+2025-05-17 21:25:08,058 [INFO] logger_config: ✅ Downloaded 2 new rows. (From 2025-05-17 18:24:00 to 2025-05-17 18:25:00)
+2025-05-17 21:25:08,094 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=1070035, df_new=1
+2025-05-17 21:25:08,128 [INFO] logger_config: 📊 Final dataset size after merge: 1070036 rows
+2025-05-17 21:25:13,993 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-17 21:25:13,993 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 15m...
+2025-05-17 21:25:13,995 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [15m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:25:13,995 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_15m.csv
+2025-05-17 21:25:14,107 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 18:15:00
+2025-05-17 21:25:14,108 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:25:14,109 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:15:00, New since: 2025-05-17 18:15:00
+2025-05-17 21:25:14,109 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:15:00 to 2026-02-11 00:11:00
+2025-05-17 21:25:14,110 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:15:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [15m]...
+2025-05-17 21:25:14,902 [INFO] logger_config: ✅ Downloaded 1 new rows. (From 2025-05-17 18:15:00 to 2025-05-17 18:15:00)
+2025-05-17 21:25:14,904 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:25:14,904 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 30m...
+2025-05-17 21:25:14,905 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [30m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:25:14,906 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-17 21:25:14,970 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 18:00:00
+2025-05-17 21:25:14,971 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:25:14,973 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:00:00, New since: 2025-05-17 18:00:00
+2025-05-17 21:25:14,973 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00
+2025-05-17 21:25:14,974 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [30m]...
+2025-05-17 21:25:16,638 [INFO] logger_config: ✅ Downloaded 1 new rows. (From 2025-05-17 18:00:00 to 2025-05-17 18:00:00)
+2025-05-17 21:25:16,640 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:25:16,641 [INFO] logger_config: ✨ All data download tasks completed.
+2025-05-17 21:28:11,970 [INFO] logger_config: Starting data download...
+2025-05-17 21:28:11,972 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-05-17 21:28:11,983 [INFO] logger_config: Converted local startt 2021-01-01 00:00:00 (UTC) to UTC start: 2021-01-01 00:00:00
+2025-05-17 21:28:11,984 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-05-17 21:28:11,985 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:28:11,986 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-17 21:28:15,192 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 18:24:00
+2025-05-17 21:28:15,194 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:24:00, New since: 2025-05-17 18:24:00
+2025-05-17 21:28:15,194 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:24:00 to 2026-02-11 00:11:00
+2025-05-17 21:28:15,195 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:24:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-05-17 21:28:20,365 [INFO] logger_config: ✅ Downloaded 5 new rows. (From 2025-05-17 18:24:00 to 2025-05-17 18:28:00)
+2025-05-17 21:28:20,444 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=2300785, df_new=4
+2025-05-17 21:28:20,517 [INFO] logger_config: 📊 Final dataset size after merge: 2300789 rows
+2025-05-17 21:28:34,364 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-17 21:28:34,365 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 15m...
+2025-05-17 21:28:34,366 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [15m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:28:34,366 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-05-17 21:28:34,730 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 18:15:00
+2025-05-17 21:28:34,730 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:15:00, New since: 2025-05-17 18:15:00
+2025-05-17 21:28:34,731 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:15:00 to 2026-02-11 00:11:00
+2025-05-17 21:28:34,731 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:15:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [15m]...
+2025-05-17 21:28:35,458 [INFO] logger_config: ✅ Downloaded 1 new rows. (From 2025-05-17 18:15:00 to 2025-05-17 18:15:00)
+2025-05-17 21:28:35,462 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:28:35,463 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 30m...
+2025-05-17 21:28:35,464 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [30m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:28:35,464 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-17 21:28:35,597 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 18:00:00
+2025-05-17 21:28:35,598 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:00:00, New since: 2025-05-17 18:00:00
+2025-05-17 21:28:35,599 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00
+2025-05-17 21:28:35,599 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [30m]...
+2025-05-17 21:28:36,334 [INFO] logger_config: ✅ Downloaded 1 new rows. (From 2025-05-17 18:00:00 to 2025-05-17 18:00:00)
+2025-05-17 21:28:36,338 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:28:36,338 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 1m...
+2025-05-17 21:28:36,339 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [1m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:28:36,340 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-17 21:28:38,273 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 18:25:00
+2025-05-17 21:28:38,274 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:28:38,275 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:25:00, New since: 2025-05-17 18:25:00
+2025-05-17 21:28:38,275 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:25:00 to 2026-02-11 00:11:00
+2025-05-17 21:28:38,276 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:25:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [1m]...
+2025-05-17 21:28:39,014 [INFO] logger_config: ✅ Downloaded 4 new rows. (From 2025-05-17 18:25:00 to 2025-05-17 18:28:00)
+2025-05-17 21:28:39,057 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=1070036, df_new=3
+2025-05-17 21:28:39,102 [INFO] logger_config: 📊 Final dataset size after merge: 1070039 rows
+2025-05-17 21:28:45,043 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-17 21:28:45,044 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 15m...
+2025-05-17 21:28:45,045 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [15m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:28:45,046 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_15m.csv
+2025-05-17 21:28:45,162 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 18:15:00
+2025-05-17 21:28:45,163 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:28:45,164 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:15:00, New since: 2025-05-17 18:15:00
+2025-05-17 21:28:45,165 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:15:00 to 2026-02-11 00:11:00
+2025-05-17 21:28:45,166 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:15:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [15m]...
+2025-05-17 21:28:45,904 [INFO] logger_config: ✅ Downloaded 1 new rows. (From 2025-05-17 18:15:00 to 2025-05-17 18:15:00)
+2025-05-17 21:28:45,907 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:28:45,908 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 30m...
+2025-05-17 21:28:45,909 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [30m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:28:45,909 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-17 21:28:45,976 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 18:00:00
+2025-05-17 21:28:45,977 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:28:45,978 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:00:00, New since: 2025-05-17 18:00:00
+2025-05-17 21:28:45,978 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00
+2025-05-17 21:28:45,979 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [30m]...
+2025-05-17 21:28:46,728 [INFO] logger_config: ✅ Downloaded 1 new rows. (From 2025-05-17 18:00:00 to 2025-05-17 18:00:00)
+2025-05-17 21:28:46,730 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:28:46,730 [INFO] logger_config: ✨ All data download tasks completed.
+2025-05-17 21:35:37,419 [INFO] logger_config: Starting data download...
+2025-05-17 21:35:37,480 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-05-17 21:35:37,490 [INFO] logger_config: Converted local startt 2021-01-01 00:00:00 (UTC) to UTC start: 2021-01-01 00:00:00
+2025-05-17 21:35:37,491 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-05-17 21:35:37,492 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:35:37,493 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-17 21:35:40,640 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 18:28:00
+2025-05-17 21:35:40,641 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:28:00, New since: 2025-05-17 18:28:00
+2025-05-17 21:35:40,642 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:28:00 to 2026-02-11 00:11:00
+2025-05-17 21:35:40,643 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:28:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-05-17 21:35:46,059 [INFO] logger_config: ✅ Downloaded 8 new rows. (From 2025-05-17 18:28:00 to 2025-05-17 18:35:00)
+2025-05-17 21:35:46,144 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=2300789, df_new=7
+2025-05-17 21:35:46,217 [INFO] logger_config: 📊 Final dataset size after merge: 2300796 rows
+2025-05-17 21:35:58,960 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-17 21:35:58,961 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 15m...
+2025-05-17 21:35:58,961 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [15m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:35:58,962 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-05-17 21:35:59,240 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 18:15:00
+2025-05-17 21:35:59,241 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:15:00, New since: 2025-05-17 18:15:00
+2025-05-17 21:35:59,242 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:15:00 to 2026-02-11 00:11:00
+2025-05-17 21:35:59,242 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:15:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [15m]...
+2025-05-17 21:35:59,975 [INFO] logger_config: ✅ Downloaded 2 new rows. (From 2025-05-17 18:15:00 to 2025-05-17 18:30:00)
+2025-05-17 21:35:59,988 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=153386, df_new=1
+2025-05-17 21:36:00,010 [INFO] logger_config: 📊 Final dataset size after merge: 153387 rows
+2025-05-17 21:36:00,939 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-05-17 21:36:00,940 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 30m...
+2025-05-17 21:36:00,941 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [30m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:36:00,942 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-17 21:36:01,083 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 18:00:00
+2025-05-17 21:36:01,084 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:00:00, New since: 2025-05-17 18:00:00
+2025-05-17 21:36:01,084 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00
+2025-05-17 21:36:01,085 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [30m]...
+2025-05-17 21:36:02,279 [INFO] logger_config: ✅ Downloaded 2 new rows. (From 2025-05-17 18:00:00 to 2025-05-17 18:30:00)
+2025-05-17 21:36:02,282 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=76693, df_new=1
+2025-05-17 21:36:02,287 [INFO] logger_config: 📊 Final dataset size after merge: 76694 rows
+2025-05-17 21:36:02,730 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-17 21:36:02,731 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 1m...
+2025-05-17 21:36:02,732 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [1m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:36:02,732 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-17 21:36:04,574 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 18:28:00
+2025-05-17 21:36:04,575 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:36:04,576 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:28:00, New since: 2025-05-17 18:28:00
+2025-05-17 21:36:04,577 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:28:00 to 2026-02-11 00:11:00
+2025-05-17 21:36:04,577 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:28:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [1m]...
+2025-05-17 21:36:05,310 [INFO] logger_config: ✅ Downloaded 9 new rows. (From 2025-05-17 18:28:00 to 2025-05-17 18:36:00)
+2025-05-17 21:36:05,346 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=1070039, df_new=8
+2025-05-17 21:36:05,385 [INFO] logger_config: 📊 Final dataset size after merge: 1070047 rows
+2025-05-17 21:36:11,853 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-17 21:36:11,854 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 15m...
+2025-05-17 21:36:11,855 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [15m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:36:11,855 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_15m.csv
+2025-05-17 21:36:11,985 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 18:15:00
+2025-05-17 21:36:11,986 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:36:11,987 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:15:00, New since: 2025-05-17 18:15:00
+2025-05-17 21:36:11,988 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:15:00 to 2026-02-11 00:11:00
+2025-05-17 21:36:11,988 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:15:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [15m]...
+2025-05-17 21:36:12,723 [INFO] logger_config: ✅ Downloaded 2 new rows. (From 2025-05-17 18:15:00 to 2025-05-17 18:30:00)
+2025-05-17 21:36:12,732 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=71336, df_new=1
+2025-05-17 21:36:12,740 [INFO] logger_config: 📊 Final dataset size after merge: 71337 rows
+2025-05-17 21:36:13,178 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_15m.csv
+2025-05-17 21:36:13,179 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 30m...
+2025-05-17 21:36:13,180 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [30m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:36:13,181 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-17 21:36:13,249 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 18:00:00
+2025-05-17 21:36:13,250 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:36:13,251 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:00:00, New since: 2025-05-17 18:00:00
+2025-05-17 21:36:13,251 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00
+2025-05-17 21:36:13,252 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:00:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [30m]...
+2025-05-17 21:36:13,983 [INFO] logger_config: ✅ Downloaded 2 new rows. (From 2025-05-17 18:00:00 to 2025-05-17 18:30:00)
+2025-05-17 21:36:13,986 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=35668, df_new=1
+2025-05-17 21:36:13,988 [INFO] logger_config: 📊 Final dataset size after merge: 35669 rows
+2025-05-17 21:36:14,213 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-17 21:36:14,214 [INFO] logger_config: ✨ All data download tasks completed.

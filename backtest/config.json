@@ -1,17 +1,17 @@
 {
     "backtest_params": {
         "symbols": [
-            "WIFUSDTUSDT"
+            "DOGEUSDTUSDT"
         ],
         "timeframes": [
-            "30m"
+            "1m"
         ],
         "data_folder": "../download/data",
         "enable_optimization": false,
-        "debug": true,
+        "debug": false,
         "debug_loop": false,
-        "start_date": "2023-11-01 00:00:00",
-        "end_date":   "2026-03-25 23:59:59",
+        "start_date": "2024-12-26 23:11:00",
+        "end_date":   "2025-10-08 19:06:01",
     
         "cash": 1000,
         "commission": 0.0005,
@@ -21,16 +21,16 @@
     },
     "strategy_params": {
         "max_dca_levels": 15,
-        "take_profit_percentage": 0.8,
+        "take_profit_percentage": 0.9,
         "entry_fraction": 0.01,
-        "so_size_multiplier": 4.2,
-        "first_safety_order_multiplier": 3.5,
-        "initial_deviation_percent": 4.6,
-        "price_multiplier": 1.1,
-        "rsi_threshold": 25,
-        "rsi_window": 19,
+        "so_size_multiplier": 4.0,
+        "first_safety_order_multiplier": 4.0,
+        "initial_deviation_percent": 1.9,
+        "price_multiplier": 1.2,
+        "rsi_threshold": 39,
+        "rsi_window": 50,
         "enable_rsi_calculation": true,
-        "require_rsi_reset": true,
+        "require_rsi_reset": false,
         "rsi_reset_percnetage": 20,
         "safety_order_price_mode": "dynamic",
         "safety_order_mode":"value",
@@ -46,7 +46,7 @@
     
         "enable_cv_calculation": false,
         "enable_laguere_calculation": false,
-        "start_trading_time" : "2020-06-15 00:00:00",
+        "start_trading_time" : "2023-05-29 03:16:00",
         "debug": {
             "trade": false,
             "loop": false,
@@ -67,7 +67,7 @@
         "take_profit_percentage": {
             "values": [
                 0.7,
-                0.8
+                0.9
             ],
             "scaling_factor": 10,
             "type": "float"
@@ -82,7 +82,7 @@
         },
         "so_size_multiplier": {
             "values": [
-                0.9,
+                1.0,
                 5.0
             ],
             "scaling_factor": 10,
@@ -91,7 +91,7 @@
         
         "first_safety_order_multiplier": {
             "values": [
-                0.9,
+                1.0,
                 4.0
             ],
             "scaling_factor": 10,
@@ -99,7 +99,7 @@
         },
         "initial_deviation_percent": {
             "values": [
-                0.9,
+                1.0,
                 5.0
             ],
             "scaling_factor": 10,
@@ -107,28 +107,14 @@
         },
         "price_multiplier": {
             "values": [
-                0.8,
+                1.0,
                 5.0
             ],
             "scaling_factor": 10,
             "type": "float"
-        },
-        "rsi_threshold": {
-            "values": [
-                10,
-                50
-            ],
-            "type": "int"
-        },
-        "rsi_window": {
-            "values": [
-                14,
-                50
-            ],
-            "type": "int"
         }
     },
-    "optimization_params1": {
+    "optimization_params_template": {
         
         "entry_fraction": {
             "values": [

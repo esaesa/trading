@@ -5,7 +5,8 @@
         "exchange": "binance",
         "timezone": "UTC",
         "timeframes": [
-
+            "1m",
+            "15m",
            "30m"
    
         ],
@@ -15,8 +16,7 @@
         ],
         "symbols": [
             "DOGE/USDT:USDT",
-            "1000PEPE/USDT:USDT",
-            "WIF/USDT:USDT"
+            "1000PEPE/USDT:USDT"
         ],
         "all_symbol":[
         "AIXBT/USDT:USDT",

@@ -1,6 +1,7 @@
 #download.py
 import json
 from pathlib import Path
+import time
 import ccxt
 import pytz
 import pandas as pd
@@ -10,7 +11,20 @@ from common_utils import beep, load_config
 from tqdm import tqdm  # New: progress bar package
 import math
 from logger_config import logger  # Centralized logger
-
+# --- Supported Binance timeframes ---
+SUPPORTED_TIMEFRAMES = {
+    '1m', '3m', '5m', '15m', '30m',
+    '1h', '2h', '4h', '6h', '8h', '12h',
+    '1d', '3d', '1w', '1M'
+}
+def validate_timeframe(timeframe):
+    """
+    Validate that the timeframe is supported by Binance.
+    Raises ValueError if not supported.
+    """
+    if timeframe not in SUPPORTED_TIMEFRAMES:
+        raise ValueError(f"Unsupported timeframe: {timeframe}. Supported: {SUPPORTED_TIMEFRAMES}")
+    
 # --- Function to resolve the data path ---
 def resolve_data_path(config):
     """
@@ -22,10 +36,10 @@ def resolve_data_path(config):
         script_dir = os.path.dirname(os.path.abspath(__file__))  # Get the script's directory
         data_path = os.path.join(script_dir, data_path)  # Convert to absolute path
     return data_path
-import os
-from pathlib import Path
-import json
-from datetime import datetime, timezone
+
+def safe_fetch_ohlcv( symbol, timeframe, since_ms, limit):
+    time.sleep(0.1)  # Conservative rate limiting
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
 
 # NEW: Build absolute path to the cache file
 script_dir = os.path.dirname(os.path.abspath(__file__))  + "/data"
@@ -50,31 +64,33 @@ def save_cache(cache):
     with open(cache_path, "w") as f:
         json.dump(sanitized_cache, f)
 
-
+def round_down_time(time_ms, timeframe_ms):
+    return (time_ms // timeframe_ms) * timeframe_ms
 
 logger.info("Starting data download...")
 
 # --- Helper function for timezone conversion ---
-def convert_to_utc(local_time_str, tz_str, fmt='%Y-%m-%d %H:%M:%S'):
-    """
-    Convert a local time string in timezone tz_str to a UTC time string.
-    If the provided string does not include time information, it defaults to midnight.
-    """
-    # If the string length suggests no time info, append " 00:00:00"
-    if len(local_time_str.strip()) == 10:
-        local_time_str = local_time_str.strip() + " 00:00:00"
-    local_tz = pytz.timezone(tz_str)
-    local_dt = datetime.strptime(local_time_str, fmt)
-    local_dt = local_tz.localize(local_dt)
-    utc_dt = local_dt.astimezone(pytz.utc)
-    return utc_dt.strftime(fmt)
-
 def convert_to_utc(local_time_str, tz_str="UTC"):
-    local_tz = pytz.timezone(tz_str)
-    local_dt = datetime.strptime(local_time_str, '%Y-%m-%d %H:%M:%S')
-    local_dt = local_tz.localize(local_dt)
-    utc_dt = local_dt.astimezone(pytz.utc)
-    return utc_dt.strftime('%Y-%m-%d %H:%M:%S')
+    if tz_str not in pytz.all_timezones:
+        raise ValueError(f"Invalid timezone: {tz_str}. Use a valid timezone from pytz.all_timezones.")
+    tz = pytz.timezone(tz_str)
+    naive_dt = datetime.strptime(local_time_str, '%Y-%m-%d %H:%M:%S')
+    aware_dt = tz.localize(naive_dt, is_dst=None)  # Raises exception if ambiguous
+    return aware_dt.astimezone(pytz.utc).strftime('%Y-%m-%d %H:%M:%S')
+# def convert_to_utc(local_time_str, tz_str="UTC", fmt='%Y-%m-%d %H:%M:%S'):
+#     """
+#     Convert a local time string in timezone tz_str to a UTC time string.
+#     If the provided string does not include time information, it defaults to midnight.
+#     """
+#     # If the string length suggests no time info, append " 00:00:00"
+#     if len(local_time_str.strip()) == 10:
+#         local_time_str = local_time_str.strip() + " 00:00:00"
+#     local_tz = pytz.timezone(tz_str)
+#     local_dt = datetime.strptime(local_time_str, fmt)
+#     local_dt = local_tz.localize(local_dt)
+#     utc_dt = local_dt.astimezone(pytz.utc)
+#     return utc_dt.strftime(fmt)
+
 
 # --- Helper: convert timeframe string to milliseconds ---
 def timeframe_to_milliseconds(timeframe):
@@ -113,7 +129,7 @@ def get_binance_oldest_timestamp(exchange, symbol, timeframe):
             test_date = datetime(year, month, 1)
             test_timestamp_ms = int(test_date.timestamp() * 1000)
             try:
-                ohlcv = exchange.fetch_ohlcv(symbol, timeframe, since=test_timestamp_ms, limit=1)
+                ohlcv =safe_fetch_ohlcv(symbol, timeframe, since=test_timestamp_ms, limit=1)
                 if ohlcv:
                     oldest_time = datetime.fromtimestamp(ohlcv[0][0] / 1000, timezone.utc)
                     logger.info(f"📌 Found first available Binance data: {oldest_time}")
@@ -161,7 +177,7 @@ def fetch_new_binance_ohlcv(exchange, symbol, timeframe, since, end=None):
         try:
             # Fetch OHLCV data in batches of 1000 candles
             #logger.debug(f"Fetching {symbol} [{timeframe}] from {since_ms} limit {limit}...")
-            ohlcv = exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+            ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
         except Exception as e:
             logger.error(f"⚠️ Error fetching data at timestamp {since_ms}: {e}", exc_info=True)
             break
@@ -218,6 +234,15 @@ if __name__ == "__main__":
     timeframes = download_config.get('timeframes', [])  # List of timeframes
     local_start = download_config['start_date']  # Start date in local timezone
     local_timezone = download_config.get('timezone', 'UTC')  # Default to UTC if not specified
+    
+    # Validate timeframes
+    for timeframe in timeframes:
+        try:
+            validate_timeframe(timeframe)
+        except ValueError as e:
+            logger.error(f"❌ Invalid timeframe configuration: {e}")
+            logger.info("🛑 Aborting script due to invalid timeframe.")
+            exit(1)
 
     # Handle optional end_date
     if 'end_date' in download_config:
@@ -287,8 +312,11 @@ if __name__ == "__main__":
 
                 
                 # Fetch newer data starting from the latest existing timestamp till the end date
-                since_date = latest_existing_timestamp.strftime('%Y-%m-%d %H:%M:%S')
-                logger.info(f"🔄 Latest existing timestamp: {since_date}, UTC end: {utc_end_str}")
+                #since_date = latest_existing_timestamp.strftime('%Y-%m-%d %H:%M:%S')
+                # Add 1 millisecond to avoid fetching the same candle
+                since_date = (latest_existing_timestamp + pd.Timedelta(milliseconds=1)).strftime('%Y-%m-%d %H:%M:%S')
+                #logger.info(f"🔄 Latest existing timestamp: {since_date}, UTC end: {utc_end_str}")
+                logger.info(f"🔄 Latest existing timestamp: {latest_existing_timestamp}, New since: {since_date}")
                 if utc_end_str and datetime.strptime(utc_end_str, '%Y-%m-%d %H:%M:%S') <= latest_existing_timestamp:
                     logger.info(f"✅ Existing data already covers the required end date ({utc_end_str}). No new data to fetch.")
                     df_new = pd.DataFrame()  # No newer data to fetch
@@ -304,6 +332,7 @@ if __name__ == "__main__":
                     logger.info("✅ Dataset is up-to-date. No changes made.")
                 else:
                     dataframes_to_concat = [df for df in [df_old, df_existing, df_new] if not df.empty]
+                    logger.info(f"🔄 Merging data: df_old={len(df_old)}, df_existing={len(df_existing)}, df_new={len(df_new)}")
 
                     if dataframes_to_concat:  # Check if there are any non-empty DataFrames
                         df_combined = pd.concat(dataframes_to_concat).reset_index(drop=True)
@@ -315,10 +344,20 @@ if __name__ == "__main__":
                         df_combined.sort_values(by='timestamp', inplace=True)
 
                     logger.info(f"📊 Final dataset size after merge: {len(df_combined)} rows")
+                    
+                    # Check for gaps in the OHLCV data
+                    timeframe_ms = timeframe_to_milliseconds(timeframe)
+                    gaps = df_combined['timestamp'].diff().dt.total_seconds() * 1000 > 2 * timeframe_ms
+                    if gaps.any():
+                        logger.warning("⚠️ Gaps detected in OHLCV data. Check for missing or duplicated candles.")
 
                     # Save the combined dataset to CSV
-                    df_combined.to_csv(full_data_filename, index=False)
-                    logger.info(f"✅ Full dataset updated: {full_data_filename}")
+                    if df_combined.empty:
+                        logger.warning("⚠️ Combined dataset is empty. Skipping save.")
+                    else:
+                        assert all(col in df_combined.columns for col in ['timestamp', 'open', 'high', 'low', 'close', 'volume']), "Missing required OHLCV columns"
+                        df_combined.to_csv(full_data_filename, index=False)
+                        logger.info(f"✅ Full dataset updated: {full_data_filename}")
 
 
 
