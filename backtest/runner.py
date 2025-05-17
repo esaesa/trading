@@ -169,10 +169,10 @@ def run_backtest(symbol, timeframe):
                 "aggregated_metrics": aggregated_metrics
             }
             saved_file = save_backtest_results(results, symbol, timeframe, params, optimization_enabled=False)
-            
+            console.print(f"[bold green]Saved results to: {saved_file}[/bold green]")
         visualize_results(stats, bt)
         
-        console.print(f"[bold green]Saved results to: {saved_file}[/bold green]")
+        
 
 def unscale_parameter(value, param_name):
     if optimization_params.get(param_name, {}).get('type') == 'float':

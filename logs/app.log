@@ -1479,3 +1479,223 @@ TypeError: safe_fetch_ohlcv() missing 1 required positional argument: 'exchange'
 2025-05-17 21:36:13,988 [INFO] logger_config: 📊 Final dataset size after merge: 35669 rows
 2025-05-17 21:36:14,213 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
 2025-05-17 21:36:14,214 [INFO] logger_config: ✨ All data download tasks completed.
+2025-05-17 21:54:24,925 [INFO] logger_config: Starting data download...
+2025-05-17 21:54:24,976 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-05-17 21:54:24,987 [INFO] logger_config: Converted local startt 2021-01-01 00:00:00 (UTC) to UTC start: 2021-01-01 00:00:00
+2025-05-17 21:54:24,988 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-05-17 21:54:24,989 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:54:24,989 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-17 21:54:28,126 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 18:35:00
+2025-05-17 21:54:28,128 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:35:00, New since: 2025-05-17 18:35:00
+2025-05-17 21:54:28,129 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:35:00 to 2026-02-11 00:11:00
+2025-05-17 21:54:28,129 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:35:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-05-17 21:54:32,816 [INFO] logger_config: ✅ Downloaded 20 new rows. (From 2025-05-17 18:35:00 to 2025-05-17 18:54:00)
+2025-05-17 21:54:32,895 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=2300796, df_new=19
+2025-05-17 21:54:32,959 [INFO] logger_config: 📊 Final dataset size after merge: 2300815 rows
+2025-05-17 21:54:44,750 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-17 21:54:44,751 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 15m...
+2025-05-17 21:54:44,753 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [15m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:54:44,753 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-05-17 21:54:45,018 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 18:30:00
+2025-05-17 21:54:45,019 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:30:00, New since: 2025-05-17 18:30:00
+2025-05-17 21:54:45,020 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:30:00 to 2026-02-11 00:11:00
+2025-05-17 21:54:45,021 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:30:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [15m]...
+2025-05-17 21:54:45,760 [INFO] logger_config: ✅ Downloaded 2 new rows. (From 2025-05-17 18:30:00 to 2025-05-17 18:45:00)
+2025-05-17 21:54:45,777 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=153387, df_new=1
+2025-05-17 21:54:45,792 [INFO] logger_config: 📊 Final dataset size after merge: 153388 rows
+2025-05-17 21:54:46,598 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-05-17 21:54:46,599 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 30m...
+2025-05-17 21:54:46,600 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [30m]: 2020-07-10 09:00:00+00:00
+2025-05-17 21:54:46,601 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-17 21:54:46,716 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-17 18:30:00
+2025-05-17 21:54:46,717 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:30:00, New since: 2025-05-17 18:30:00
+2025-05-17 21:54:46,718 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:30:00 to 2026-02-11 00:11:00
+2025-05-17 21:54:46,718 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:30:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [30m]...
+2025-05-17 21:54:47,463 [INFO] logger_config: ✅ Downloaded 1 new rows. (From 2025-05-17 18:30:00 to 2025-05-17 18:30:00)
+2025-05-17 21:54:47,466 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:54:47,466 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 1m...
+2025-05-17 21:54:47,468 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [1m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:54:47,468 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-17 21:54:49,049 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 18:36:00
+2025-05-17 21:54:49,050 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:54:49,052 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:36:00, New since: 2025-05-17 18:36:00
+2025-05-17 21:54:49,052 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:36:00 to 2026-02-11 00:11:00
+2025-05-17 21:54:49,053 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:36:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [1m]...
+2025-05-17 21:54:49,819 [INFO] logger_config: ✅ Downloaded 19 new rows. (From 2025-05-17 18:36:00 to 2025-05-17 18:54:00)
+2025-05-17 21:54:49,851 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=1070047, df_new=18
+2025-05-17 21:54:49,886 [INFO] logger_config: 📊 Final dataset size after merge: 1070065 rows
+2025-05-17 21:54:55,725 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-17 21:54:55,726 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 15m...
+2025-05-17 21:54:55,727 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [15m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:54:55,728 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_15m.csv
+2025-05-17 21:54:55,849 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 18:30:00
+2025-05-17 21:54:55,850 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:54:55,851 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:30:00, New since: 2025-05-17 18:30:00
+2025-05-17 21:54:55,852 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:30:00 to 2026-02-11 00:11:00
+2025-05-17 21:54:55,853 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:30:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [15m]...
+2025-05-17 21:54:56,594 [INFO] logger_config: ✅ Downloaded 2 new rows. (From 2025-05-17 18:30:00 to 2025-05-17 18:45:00)
+2025-05-17 21:54:56,601 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=71337, df_new=1
+2025-05-17 21:54:56,608 [INFO] logger_config: 📊 Final dataset size after merge: 71338 rows
+2025-05-17 21:54:57,009 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_15m.csv
+2025-05-17 21:54:57,010 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 30m...
+2025-05-17 21:54:57,011 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [30m]: 2023-05-05 16:30:00+00:00
+2025-05-17 21:54:57,012 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-17 21:54:57,074 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-17 18:30:00
+2025-05-17 21:54:57,075 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-17 21:54:57,076 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-17 18:30:00, New since: 2025-05-17 18:30:00
+2025-05-17 21:54:57,077 [INFO] logger_config: 🔄 Fetching new data from 2025-05-17 18:30:00 to 2026-02-11 00:11:00
+2025-05-17 21:54:57,078 [INFO] logger_config: 🔍 Fetching data from 2025-05-17 18:30:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [30m]...
+2025-05-17 21:54:57,814 [INFO] logger_config: ✅ Downloaded 1 new rows. (From 2025-05-17 18:30:00 to 2025-05-17 18:30:00)
+2025-05-17 21:54:57,816 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-17 21:54:57,817 [INFO] logger_config: 🚀 Processing XRP/USDT:USDT with timeframe 1m...
+2025-05-17 21:54:57,818 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2017-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 21:54:57,819 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2017-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 21:54:57,820 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2018-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 21:54:57,821 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2018-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 21:54:57,822 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2019-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 21:54:57,823 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2019-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 21:54:57,824 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2020-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 21:54:57,824 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2020-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 21:54:57,825 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2021-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 21:54:57,825 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2021-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 21:54:57,826 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2022-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 21:54:57,826 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2022-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 21:54:57,827 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2023-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 21:54:57,827 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2023-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 21:54:57,828 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2024-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 21:54:57,828 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2024-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 21:54:57,828 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2025-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 21:54:57,829 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2025-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 21:54:57,829 [WARNING] logger_config: ⚠️ Unable to determine oldest available data.
+2025-05-17 21:54:57,829 [INFO] logger_config: 🆕 No existing dataset found. Downloading full dataset...
+2025-05-17 21:54:57,830 [INFO] logger_config: 🔍 Fetching data from 2021-01-01 00:00:00 to 2026-02-11 00:11:00 for XRP/USDT:USDT [1m]...
+2025-05-17 22:14:10,023 [INFO] logger_config: ✅ Downloaded 2300815 new rows. (From 2021-01-01 00:00:00 to 2025-05-17 18:54:00)
+2025-05-17 22:14:21,052 [INFO] logger_config: ✅ Full dataset saved to c:\src\trading\download\data\binance_XRPUSDTUSDT_1m.csv
+2025-05-17 22:14:21,053 [INFO] logger_config: 🚀 Processing XRP/USDT:USDT with timeframe 15m...
+2025-05-17 22:14:21,054 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2017-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:14:21,055 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2017-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:14:21,056 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2018-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:14:21,057 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2018-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:14:21,058 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2019-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:14:21,059 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2019-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:14:21,059 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2020-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:14:21,060 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2020-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:14:21,061 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2021-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:14:21,061 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2021-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:14:21,062 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2022-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:14:21,063 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2022-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:14:21,063 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2023-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:14:21,064 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2023-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:14:21,064 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2024-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:14:21,065 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2024-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:14:21,065 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2025-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:14:21,066 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2025-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:14:21,066 [WARNING] logger_config: ⚠️ Unable to determine oldest available data.
+2025-05-17 22:14:21,066 [INFO] logger_config: 🆕 No existing dataset found. Downloading full dataset...
+2025-05-17 22:14:21,067 [INFO] logger_config: 🔍 Fetching data from 2021-01-01 00:00:00 to 2026-02-11 00:11:00 for XRP/USDT:USDT [15m]...
+2025-05-17 22:15:49,983 [INFO] logger_config: ✅ Downloaded 153389 new rows. (From 2021-01-01 00:00:00 to 2025-05-17 19:00:00)
+2025-05-17 22:15:50,743 [INFO] logger_config: ✅ Full dataset saved to c:\src\trading\download\data\binance_XRPUSDTUSDT_15m.csv
+2025-05-17 22:15:50,744 [INFO] logger_config: 🚀 Processing XRP/USDT:USDT with timeframe 30m...
+2025-05-17 22:15:50,745 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2017-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:15:50,746 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2017-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:15:50,747 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2018-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:15:50,748 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2018-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:15:50,749 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2019-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:15:50,750 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2019-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:15:50,750 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2020-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:15:50,752 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2020-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:15:50,753 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2021-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:15:50,753 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2021-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:15:50,754 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2022-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:15:50,755 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2022-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:15:50,756 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2023-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:15:50,757 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2023-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:15:50,757 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2024-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:15:50,758 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2024-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:15:50,759 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2025-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:15:50,759 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2025-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:15:50,759 [WARNING] logger_config: ⚠️ Unable to determine oldest available data.
+2025-05-17 22:15:50,760 [INFO] logger_config: 🆕 No existing dataset found. Downloading full dataset...
+2025-05-17 22:15:50,760 [INFO] logger_config: 🔍 Fetching data from 2021-01-01 00:00:00 to 2026-02-11 00:11:00 for XRP/USDT:USDT [30m]...
+2025-05-17 22:16:32,048 [INFO] logger_config: ✅ Downloaded 76695 new rows. (From 2021-01-01 00:00:00 to 2025-05-17 19:00:00)
+2025-05-17 22:16:32,425 [INFO] logger_config: ✅ Full dataset saved to c:\src\trading\download\data\binance_XRPUSDTUSDT_30m.csv
+2025-05-17 22:16:32,426 [INFO] logger_config: 🚀 Processing ENA/USDT:USDT with timeframe 1m...
+2025-05-17 22:16:32,427 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2017-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:16:32,428 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2017-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:16:32,429 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2018-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:16:32,430 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2018-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:16:32,431 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2019-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:16:32,432 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2019-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:16:32,432 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2020-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:16:32,433 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2020-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:16:32,434 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2021-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:16:32,435 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2021-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:16:32,436 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2022-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:16:32,437 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2022-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:16:32,438 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2023-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:16:32,438 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2023-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:16:32,439 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2024-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:16:32,439 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2024-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:16:32,440 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2025-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:16:32,441 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2025-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:16:32,441 [WARNING] logger_config: ⚠️ Unable to determine oldest available data.
+2025-05-17 22:16:32,442 [INFO] logger_config: 🆕 No existing dataset found. Downloading full dataset...
+2025-05-17 22:16:32,442 [INFO] logger_config: 🔍 Fetching data from 2021-01-01 00:00:00 to 2026-02-11 00:11:00 for ENA/USDT:USDT [1m]...
+2025-05-17 22:21:15,163 [INFO] logger_config: ✅ Downloaded 590807 new rows. (From 2024-04-02 12:30:00 to 2025-05-17 19:16:00)
+2025-05-17 22:21:18,060 [INFO] logger_config: ✅ Full dataset saved to c:\src\trading\download\data\binance_ENAUSDTUSDT_1m.csv
+2025-05-17 22:21:18,061 [INFO] logger_config: 🚀 Processing ENA/USDT:USDT with timeframe 15m...
+2025-05-17 22:21:18,063 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2017-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:18,064 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2017-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:18,065 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2018-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:18,066 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2018-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:18,067 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2019-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:18,068 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2019-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:18,069 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2020-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:18,070 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2020-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:18,070 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2021-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:18,071 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2021-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:18,071 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2022-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:18,072 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2022-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:18,072 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2023-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:18,073 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2023-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:18,073 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2024-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:18,073 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2024-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:18,074 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2025-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:18,074 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2025-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:18,074 [WARNING] logger_config: ⚠️ Unable to determine oldest available data.
+2025-05-17 22:21:18,075 [INFO] logger_config: 🆕 No existing dataset found. Downloading full dataset...
+2025-05-17 22:21:18,075 [INFO] logger_config: 🔍 Fetching data from 2021-01-01 00:00:00 to 2026-02-11 00:11:00 for ENA/USDT:USDT [15m]...
+2025-05-17 22:21:39,080 [INFO] logger_config: ✅ Downloaded 39388 new rows. (From 2024-04-02 12:30:00 to 2025-05-17 19:15:00)
+2025-05-17 22:21:39,280 [INFO] logger_config: ✅ Full dataset saved to c:\src\trading\download\data\binance_ENAUSDTUSDT_15m.csv
+2025-05-17 22:21:39,281 [INFO] logger_config: 🚀 Processing ENA/USDT:USDT with timeframe 30m...
+2025-05-17 22:21:39,282 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2017-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:39,283 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2017-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:39,284 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2018-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:39,285 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2018-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:39,286 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2019-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:39,287 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2019-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:39,288 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2020-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:39,289 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2020-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:39,290 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2021-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:39,290 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2021-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:39,291 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2022-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:39,292 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2022-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:39,292 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2023-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:39,293 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2023-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:39,293 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2024-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:39,294 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2024-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:39,295 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2025-01-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:39,295 [WARNING] logger_config: ⚠️ Error while searching for oldest timestamp at 2025-07-01 00:00:00: safe_fetch_ohlcv() got an unexpected keyword argument 'since'
+2025-05-17 22:21:39,296 [WARNING] logger_config: ⚠️ Unable to determine oldest available data.
+2025-05-17 22:21:39,296 [INFO] logger_config: 🆕 No existing dataset found. Downloading full dataset...
+2025-05-17 22:21:39,297 [INFO] logger_config: 🔍 Fetching data from 2021-01-01 00:00:00 to 2026-02-11 00:11:00 for ENA/USDT:USDT [30m]...
+2025-05-17 22:21:50,854 [INFO] logger_config: ✅ Downloaded 19694 new rows. (From 2024-04-02 12:30:00 to 2025-05-17 19:00:00)
+2025-05-17 22:21:50,972 [INFO] logger_config: ✅ Full dataset saved to c:\src\trading\download\data\binance_ENAUSDTUSDT_30m.csv
+2025-05-17 22:21:50,973 [INFO] logger_config: ✨ All data download tasks completed.
+2025-05-17 23:32:20,087 [INFO] logger_config: Starting data download...
+2025-05-17 23:32:20,132 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-05-17 23:32:20,142 [INFO] logger_config: Converted local startt 2021-01-01 00:00:00 (UTC) to UTC start: 2021-01-01 00:00:00
+2025-05-17 23:32:20,143 [INFO] logger_config: 🚀 Processing BTC/USDT:USDT with timeframe 1m...
+2025-05-17 23:32:20,144 [INFO] logger_config: 📌 Found cached oldest timestamp for BTC/USDT:USDT [1m]: 2019-09-08 17:57:00+00:00
+2025-05-17 23:32:20,145 [INFO] logger_config: 🆕 No existing dataset found. Downloading full dataset...
+2025-05-17 23:32:20,146 [INFO] logger_config: 🔍 Fetching data from 2021-01-01 00:00:00 to 2026-02-11 00:11:00 for BTC/USDT:USDT [1m]...
