@@ -1,5 +1,5 @@
 # runner.py
-
+from typing import Dict, List, Optional, Tuple, Any
 from backtesting import Backtest
 import numpy as np
 import pandas as pd
@@ -16,8 +16,9 @@ import os
 
 console = Console()
 
-def aggregate_cycle_metrics(processes):
+def aggregate_cycle_metrics(processes : List[Dict]) ->Dict[str, Any] :
     if not processes:
+        console.print("[bold red]No completed processes found.[/bold red]")
         return {}
     
     import statistics
@@ -87,8 +88,8 @@ def run_backtest(symbol, timeframe):
         data,
         DCAStrategy,
         cash=backtest_params["cash"],
-        # commission=backtest_params["commission"],
-        commission = lambda size, price:  price * 0.0005,
+        commission=backtest_params["commission"],
+        #commission = lambda size, price:  price * 0.0005,
         trade_on_close=True,
         finalize_trades=True,
         margin=1/1,
@@ -132,8 +133,8 @@ def run_backtest(symbol, timeframe):
             **scaled_optimization_params,
             # constraint=constraint_func,
             maximize=maximize_func,
-            max_tries=2000,
-            random_state=0,
+            max_tries=1000,
+            random_state=2,
             method="sambo",
             # return_heatmap=False,
             # return_optimization=False

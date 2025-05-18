@@ -10,8 +10,8 @@
         "enable_optimization": false,
         "debug": true,
         "debug_loop": false,
-        "start_date": "2024-09-26 23:11:00",
-        "end_date":   "2025-10-08 19:06:01",
+        "start_date": "2025-02-12 00:00:00",
+        "end_date":   "2025-03-04 23:59:59",
     
         "cash": 1000,
         "commission": 0.0005,
@@ -20,17 +20,17 @@
         "enable_quantstats_analysis": false
     },
     "strategy_params": {
-        "max_dca_levels": 15,
-        "take_profit_percentage": 0.9,
+        "max_dca_levels": 20,
+        "take_profit_percentage": 0.7,
         "entry_fraction": 0.01,
-        "so_size_multiplier": 4.0,
-        "first_safety_order_multiplier": 4.0,
-        "initial_deviation_percent": 1.9,
-        "price_multiplier": 1.3,
-        "rsi_threshold": 18,
-        "rsi_window": 7,
+        "so_size_multiplier": 5.0,
+        "first_safety_order_multiplier": 5.0,
+        "initial_deviation_percent": 5.0,
+        "price_multiplier": 1,
+        "rsi_threshold": 50,
+        "rsi_window": 28,
         "enable_rsi_calculation": true,
-        "require_rsi_reset": true,
+        "require_rsi_reset": false,
         "rsi_reset_percnetage": 20,
         "safety_order_price_mode": "dynamic",
         "safety_order_mode":"value",
@@ -42,18 +42,18 @@
         "atr_resample_interval": "1h",  
         "enable_ema_calculation": false,
         "ema_resample_interval": "1h", 
-        "rsi_resample_interval": "30m",
+        "rsi_resample_interval": "30min",
     
         "enable_cv_calculation": false,
         "enable_laguere_calculation": false,
-        "start_trading_time" : "2023-05-29 03:16:00",
+        "start_trading_time" : "2023-01-01 00:00:00",
         "debug": {
             "trade": false,
             "loop": false,
             "process": false
           },
           "show_indicators": {
-            "rsi": true,
+            "rsi": false,
             "bbw": false,
             "atr": false,
             "ema": false,
@@ -92,7 +92,7 @@
         "first_safety_order_multiplier": {
             "values": [
                 1.0,
-                4.0
+                5.0
             ],
             "scaling_factor": 10,
             "type": "float"
@@ -112,6 +112,20 @@
             ],
             "scaling_factor": 10,
             "type": "float"
+        },
+        "rsi_threshold": {
+            "values": [
+                20,
+                50
+            ],
+            "type": "int"
+        },
+        "rsi_window": {
+            "values": [
+                7,
+                28
+            ],
+            "type": "int"
         }
     },
     "optimization_params_template": {

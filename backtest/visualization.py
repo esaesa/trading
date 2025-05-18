@@ -126,12 +126,12 @@ def visualize_results(stats, bt, optimize_result=None, param_names=None, show_op
         
         import pandas as pd
 
-        pd.set_option('display.max_columns', None)  # Show all columns
-        pd.set_option('display.max_rows', None)     # Show all rows
-        pd.set_option('display.max_colwidth', None) # Show full column content
-        pd.set_option('display.expand_frame_repr', False)  # Prevent wrapping
+        # pd.set_option('display.max_columns', None)  # Show all columns
+        # pd.set_option('display.max_rows', None)     # Show all rows
+        # pd.set_option('display.max_colwidth', None) # Show full column content
+        # pd.set_option('display.expand_frame_repr', False)  # Prevent wrapping
 
-        # print(trades_table)
+        print(trades_table)
     
         if heatmap is not None:
             plot_heatmaps(heatmap, agg='mean')
