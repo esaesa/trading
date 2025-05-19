@@ -88,10 +88,10 @@ def run_backtest(symbol, timeframe):
         data,
         DCAStrategy,
         cash=backtest_params["cash"],
-        commission=backtest_params["commission"],
-        #commission = lambda size, price:  price * 0.0005,
+        #commission=backtest_params["commission"],
+        commission = lambda size, price:  price * 0.0005,
         trade_on_close=True,
-        finalize_trades=True,
+        finalize_trades=False,
         margin=1/1,
     )
     # Scale optimization parameters

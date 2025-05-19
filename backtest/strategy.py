@@ -164,7 +164,7 @@ class DCAStrategy(Strategy):
             if self.show_indicators.get('bbw', False):
                 self.I(lambda _: bbw_series, self.data.Close, name="BBW")
             
-        if self.debug_backtest:    
+        if self.debug_backtest or self.show_indicators.get('average_entry_price', True):    
             self.breakeven_prices = np.full(len(self.data), np.nan)
             self.breakeven_indicator = self.I(lambda: self.breakeven_prices, name='Average Entry Price', overlay=True)
 
@@ -608,7 +608,7 @@ class DCAStrategy(Strategy):
         if current_time < self.start_trading_time:
             return
         current_idx = len(self.data) - 1
-        if self.debug_backtest:
+        if self.debug_backtest or self.show_indicators.get('average_entry_price', True):
             if self.position:
                 # Calculate breakeven price
                 entry_price = self.get_entry_price()

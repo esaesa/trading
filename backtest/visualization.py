@@ -122,7 +122,7 @@ def visualize_results(stats, bt, optimize_result=None, param_names=None, show_op
    
         logger.info(str(stats._strategy))
         # pd.set_option('display.precision', 10)
-        trades_table = stats["_trades"].set_index("EntryTime")
+        trades_table = stats["_trades"].set_index("EntryTime").sort_index()
         
         import pandas as pd
 
@@ -144,7 +144,7 @@ def visualize_results(stats, bt, optimize_result=None, param_names=None, show_op
         filename=plot_file_name,
         plot_drawdown=True,
         plot_return=False,
-        resample=False, # True make error in 1m large data
+        resample=True, # True make error in 1m large data
         relative_equity=True,
         plot_volume = False
         

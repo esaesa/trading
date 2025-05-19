@@ -10,33 +10,34 @@
         "enable_optimization": false,
         "debug": true,
         "debug_loop": false,
-        "start_date": "2025-02-12 00:00:00",
-        "end_date":   "2025-03-04 23:59:59",
+        "start_date": "2023-05-01 12:00:00",
+        "end_date":   "2025-05-22 11:59:59",
     
-        "cash": 1000,
+        "cash": 10000,
         "commission": 0.0005,
         "show_optimization_graphs": false,
         "slippage_probability": 0.0,
         "enable_quantstats_analysis": false
     },
     "strategy_params": {
-        "max_dca_levels": 20,
+        "max_dca_levels": 11,
         "take_profit_percentage": 0.7,
-        "entry_fraction": 0.01,
-        "so_size_multiplier": 5.0,
-        "first_safety_order_multiplier": 5.0,
-        "initial_deviation_percent": 5.0,
-        "price_multiplier": 1,
-        "rsi_threshold": 50,
-        "rsi_window": 28,
+        "entry_fraction": 0.02,
+        "so_size_multiplier": 2,
+        "first_safety_order_multiplier": 1.5,
+        "initial_deviation_percent": 1,
+        "price_multiplier": 1.5,
+        "rsi_threshold":33,
+        "rsi_window": 21,
         "enable_rsi_calculation": true,
+        "rsi_dynamic_threshold": false,
         "require_rsi_reset": false,
-        "rsi_reset_percnetage": 20,
+        "rsi_reset_percnetage": 10,
         "safety_order_price_mode": "dynamic",
         "safety_order_mode":"value",
         "price_growth_type": "exponential",
         "size_growth_type": "exponential",
-        "minimum_notional": 5.0,
+        "minimum_notional": 0.0,
         "enable_atr_calculation": false,
         "atr_window": 14,
         "atr_resample_interval": "1h",  
@@ -46,19 +47,21 @@
     
         "enable_cv_calculation": false,
         "enable_laguere_calculation": false,
-        "start_trading_time" : "2023-01-01 00:00:00",
+        "start_trading_time" : "2023-02-03 16:01:00",
         "debug": {
             "trade": false,
             "loop": false,
             "process": false
           },
           "show_indicators": {
-            "rsi": false,
+            "dynamic_rsi_threshold": false,
+            "rsi": true,
             "bbw": false,
             "atr": false,
             "ema": false,
             "laguerre": false,
-            "cv": false
+            "cv": false,
+            "average_entry_price"  : true
     }
 
     

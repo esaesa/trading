@@ -129,7 +129,7 @@ def get_binance_oldest_timestamp(exchange, symbol, timeframe):
             test_date = datetime(year, month, 1)
             test_timestamp_ms = int(test_date.timestamp() * 1000)
             try:
-                ohlcv =safe_fetch_ohlcv(symbol, timeframe, since=test_timestamp_ms, limit=1)
+                ohlcv =safe_fetch_ohlcv(symbol, timeframe, since_ms=test_timestamp_ms, limit=1)
                 if ohlcv:
                     oldest_time = datetime.fromtimestamp(ohlcv[0][0] / 1000, timezone.utc)
                     logger.info(f"📌 Found first available Binance data: {oldest_time}")
