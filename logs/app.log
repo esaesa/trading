@@ -2154,3 +2154,1114 @@ TypeError: safe_fetch_ohlcv() missing 1 required positional argument: 'exchange'
 2025-05-19 21:13:45,170 [INFO] logger_config: ✅ Downloaded 1 new rows. (From 2025-05-19 18:00:00 to 2025-05-19 18:00:00)
 2025-05-19 21:13:45,172 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
 2025-05-19 21:13:45,172 [INFO] logger_config: ✨ All data download tasks completed.
+2025-05-20 20:40:58,694 [INFO] logger_config: Starting data download...
+2025-05-20 20:40:58,766 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-05-20 20:40:58,779 [INFO] logger_config: Converted local startt 2021-01-01 00:00:00 (UTC) to UTC start: 2021-01-01 00:00:00
+2025-05-20 20:40:58,779 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-05-20 20:40:58,788 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-05-20 20:40:58,789 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-20 20:41:02,700 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-19 18:12:00
+2025-05-20 20:41:02,709 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-19 18:12:00, New since: 2025-05-19 18:12:00
+2025-05-20 20:41:02,717 [INFO] logger_config: 🔄 Fetching new data from 2025-05-19 18:12:00 to 2026-02-11 00:11:00
+2025-05-20 20:41:02,717 [INFO] logger_config: 🔍 Fetching data from 2025-05-19 18:12:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-05-20 20:41:03,456 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747678320000: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 574, in fetch
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error:  for url: https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1747762862885&recvWindow=10000&signature=3b346aa6052ab10149c0635751e79c87c325e55af79f27e2acc86db1185cbfa6
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1509, in load_markets
+    currencies = self.fetch_currencies()
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 2992, in fetch_currencies
+    promises = [self.sapiGetCapitalConfigGetall(params)]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 590, in fetch
+    skip_further_error_handling = self.handle_errors(http_status_code, http_status_text, url, method, headers, http_response, json_response, request_headers, request_body)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11453, in handle_errors
+    self.throw_exactly_matched_exception(self.exceptions['exact'], error, feedback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4757, in throw_exactly_matched_exception
+    raise exact[string](message)
+ccxt.base.errors.InvalidNonce: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+2025-05-20 20:41:03,510 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-20 20:41:03,605 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-20 20:41:03,605 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 15m...
+2025-05-20 20:41:03,606 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [15m]: 2020-07-10 09:00:00+00:00
+2025-05-20 20:41:03,607 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-05-20 20:41:03,949 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-19 18:00:00
+2025-05-20 20:41:03,950 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-19 18:00:00, New since: 2025-05-19 18:00:00
+2025-05-20 20:41:03,951 [INFO] logger_config: 🔄 Fetching new data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00
+2025-05-20 20:41:03,951 [INFO] logger_config: 🔍 Fetching data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [15m]...
+2025-05-20 20:41:04,333 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747677600000: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 574, in fetch
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error:  for url: https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1747762864053&recvWindow=10000&signature=b9a1db4dd2dd4c3e3362dac8819ab8ed694c7872464c1c82a83dd11989900e73
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1509, in load_markets
+    currencies = self.fetch_currencies()
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 2992, in fetch_currencies
+    promises = [self.sapiGetCapitalConfigGetall(params)]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 590, in fetch
+    skip_further_error_handling = self.handle_errors(http_status_code, http_status_text, url, method, headers, http_response, json_response, request_headers, request_body)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11453, in handle_errors
+    self.throw_exactly_matched_exception(self.exceptions['exact'], error, feedback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4757, in throw_exactly_matched_exception
+    raise exact[string](message)
+ccxt.base.errors.InvalidNonce: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+2025-05-20 20:41:04,347 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-20 20:41:04,351 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-20 20:41:04,352 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 30m...
+2025-05-20 20:41:04,353 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [30m]: 2020-07-10 09:00:00+00:00
+2025-05-20 20:41:04,354 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-20 20:41:04,516 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-19 18:00:00
+2025-05-20 20:41:04,517 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-19 18:00:00, New since: 2025-05-19 18:00:00
+2025-05-20 20:41:04,518 [INFO] logger_config: 🔄 Fetching new data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00
+2025-05-20 20:41:04,518 [INFO] logger_config: 🔍 Fetching data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [30m]...
+2025-05-20 20:41:04,896 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747677600000: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 574, in fetch
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error:  for url: https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1747762864620&recvWindow=10000&signature=f21be8b46d94e7f189a4e48105655c8146826b3e89ec342acc12c7847c927eb7
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1509, in load_markets
+    currencies = self.fetch_currencies()
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 2992, in fetch_currencies
+    promises = [self.sapiGetCapitalConfigGetall(params)]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 590, in fetch
+    skip_further_error_handling = self.handle_errors(http_status_code, http_status_text, url, method, headers, http_response, json_response, request_headers, request_body)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11453, in handle_errors
+    self.throw_exactly_matched_exception(self.exceptions['exact'], error, feedback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4757, in throw_exactly_matched_exception
+    raise exact[string](message)
+ccxt.base.errors.InvalidNonce: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+2025-05-20 20:41:04,910 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-20 20:41:04,913 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-20 20:41:04,913 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 1m...
+2025-05-20 20:41:04,915 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [1m]: 2023-05-05 16:30:00+00:00
+2025-05-20 20:41:04,916 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-20 20:41:07,177 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-19 18:13:00
+2025-05-20 20:41:07,178 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-20 20:41:07,179 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-19 18:13:00, New since: 2025-05-19 18:13:00
+2025-05-20 20:41:07,180 [INFO] logger_config: 🔄 Fetching new data from 2025-05-19 18:13:00 to 2026-02-11 00:11:00
+2025-05-20 20:41:07,180 [INFO] logger_config: 🔍 Fetching data from 2025-05-19 18:13:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [1m]...
+2025-05-20 20:41:07,568 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747678380000: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 574, in fetch
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error:  for url: https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1747762867282&recvWindow=10000&signature=2a5a7e67ffa1682378b9c24e5ee992c1ff35f864e07d2ed80778a5f16ff27d93
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1509, in load_markets
+    currencies = self.fetch_currencies()
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 2992, in fetch_currencies
+    promises = [self.sapiGetCapitalConfigGetall(params)]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 590, in fetch
+    skip_further_error_handling = self.handle_errors(http_status_code, http_status_text, url, method, headers, http_response, json_response, request_headers, request_body)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11453, in handle_errors
+    self.throw_exactly_matched_exception(self.exceptions['exact'], error, feedback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4757, in throw_exactly_matched_exception
+    raise exact[string](message)
+ccxt.base.errors.InvalidNonce: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+2025-05-20 20:41:07,582 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-20 20:41:07,614 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-20 20:41:07,615 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 15m...
+2025-05-20 20:41:07,616 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [15m]: 2023-05-05 16:30:00+00:00
+2025-05-20 20:41:07,617 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_15m.csv
+2025-05-20 20:41:07,742 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-19 18:00:00
+2025-05-20 20:41:07,743 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-20 20:41:07,744 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-19 18:00:00, New since: 2025-05-19 18:00:00
+2025-05-20 20:41:07,745 [INFO] logger_config: 🔄 Fetching new data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00
+2025-05-20 20:41:07,746 [INFO] logger_config: 🔍 Fetching data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [15m]...
+2025-05-20 20:41:08,123 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747677600000: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 574, in fetch
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error:  for url: https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1747762867847&recvWindow=10000&signature=a7c6a3e9b9e9378c0f4b63b9d6a82a017a8070df2ab4e5eee48039ecfb4ac7fa
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1509, in load_markets
+    currencies = self.fetch_currencies()
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 2992, in fetch_currencies
+    promises = [self.sapiGetCapitalConfigGetall(params)]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 590, in fetch
+    skip_further_error_handling = self.handle_errors(http_status_code, http_status_text, url, method, headers, http_response, json_response, request_headers, request_body)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11453, in handle_errors
+    self.throw_exactly_matched_exception(self.exceptions['exact'], error, feedback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4757, in throw_exactly_matched_exception
+    raise exact[string](message)
+ccxt.base.errors.InvalidNonce: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+2025-05-20 20:41:08,135 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-20 20:41:08,137 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-20 20:41:08,137 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 30m...
+2025-05-20 20:41:08,138 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [30m]: 2023-05-05 16:30:00+00:00
+2025-05-20 20:41:08,139 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-20 20:41:08,243 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-19 18:00:00
+2025-05-20 20:41:08,244 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-20 20:41:08,246 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-19 18:00:00, New since: 2025-05-19 18:00:00
+2025-05-20 20:41:08,247 [INFO] logger_config: 🔄 Fetching new data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00
+2025-05-20 20:41:08,247 [INFO] logger_config: 🔍 Fetching data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [30m]...
+2025-05-20 20:41:08,626 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747677600000: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 574, in fetch
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error:  for url: https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1747762868349&recvWindow=10000&signature=1664226631477262bb6bc2f28a93ce5898d4e0c23e92d0fde3e57426650aff01
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1509, in load_markets
+    currencies = self.fetch_currencies()
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 2992, in fetch_currencies
+    promises = [self.sapiGetCapitalConfigGetall(params)]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 590, in fetch
+    skip_further_error_handling = self.handle_errors(http_status_code, http_status_text, url, method, headers, http_response, json_response, request_headers, request_body)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11453, in handle_errors
+    self.throw_exactly_matched_exception(self.exceptions['exact'], error, feedback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4757, in throw_exactly_matched_exception
+    raise exact[string](message)
+ccxt.base.errors.InvalidNonce: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+2025-05-20 20:41:08,640 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-20 20:41:08,642 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-20 20:41:08,642 [INFO] logger_config: 🚀 Processing XRP/USDT:USDT with timeframe 1m...
+2025-05-20 20:41:08,643 [INFO] logger_config: 📌 Found cached oldest timestamp for XRP/USDT:USDT [1m]: 2020-01-06 08:21:00+00:00
+2025-05-20 20:41:08,644 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_XRPUSDTUSDT_1m.csv
+2025-05-20 20:41:11,740 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-19 18:13:00
+2025-05-20 20:41:11,741 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-19 18:13:00, New since: 2025-05-19 18:13:00
+2025-05-20 20:41:11,741 [INFO] logger_config: 🔄 Fetching new data from 2025-05-19 18:13:00 to 2026-02-11 00:11:00
+2025-05-20 20:41:11,741 [INFO] logger_config: 🔍 Fetching data from 2025-05-19 18:13:00 to 2026-02-11 00:11:00 for XRP/USDT:USDT [1m]...
+2025-05-20 20:41:12,119 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747678380000: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 574, in fetch
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error:  for url: https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1747762871843&recvWindow=10000&signature=a4301f5160afb9a9c74d77b7159598cec71e2afd504aed6df9a3a8c96add1b7b
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1509, in load_markets
+    currencies = self.fetch_currencies()
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 2992, in fetch_currencies
+    promises = [self.sapiGetCapitalConfigGetall(params)]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 590, in fetch
+    skip_further_error_handling = self.handle_errors(http_status_code, http_status_text, url, method, headers, http_response, json_response, request_headers, request_body)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11453, in handle_errors
+    self.throw_exactly_matched_exception(self.exceptions['exact'], error, feedback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4757, in throw_exactly_matched_exception
+    raise exact[string](message)
+ccxt.base.errors.InvalidNonce: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+2025-05-20 20:41:12,133 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-20 20:41:12,208 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-20 20:41:12,209 [INFO] logger_config: 🚀 Processing XRP/USDT:USDT with timeframe 15m...
+2025-05-20 20:41:12,209 [INFO] logger_config: 📌 Found cached oldest timestamp for XRP/USDT:USDT [15m]: 2020-01-06 08:15:00+00:00
+2025-05-20 20:41:12,210 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_XRPUSDTUSDT_15m.csv
+2025-05-20 20:41:12,440 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-19 18:00:00
+2025-05-20 20:41:12,441 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-19 18:00:00, New since: 2025-05-19 18:00:00
+2025-05-20 20:41:12,442 [INFO] logger_config: 🔄 Fetching new data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00
+2025-05-20 20:41:12,443 [INFO] logger_config: 🔍 Fetching data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00 for XRP/USDT:USDT [15m]...
+2025-05-20 20:41:12,821 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747677600000: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 574, in fetch
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error:  for url: https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1747762872545&recvWindow=10000&signature=a64b45e1c22588a4a50f70d67f353d693fb681ba5680d10c772ea992e5b8ad1d
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1509, in load_markets
+    currencies = self.fetch_currencies()
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 2992, in fetch_currencies
+    promises = [self.sapiGetCapitalConfigGetall(params)]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 590, in fetch
+    skip_further_error_handling = self.handle_errors(http_status_code, http_status_text, url, method, headers, http_response, json_response, request_headers, request_body)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11453, in handle_errors
+    self.throw_exactly_matched_exception(self.exceptions['exact'], error, feedback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4757, in throw_exactly_matched_exception
+    raise exact[string](message)
+ccxt.base.errors.InvalidNonce: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+2025-05-20 20:41:12,835 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-20 20:41:12,838 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-20 20:41:12,839 [INFO] logger_config: 🚀 Processing XRP/USDT:USDT with timeframe 30m...
+2025-05-20 20:41:12,840 [INFO] logger_config: 📌 Found cached oldest timestamp for XRP/USDT:USDT [30m]: 2020-01-06 08:00:00+00:00
+2025-05-20 20:41:12,841 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_XRPUSDTUSDT_30m.csv
+2025-05-20 20:41:12,955 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-19 18:00:00
+2025-05-20 20:41:12,956 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-19 18:00:00, New since: 2025-05-19 18:00:00
+2025-05-20 20:41:12,957 [INFO] logger_config: 🔄 Fetching new data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00
+2025-05-20 20:41:12,958 [INFO] logger_config: 🔍 Fetching data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00 for XRP/USDT:USDT [30m]...
+2025-05-20 20:41:13,333 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747677600000: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 574, in fetch
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error:  for url: https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1747762873059&recvWindow=10000&signature=71cb26a0772ac9ccb9c369a0dc209262f8ec66bffd2e07c6cbd4a33a2877c6c2
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1509, in load_markets
+    currencies = self.fetch_currencies()
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 2992, in fetch_currencies
+    promises = [self.sapiGetCapitalConfigGetall(params)]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 590, in fetch
+    skip_further_error_handling = self.handle_errors(http_status_code, http_status_text, url, method, headers, http_response, json_response, request_headers, request_body)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11453, in handle_errors
+    self.throw_exactly_matched_exception(self.exceptions['exact'], error, feedback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4757, in throw_exactly_matched_exception
+    raise exact[string](message)
+ccxt.base.errors.InvalidNonce: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+2025-05-20 20:41:13,347 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-20 20:41:13,350 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-20 20:41:13,350 [INFO] logger_config: 🚀 Processing ENA/USDT:USDT with timeframe 1m...
+2025-05-20 20:41:13,351 [INFO] logger_config: 📌 Found cached oldest timestamp for ENA/USDT:USDT [1m]: 2024-04-02 12:30:00+00:00
+2025-05-20 20:41:13,352 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_ENAUSDTUSDT_1m.csv
+2025-05-20 20:41:14,139 [INFO] logger_config: 🕒 Existing data range: 2024-04-02 12:30:00+00:00 to 2025-05-19 18:13:00
+2025-05-20 20:41:14,140 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2024-04-02 12:30:00+00:00.
+2025-05-20 20:41:14,141 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-19 18:13:00, New since: 2025-05-19 18:13:00
+2025-05-20 20:41:14,142 [INFO] logger_config: 🔄 Fetching new data from 2025-05-19 18:13:00 to 2026-02-11 00:11:00
+2025-05-20 20:41:14,143 [INFO] logger_config: 🔍 Fetching data from 2025-05-19 18:13:00 to 2026-02-11 00:11:00 for ENA/USDT:USDT [1m]...
+2025-05-20 20:41:14,525 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747678380000: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 574, in fetch
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error:  for url: https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1747762874245&recvWindow=10000&signature=c8df96a9aac3735f924f27163f8a90fb5891e65ab46781af5b02329f4d366744
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1509, in load_markets
+    currencies = self.fetch_currencies()
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 2992, in fetch_currencies
+    promises = [self.sapiGetCapitalConfigGetall(params)]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 590, in fetch
+    skip_further_error_handling = self.handle_errors(http_status_code, http_status_text, url, method, headers, http_response, json_response, request_headers, request_body)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11453, in handle_errors
+    self.throw_exactly_matched_exception(self.exceptions['exact'], error, feedback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4757, in throw_exactly_matched_exception
+    raise exact[string](message)
+ccxt.base.errors.InvalidNonce: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+2025-05-20 20:41:14,539 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-20 20:41:14,552 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-20 20:41:14,553 [INFO] logger_config: 🚀 Processing ENA/USDT:USDT with timeframe 15m...
+2025-05-20 20:41:14,554 [INFO] logger_config: 📌 Found cached oldest timestamp for ENA/USDT:USDT [15m]: 2024-04-02 12:30:00+00:00
+2025-05-20 20:41:14,555 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_ENAUSDTUSDT_15m.csv
+2025-05-20 20:41:14,624 [INFO] logger_config: 🕒 Existing data range: 2024-04-02 12:30:00+00:00 to 2025-05-19 18:00:00
+2025-05-20 20:41:14,625 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2024-04-02 12:30:00+00:00.
+2025-05-20 20:41:14,626 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-19 18:00:00, New since: 2025-05-19 18:00:00
+2025-05-20 20:41:14,627 [INFO] logger_config: 🔄 Fetching new data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00
+2025-05-20 20:41:14,627 [INFO] logger_config: 🔍 Fetching data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00 for ENA/USDT:USDT [15m]...
+2025-05-20 20:41:15,000 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747677600000: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 574, in fetch
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error:  for url: https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1747762874729&recvWindow=10000&signature=67e967e2c0ad5eb454d472bb5460019673eb5667c8cfa03f5ee06d58fee36082
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1509, in load_markets
+    currencies = self.fetch_currencies()
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 2992, in fetch_currencies
+    promises = [self.sapiGetCapitalConfigGetall(params)]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 590, in fetch
+    skip_further_error_handling = self.handle_errors(http_status_code, http_status_text, url, method, headers, http_response, json_response, request_headers, request_body)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11453, in handle_errors
+    self.throw_exactly_matched_exception(self.exceptions['exact'], error, feedback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4757, in throw_exactly_matched_exception
+    raise exact[string](message)
+ccxt.base.errors.InvalidNonce: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+2025-05-20 20:41:15,014 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-20 20:41:15,016 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-20 20:41:15,016 [INFO] logger_config: 🚀 Processing ENA/USDT:USDT with timeframe 30m...
+2025-05-20 20:41:15,017 [INFO] logger_config: 📌 Found cached oldest timestamp for ENA/USDT:USDT [30m]: 2024-04-02 12:30:00+00:00
+2025-05-20 20:41:15,017 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_ENAUSDTUSDT_30m.csv
+2025-05-20 20:41:15,052 [INFO] logger_config: 🕒 Existing data range: 2024-04-02 12:30:00+00:00 to 2025-05-19 18:00:00
+2025-05-20 20:41:15,052 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2024-04-02 12:30:00+00:00.
+2025-05-20 20:41:15,054 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-19 18:00:00, New since: 2025-05-19 18:00:00
+2025-05-20 20:41:15,055 [INFO] logger_config: 🔄 Fetching new data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00
+2025-05-20 20:41:15,055 [INFO] logger_config: 🔍 Fetching data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00 for ENA/USDT:USDT [30m]...
+2025-05-20 20:41:15,429 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747677600000: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 574, in fetch
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error:  for url: https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1747762875158&recvWindow=10000&signature=b2c56807f88bb8d07f60d612ff28012efebe77c46611ea76aed7a11df10738d9
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1509, in load_markets
+    currencies = self.fetch_currencies()
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 2992, in fetch_currencies
+    promises = [self.sapiGetCapitalConfigGetall(params)]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 590, in fetch
+    skip_further_error_handling = self.handle_errors(http_status_code, http_status_text, url, method, headers, http_response, json_response, request_headers, request_body)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11453, in handle_errors
+    self.throw_exactly_matched_exception(self.exceptions['exact'], error, feedback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4757, in throw_exactly_matched_exception
+    raise exact[string](message)
+ccxt.base.errors.InvalidNonce: binance {"code":-1021,"msg":"Timestamp for this request was 1000ms ahead of the server's time."}
+2025-05-20 20:41:15,443 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-05-20 20:41:15,445 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-05-20 20:41:15,445 [INFO] logger_config: ✨ All data download tasks completed.
+2025-05-20 20:41:42,704 [INFO] logger_config: Starting data download...
+2025-05-20 20:41:42,745 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-05-20 20:41:42,756 [INFO] logger_config: Converted local startt 2021-01-01 00:00:00 (UTC) to UTC start: 2021-01-01 00:00:00
+2025-05-20 20:41:42,756 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-05-20 20:41:42,757 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-05-20 20:41:42,758 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-20 20:41:45,775 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-19 18:12:00
+2025-05-20 20:41:45,776 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-19 18:12:00, New since: 2025-05-19 18:12:00
+2025-05-20 20:41:45,777 [INFO] logger_config: 🔄 Fetching new data from 2025-05-19 18:12:00 to 2026-02-11 00:11:00
+2025-05-20 20:41:45,778 [INFO] logger_config: 🔍 Fetching data from 2025-05-19 18:12:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-05-20 20:41:50,551 [INFO] logger_config: ✅ Downloaded 1410 new rows. (From 2025-05-19 18:12:00 to 2025-05-20 17:41:00)
+2025-05-20 20:41:50,632 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=2303653, df_new=1409
+2025-05-20 20:41:50,697 [INFO] logger_config: 📊 Final dataset size after merge: 2305062 rows
+2025-05-20 20:42:01,989 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-05-20 20:42:01,990 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 15m...
+2025-05-20 20:42:01,992 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [15m]: 2020-07-10 09:00:00+00:00
+2025-05-20 20:42:01,992 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-05-20 20:42:02,230 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-19 18:00:00
+2025-05-20 20:42:02,231 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-19 18:00:00, New since: 2025-05-19 18:00:00
+2025-05-20 20:42:02,232 [INFO] logger_config: 🔄 Fetching new data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00
+2025-05-20 20:42:02,233 [INFO] logger_config: 🔍 Fetching data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [15m]...
+2025-05-20 20:42:03,249 [INFO] logger_config: ✅ Downloaded 95 new rows. (From 2025-05-19 18:00:00 to 2025-05-20 17:30:00)
+2025-05-20 20:42:03,264 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=153577, df_new=94
+2025-05-20 20:42:03,282 [INFO] logger_config: 📊 Final dataset size after merge: 153671 rows
+2025-05-20 20:42:04,331 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-05-20 20:42:04,332 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 30m...
+2025-05-20 20:42:04,333 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [30m]: 2020-07-10 09:00:00+00:00
+2025-05-20 20:42:04,333 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-20 20:42:04,476 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-19 18:00:00
+2025-05-20 20:42:04,477 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-19 18:00:00, New since: 2025-05-19 18:00:00
+2025-05-20 20:42:04,478 [INFO] logger_config: 🔄 Fetching new data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00
+2025-05-20 20:42:04,478 [INFO] logger_config: 🔍 Fetching data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [30m]...
+2025-05-20 20:42:05,229 [INFO] logger_config: ✅ Downloaded 48 new rows. (From 2025-05-19 18:00:00 to 2025-05-20 17:30:00)
+2025-05-20 20:42:05,233 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=76789, df_new=47
+2025-05-20 20:42:05,239 [INFO] logger_config: 📊 Final dataset size after merge: 76836 rows
+2025-05-20 20:42:05,693 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-05-20 20:42:05,694 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 1m...
+2025-05-20 20:42:05,695 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [1m]: 2023-05-05 16:30:00+00:00
+2025-05-20 20:42:05,695 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-20 20:42:07,305 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-19 18:13:00
+2025-05-20 20:42:07,306 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-20 20:42:07,307 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-19 18:13:00, New since: 2025-05-19 18:13:00
+2025-05-20 20:42:07,307 [INFO] logger_config: 🔄 Fetching new data from 2025-05-19 18:13:00 to 2026-02-11 00:11:00
+2025-05-20 20:42:07,308 [INFO] logger_config: 🔍 Fetching data from 2025-05-19 18:13:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [1m]...
+2025-05-20 20:42:08,984 [INFO] logger_config: ✅ Downloaded 1410 new rows. (From 2025-05-19 18:13:00 to 2025-05-20 17:42:00)
+2025-05-20 20:42:09,018 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=1072904, df_new=1409
+2025-05-20 20:42:09,048 [INFO] logger_config: 📊 Final dataset size after merge: 1074313 rows
+2025-05-20 20:42:14,688 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-05-20 20:42:14,689 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 15m...
+2025-05-20 20:42:14,690 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [15m]: 2023-05-05 16:30:00+00:00
+2025-05-20 20:42:14,691 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_15m.csv
+2025-05-20 20:42:14,797 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-19 18:00:00
+2025-05-20 20:42:14,797 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-20 20:42:14,799 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-19 18:00:00, New since: 2025-05-19 18:00:00
+2025-05-20 20:42:14,799 [INFO] logger_config: 🔄 Fetching new data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00
+2025-05-20 20:42:14,800 [INFO] logger_config: 🔍 Fetching data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [15m]...
+2025-05-20 20:42:16,000 [INFO] logger_config: ✅ Downloaded 95 new rows. (From 2025-05-19 18:00:00 to 2025-05-20 17:30:00)
+2025-05-20 20:42:16,008 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=71527, df_new=94
+2025-05-20 20:42:16,016 [INFO] logger_config: 📊 Final dataset size after merge: 71621 rows
+2025-05-20 20:42:16,395 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_15m.csv
+2025-05-20 20:42:16,396 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 30m...
+2025-05-20 20:42:16,398 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [30m]: 2023-05-05 16:30:00+00:00
+2025-05-20 20:42:16,398 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-20 20:42:16,457 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-19 18:00:00
+2025-05-20 20:42:16,458 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-05-20 20:42:16,459 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-19 18:00:00, New since: 2025-05-19 18:00:00
+2025-05-20 20:42:16,460 [INFO] logger_config: 🔄 Fetching new data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00
+2025-05-20 20:42:16,461 [INFO] logger_config: 🔍 Fetching data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [30m]...
+2025-05-20 20:42:17,669 [INFO] logger_config: ✅ Downloaded 48 new rows. (From 2025-05-19 18:00:00 to 2025-05-20 17:30:00)
+2025-05-20 20:42:17,672 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=35764, df_new=47
+2025-05-20 20:42:17,674 [INFO] logger_config: 📊 Final dataset size after merge: 35811 rows
+2025-05-20 20:42:17,864 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-05-20 20:42:17,865 [INFO] logger_config: 🚀 Processing XRP/USDT:USDT with timeframe 1m...
+2025-05-20 20:42:17,866 [INFO] logger_config: 📌 Found cached oldest timestamp for XRP/USDT:USDT [1m]: 2020-01-06 08:21:00+00:00
+2025-05-20 20:42:17,867 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_XRPUSDTUSDT_1m.csv
+2025-05-20 20:42:20,961 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-19 18:13:00
+2025-05-20 20:42:20,962 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-19 18:13:00, New since: 2025-05-19 18:13:00
+2025-05-20 20:42:20,963 [INFO] logger_config: 🔄 Fetching new data from 2025-05-19 18:13:00 to 2026-02-11 00:11:00
+2025-05-20 20:42:20,964 [INFO] logger_config: 🔍 Fetching data from 2025-05-19 18:13:00 to 2026-02-11 00:11:00 for XRP/USDT:USDT [1m]...
+2025-05-20 20:42:22,109 [INFO] logger_config: ✅ Downloaded 1410 new rows. (From 2025-05-19 18:13:00 to 2025-05-20 17:42:00)
+2025-05-20 20:42:22,182 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=2303654, df_new=1409
+2025-05-20 20:42:22,238 [INFO] logger_config: 📊 Final dataset size after merge: 2305063 rows
+2025-05-20 20:42:33,443 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_XRPUSDTUSDT_1m.csv
+2025-05-20 20:42:33,443 [INFO] logger_config: 🚀 Processing XRP/USDT:USDT with timeframe 15m...
+2025-05-20 20:42:33,444 [INFO] logger_config: 📌 Found cached oldest timestamp for XRP/USDT:USDT [15m]: 2020-01-06 08:15:00+00:00
+2025-05-20 20:42:33,445 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_XRPUSDTUSDT_15m.csv
+2025-05-20 20:42:33,726 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-19 18:00:00
+2025-05-20 20:42:33,730 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-19 18:00:00, New since: 2025-05-19 18:00:00
+2025-05-20 20:42:33,730 [INFO] logger_config: 🔄 Fetching new data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00
+2025-05-20 20:42:33,731 [INFO] logger_config: 🔍 Fetching data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00 for XRP/USDT:USDT [15m]...
+2025-05-20 20:42:34,476 [INFO] logger_config: ✅ Downloaded 95 new rows. (From 2025-05-19 18:00:00 to 2025-05-20 17:30:00)
+2025-05-20 20:42:34,499 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=153577, df_new=94
+2025-05-20 20:42:34,542 [INFO] logger_config: 📊 Final dataset size after merge: 153671 rows
+2025-05-20 20:42:35,559 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_XRPUSDTUSDT_15m.csv
+2025-05-20 20:42:35,560 [INFO] logger_config: 🚀 Processing XRP/USDT:USDT with timeframe 30m...
+2025-05-20 20:42:35,561 [INFO] logger_config: 📌 Found cached oldest timestamp for XRP/USDT:USDT [30m]: 2020-01-06 08:00:00+00:00
+2025-05-20 20:42:35,561 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_XRPUSDTUSDT_30m.csv
+2025-05-20 20:42:35,686 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-19 18:00:00
+2025-05-20 20:42:35,688 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-19 18:00:00, New since: 2025-05-19 18:00:00
+2025-05-20 20:42:35,688 [INFO] logger_config: 🔄 Fetching new data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00
+2025-05-20 20:42:35,689 [INFO] logger_config: 🔍 Fetching data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00 for XRP/USDT:USDT [30m]...
+2025-05-20 20:42:36,893 [INFO] logger_config: ✅ Downloaded 48 new rows. (From 2025-05-19 18:00:00 to 2025-05-20 17:30:00)
+2025-05-20 20:42:36,896 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=76789, df_new=47
+2025-05-20 20:42:36,901 [INFO] logger_config: 📊 Final dataset size after merge: 76836 rows
+2025-05-20 20:42:37,385 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_XRPUSDTUSDT_30m.csv
+2025-05-20 20:42:37,386 [INFO] logger_config: 🚀 Processing ENA/USDT:USDT with timeframe 1m...
+2025-05-20 20:42:37,386 [INFO] logger_config: 📌 Found cached oldest timestamp for ENA/USDT:USDT [1m]: 2024-04-02 12:30:00+00:00
+2025-05-20 20:42:37,387 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_ENAUSDTUSDT_1m.csv
+2025-05-20 20:42:38,233 [INFO] logger_config: 🕒 Existing data range: 2024-04-02 12:30:00+00:00 to 2025-05-19 18:13:00
+2025-05-20 20:42:38,233 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2024-04-02 12:30:00+00:00.
+2025-05-20 20:42:38,235 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-19 18:13:00, New since: 2025-05-19 18:13:00
+2025-05-20 20:42:38,235 [INFO] logger_config: 🔄 Fetching new data from 2025-05-19 18:13:00 to 2026-02-11 00:11:00
+2025-05-20 20:42:38,235 [INFO] logger_config: 🔍 Fetching data from 2025-05-19 18:13:00 to 2026-02-11 00:11:00 for ENA/USDT:USDT [1m]...
+2025-05-20 20:42:39,636 [INFO] logger_config: ✅ Downloaded 1410 new rows. (From 2025-05-19 18:13:00 to 2025-05-20 17:42:00)
+2025-05-20 20:42:39,652 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=593624, df_new=1409
+2025-05-20 20:42:39,672 [INFO] logger_config: 📊 Final dataset size after merge: 595033 rows
+2025-05-20 20:42:43,500 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_ENAUSDTUSDT_1m.csv
+2025-05-20 20:42:43,501 [INFO] logger_config: 🚀 Processing ENA/USDT:USDT with timeframe 15m...
+2025-05-20 20:42:43,502 [INFO] logger_config: 📌 Found cached oldest timestamp for ENA/USDT:USDT [15m]: 2024-04-02 12:30:00+00:00
+2025-05-20 20:42:43,503 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_ENAUSDTUSDT_15m.csv
+2025-05-20 20:42:43,572 [INFO] logger_config: 🕒 Existing data range: 2024-04-02 12:30:00+00:00 to 2025-05-19 18:00:00
+2025-05-20 20:42:43,572 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2024-04-02 12:30:00+00:00.
+2025-05-20 20:42:43,573 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-19 18:00:00, New since: 2025-05-19 18:00:00
+2025-05-20 20:42:43,574 [INFO] logger_config: 🔄 Fetching new data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00
+2025-05-20 20:42:43,574 [INFO] logger_config: 🔍 Fetching data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00 for ENA/USDT:USDT [15m]...
+2025-05-20 20:42:44,784 [INFO] logger_config: ✅ Downloaded 95 new rows. (From 2025-05-19 18:00:00 to 2025-05-20 17:30:00)
+2025-05-20 20:42:44,787 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=39575, df_new=94
+2025-05-20 20:42:44,790 [INFO] logger_config: 📊 Final dataset size after merge: 39669 rows
+2025-05-20 20:42:45,003 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_ENAUSDTUSDT_15m.csv
+2025-05-20 20:42:45,004 [INFO] logger_config: 🚀 Processing ENA/USDT:USDT with timeframe 30m...
+2025-05-20 20:42:45,005 [INFO] logger_config: 📌 Found cached oldest timestamp for ENA/USDT:USDT [30m]: 2024-04-02 12:30:00+00:00
+2025-05-20 20:42:45,005 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_ENAUSDTUSDT_30m.csv
+2025-05-20 20:42:45,039 [INFO] logger_config: 🕒 Existing data range: 2024-04-02 12:30:00+00:00 to 2025-05-19 18:00:00
+2025-05-20 20:42:45,040 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2024-04-02 12:30:00+00:00.
+2025-05-20 20:42:45,040 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-19 18:00:00, New since: 2025-05-19 18:00:00
+2025-05-20 20:42:45,041 [INFO] logger_config: 🔄 Fetching new data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00
+2025-05-20 20:42:45,041 [INFO] logger_config: 🔍 Fetching data from 2025-05-19 18:00:00 to 2026-02-11 00:11:00 for ENA/USDT:USDT [30m]...
+2025-05-20 20:42:45,778 [INFO] logger_config: ✅ Downloaded 48 new rows. (From 2025-05-19 18:00:00 to 2025-05-20 17:30:00)
+2025-05-20 20:42:45,780 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=19788, df_new=47
+2025-05-20 20:42:45,782 [INFO] logger_config: 📊 Final dataset size after merge: 19835 rows
+2025-05-20 20:42:45,904 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_ENAUSDTUSDT_30m.csv
+2025-05-20 20:42:45,905 [INFO] logger_config: ✨ All data download tasks completed.
+2025-06-03 01:53:00,738 [INFO] logger_config: Starting data download...
+2025-06-03 01:53:01,045 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-06-03 01:53:01,086 [INFO] logger_config: Converted local startt 2021-01-01 00:00:00 (UTC) to UTC start: 2021-01-01 00:00:00
+2025-06-03 01:53:01,087 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-06-03 01:53:01,092 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-06-03 01:53:01,097 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-06-03 01:53:09,748 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-20 17:41:00
+2025-06-03 01:53:09,749 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-20 17:41:00, New since: 2025-05-20 17:41:00
+2025-06-03 01:53:09,750 [INFO] logger_config: 🔄 Fetching new data from 2025-05-20 17:41:00 to 2026-02-11 00:11:00
+2025-06-03 01:53:09,752 [INFO] logger_config: 🔍 Fetching data from 2025-05-20 17:41:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-06-03 01:53:29,111 [INFO] logger_config: ✅ Downloaded 19033 new rows. (From 2025-05-20 17:41:00 to 2025-06-02 22:53:00)
+2025-06-03 01:53:29,258 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=2305062, df_new=19032
+2025-06-03 01:53:29,398 [INFO] logger_config: 📊 Final dataset size after merge: 2324094 rows
+2025-06-03 01:53:58,453 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.csv
+2025-06-03 01:53:58,454 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 15m...
+2025-06-03 01:53:58,456 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [15m]: 2020-07-10 09:00:00+00:00
+2025-06-03 01:53:58,463 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-06-03 01:53:58,868 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-20 17:30:00
+2025-06-03 01:53:58,869 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-20 17:30:00, New since: 2025-05-20 17:30:00
+2025-06-03 01:53:58,869 [INFO] logger_config: 🔄 Fetching new data from 2025-05-20 17:30:00 to 2026-02-11 00:11:00
+2025-06-03 01:53:58,870 [INFO] logger_config: 🔍 Fetching data from 2025-05-20 17:30:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [15m]...
+2025-06-03 01:54:00,034 [INFO] logger_config: ✅ Downloaded 1270 new rows. (From 2025-05-20 17:30:00 to 2025-06-02 22:45:00)
+2025-06-03 01:54:00,052 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=153671, df_new=1269
+2025-06-03 01:54:00,072 [INFO] logger_config: 📊 Final dataset size after merge: 154940 rows
+2025-06-03 01:54:01,178 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_15m.csv
+2025-06-03 01:54:01,179 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 30m...
+2025-06-03 01:54:01,179 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [30m]: 2020-07-10 09:00:00+00:00
+2025-06-03 01:54:01,271 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-06-03 01:54:03,487 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-20 17:30:00
+2025-06-03 01:54:03,488 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-20 17:30:00, New since: 2025-05-20 17:30:00
+2025-06-03 01:54:03,489 [INFO] logger_config: 🔄 Fetching new data from 2025-05-20 17:30:00 to 2026-02-11 00:11:00
+2025-06-03 01:54:03,489 [INFO] logger_config: 🔍 Fetching data from 2025-05-20 17:30:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [30m]...
+2025-06-03 01:54:04,241 [INFO] logger_config: ✅ Downloaded 635 new rows. (From 2025-05-20 17:30:00 to 2025-06-02 22:30:00)
+2025-06-03 01:54:04,245 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=76836, df_new=634
+2025-06-03 01:54:04,250 [INFO] logger_config: 📊 Final dataset size after merge: 77470 rows
+2025-06-03 01:54:04,713 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_DOGEUSDTUSDT_30m.csv
+2025-06-03 01:54:04,714 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 1m...
+2025-06-03 01:54:04,714 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [1m]: 2023-05-05 16:30:00+00:00
+2025-06-03 01:54:04,715 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-06-03 01:54:09,353 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-20 17:42:00
+2025-06-03 01:54:09,353 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-06-03 01:54:09,354 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-20 17:42:00, New since: 2025-05-20 17:42:00
+2025-06-03 01:54:09,355 [INFO] logger_config: 🔄 Fetching new data from 2025-05-20 17:42:00 to 2026-02-11 00:11:00
+2025-06-03 01:54:09,356 [INFO] logger_config: 🔍 Fetching data from 2025-05-20 17:42:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [1m]...
+2025-06-03 01:54:24,340 [INFO] logger_config: ✅ Downloaded 19033 new rows. (From 2025-05-20 17:42:00 to 2025-06-02 22:54:00)
+2025-06-03 01:54:24,398 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=1074313, df_new=19032
+2025-06-03 01:54:24,446 [INFO] logger_config: 📊 Final dataset size after merge: 1093345 rows
+2025-06-03 01:54:39,220 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.csv
+2025-06-03 01:54:39,221 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 15m...
+2025-06-03 01:54:39,222 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [15m]: 2023-05-05 16:30:00+00:00
+2025-06-03 01:54:39,223 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_15m.csv
+2025-06-03 01:54:39,949 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-20 17:30:00
+2025-06-03 01:54:39,950 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-06-03 01:54:39,951 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-20 17:30:00, New since: 2025-05-20 17:30:00
+2025-06-03 01:54:39,952 [INFO] logger_config: 🔄 Fetching new data from 2025-05-20 17:30:00 to 2026-02-11 00:11:00
+2025-06-03 01:54:39,953 [INFO] logger_config: 🔍 Fetching data from 2025-05-20 17:30:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [15m]...
+2025-06-03 01:54:50,062 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747762200000: binance GET https://fapi.binance.com/fapi/v1/klines?interval=15m&limit=1000&symbol=1000PEPEUSDT&startTime=1747762200000
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 534, in _make_request
+    response = conn.getresponse()
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 516, in getresponse
+    httplib_response = super().getresponse()
+  File "C:\Users\DELL\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 1430, in getresponse
+    response.begin()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Users\DELL\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 331, in begin
+    version, status, reason = self._read_status()
+                              ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\DELL\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 292, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\DELL\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 719, in readinto
+    return self._sock.recv_into(b)
+           ~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\DELL\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 1304, in recv_into
+    return self.read(nbytes, buffer)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 1138, in read
+    return self._sslobj.read(len, buffer)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+TimeoutError: The read operation timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\retry.py", line 474, in increment
+    raise reraise(type(error), error, _stacktrace)
+          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\util.py", line 39, in reraise
+    raise value
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 536, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=read_timeout)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 367, in _raise_timeout
+    raise ReadTimeoutError(
+        self, url, f"Read timed out. (read timeout={timeout_value})"
+    ) from err
+urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='fapi.binance.com', port=443): Read timed out. (read timeout=10.0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 548, in fetch
+    response = self.session.request(
+        method,
+    ...<5 lines>...
+        verify=self.verify and self.validateServerSsl
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 713, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='fapi.binance.com', port=443): Read timed out. (read timeout=10.0)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4687, in fetch_ohlcv
+    response = self.fapiPublicGetKlines(self.extend(request, params))
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 578, in fetch
+    raise RequestTimeout(details) from e
+ccxt.base.errors.RequestTimeout: binance GET https://fapi.binance.com/fapi/v1/klines?interval=15m&limit=1000&symbol=1000PEPEUSDT&startTime=1747762200000
+2025-06-03 01:54:50,123 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-06-03 01:54:50,126 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-06-03 01:54:50,126 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 30m...
+2025-06-03 01:54:50,127 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [30m]: 2023-05-05 16:30:00+00:00
+2025-06-03 01:54:50,131 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_30m.csv
+2025-06-03 01:54:50,244 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-05-20 17:30:00
+2025-06-03 01:54:50,245 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2023-05-05 16:30:00+00:00.
+2025-06-03 01:54:50,246 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-20 17:30:00, New since: 2025-05-20 17:30:00
+2025-06-03 01:54:50,247 [INFO] logger_config: 🔄 Fetching new data from 2025-05-20 17:30:00 to 2026-02-11 00:11:00
+2025-06-03 01:54:50,248 [INFO] logger_config: 🔍 Fetching data from 2025-05-20 17:30:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [30m]...
+2025-06-03 01:54:50,352 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1747762200000: binance GET https://fapi.binance.com/fapi/v1/klines?interval=30m&limit=1000&symbol=1000PEPEUSDT&startTime=1747762200000
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 198, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 977, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 704, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 205, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: <urllib3.connection.HTTPSConnection object at 0x000001DF5BE6C410>: Failed to resolve 'fapi.binance.com' ([Errno 11001] getaddrinfo failed)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='fapi.binance.com', port=443): Max retries exceeded with url: /fapi/v1/klines?interval=30m&limit=1000&symbol=1000PEPEUSDT&startTime=1747762200000 (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001DF5BE6C410>: Failed to resolve 'fapi.binance.com' ([Errno 11001] getaddrinfo failed)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 548, in fetch
+    response = self.session.request(
+        method,
+    ...<5 lines>...
+        verify=self.verify and self.validateServerSsl
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='fapi.binance.com', port=443): Max retries exceeded with url: /fapi/v1/klines?interval=30m&limit=1000&symbol=1000PEPEUSDT&startTime=1747762200000 (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001DF5BE6C410>: Failed to resolve 'fapi.binance.com' ([Errno 11001] getaddrinfo failed)"))
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4687, in fetch_ohlcv
+    response = self.fapiPublicGetKlines(self.extend(request, params))
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 601, in fetch
+    raise NetworkError(details) from e
+ccxt.base.errors.NetworkError: binance GET https://fapi.binance.com/fapi/v1/klines?interval=30m&limit=1000&symbol=1000PEPEUSDT&startTime=1747762200000
+2025-06-03 01:54:50,378 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-06-03 01:54:50,380 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-06-03 01:54:50,380 [INFO] logger_config: 🚀 Processing XRP/USDT:USDT with timeframe 1m...
+2025-06-03 01:54:50,381 [INFO] logger_config: 📌 Found cached oldest timestamp for XRP/USDT:USDT [1m]: 2020-01-06 08:21:00+00:00
+2025-06-03 01:54:50,388 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_XRPUSDTUSDT_1m.csv
+2025-06-03 01:54:58,482 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-20 17:42:00
+2025-06-03 01:54:58,484 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-20 17:42:00, New since: 2025-05-20 17:42:00
+2025-06-03 01:54:58,485 [INFO] logger_config: 🔄 Fetching new data from 2025-05-20 17:42:00 to 2026-02-11 00:11:00
+2025-06-03 01:54:58,485 [INFO] logger_config: 🔍 Fetching data from 2025-05-20 17:42:00 to 2026-02-11 00:11:00 for XRP/USDT:USDT [1m]...
+2025-06-03 01:55:11,178 [INFO] logger_config: ✅ Downloaded 19033 new rows. (From 2025-05-20 17:42:00 to 2025-06-02 22:54:00)
+2025-06-03 01:55:11,271 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=2305063, df_new=19032
+2025-06-03 01:55:11,363 [INFO] logger_config: 📊 Final dataset size after merge: 2324095 rows
+2025-06-03 01:55:44,498 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_XRPUSDTUSDT_1m.csv
+2025-06-03 01:55:44,498 [INFO] logger_config: 🚀 Processing XRP/USDT:USDT with timeframe 15m...
+2025-06-03 01:55:44,499 [INFO] logger_config: 📌 Found cached oldest timestamp for XRP/USDT:USDT [15m]: 2020-01-06 08:15:00+00:00
+2025-06-03 01:55:44,505 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_XRPUSDTUSDT_15m.csv
+2025-06-03 01:55:46,131 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-20 17:30:00
+2025-06-03 01:55:46,132 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-20 17:30:00, New since: 2025-05-20 17:30:00
+2025-06-03 01:55:46,133 [INFO] logger_config: 🔄 Fetching new data from 2025-05-20 17:30:00 to 2026-02-11 00:11:00
+2025-06-03 01:55:46,134 [INFO] logger_config: 🔍 Fetching data from 2025-05-20 17:30:00 to 2026-02-11 00:11:00 for XRP/USDT:USDT [15m]...
+2025-06-03 01:55:47,356 [INFO] logger_config: ✅ Downloaded 1270 new rows. (From 2025-05-20 17:30:00 to 2025-06-02 22:45:00)
+2025-06-03 01:55:47,373 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=153671, df_new=1269
+2025-06-03 01:55:47,396 [INFO] logger_config: 📊 Final dataset size after merge: 154940 rows
+2025-06-03 01:55:49,067 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_XRPUSDTUSDT_15m.csv
+2025-06-03 01:55:49,068 [INFO] logger_config: 🚀 Processing XRP/USDT:USDT with timeframe 30m...
+2025-06-03 01:55:49,069 [INFO] logger_config: 📌 Found cached oldest timestamp for XRP/USDT:USDT [30m]: 2020-01-06 08:00:00+00:00
+2025-06-03 01:55:49,070 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_XRPUSDTUSDT_30m.csv
+2025-06-03 01:55:49,265 [INFO] logger_config: 🕒 Existing data range: 2021-01-01 00:00:00+00:00 to 2025-05-20 17:30:00
+2025-06-03 01:55:49,267 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-20 17:30:00, New since: 2025-05-20 17:30:00
+2025-06-03 01:55:49,268 [INFO] logger_config: 🔄 Fetching new data from 2025-05-20 17:30:00 to 2026-02-11 00:11:00
+2025-06-03 01:55:49,268 [INFO] logger_config: 🔍 Fetching data from 2025-05-20 17:30:00 to 2026-02-11 00:11:00 for XRP/USDT:USDT [30m]...
+2025-06-03 01:55:50,171 [INFO] logger_config: ✅ Downloaded 635 new rows. (From 2025-05-20 17:30:00 to 2025-06-02 22:30:00)
+2025-06-03 01:55:50,177 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=76836, df_new=634
+2025-06-03 01:55:50,184 [INFO] logger_config: 📊 Final dataset size after merge: 77470 rows
+2025-06-03 01:55:51,702 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_XRPUSDTUSDT_30m.csv
+2025-06-03 01:55:51,705 [INFO] logger_config: 🚀 Processing ENA/USDT:USDT with timeframe 1m...
+2025-06-03 01:55:51,709 [INFO] logger_config: 📌 Found cached oldest timestamp for ENA/USDT:USDT [1m]: 2024-04-02 12:30:00+00:00
+2025-06-03 01:55:51,711 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_ENAUSDTUSDT_1m.csv
+2025-06-03 01:55:54,386 [INFO] logger_config: 🕒 Existing data range: 2024-04-02 12:30:00+00:00 to 2025-05-20 17:42:00
+2025-06-03 01:55:54,389 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2024-04-02 12:30:00+00:00.
+2025-06-03 01:55:54,392 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-20 17:42:00, New since: 2025-05-20 17:42:00
+2025-06-03 01:55:54,396 [INFO] logger_config: 🔄 Fetching new data from 2025-05-20 17:42:00 to 2026-02-11 00:11:00
+2025-06-03 01:55:54,402 [INFO] logger_config: 🔍 Fetching data from 2025-05-20 17:42:00 to 2026-02-11 00:11:00 for ENA/USDT:USDT [1m]...
+2025-06-03 01:56:08,709 [INFO] logger_config: ✅ Downloaded 19034 new rows. (From 2025-05-20 17:42:00 to 2025-06-02 22:55:00)
+2025-06-03 01:56:08,777 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=595033, df_new=19033
+2025-06-03 01:56:08,842 [INFO] logger_config: 📊 Final dataset size after merge: 614066 rows
+2025-06-03 01:56:19,044 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_ENAUSDTUSDT_1m.csv
+2025-06-03 01:56:19,045 [INFO] logger_config: 🚀 Processing ENA/USDT:USDT with timeframe 15m...
+2025-06-03 01:56:19,046 [INFO] logger_config: 📌 Found cached oldest timestamp for ENA/USDT:USDT [15m]: 2024-04-02 12:30:00+00:00
+2025-06-03 01:56:19,079 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_ENAUSDTUSDT_15m.csv
+2025-06-03 01:56:19,258 [INFO] logger_config: 🕒 Existing data range: 2024-04-02 12:30:00+00:00 to 2025-05-20 17:30:00
+2025-06-03 01:56:19,263 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2024-04-02 12:30:00+00:00.
+2025-06-03 01:56:19,268 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-20 17:30:00, New since: 2025-05-20 17:30:00
+2025-06-03 01:56:19,276 [INFO] logger_config: 🔄 Fetching new data from 2025-05-20 17:30:00 to 2026-02-11 00:11:00
+2025-06-03 01:56:19,281 [INFO] logger_config: 🔍 Fetching data from 2025-05-20 17:30:00 to 2026-02-11 00:11:00 for ENA/USDT:USDT [15m]...
+2025-06-03 01:56:21,388 [INFO] logger_config: ✅ Downloaded 1270 new rows. (From 2025-05-20 17:30:00 to 2025-06-02 22:45:00)
+2025-06-03 01:56:21,400 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=39669, df_new=1269
+2025-06-03 01:56:21,412 [INFO] logger_config: 📊 Final dataset size after merge: 40938 rows
+2025-06-03 01:56:22,060 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_ENAUSDTUSDT_15m.csv
+2025-06-03 01:56:22,061 [INFO] logger_config: 🚀 Processing ENA/USDT:USDT with timeframe 30m...
+2025-06-03 01:56:22,062 [INFO] logger_config: 📌 Found cached oldest timestamp for ENA/USDT:USDT [30m]: 2024-04-02 12:30:00+00:00
+2025-06-03 01:56:22,063 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_ENAUSDTUSDT_30m.csv
+2025-06-03 01:56:22,143 [INFO] logger_config: 🕒 Existing data range: 2024-04-02 12:30:00+00:00 to 2025-05-20 17:30:00
+2025-06-03 01:56:22,144 [WARNING] logger_config: ⚠️ Requested start date 2021-01-01 00:00:00+00:00 is too old! Adjusting to 2024-04-02 12:30:00+00:00.
+2025-06-03 01:56:22,146 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-05-20 17:30:00, New since: 2025-05-20 17:30:00
+2025-06-03 01:56:22,147 [INFO] logger_config: 🔄 Fetching new data from 2025-05-20 17:30:00 to 2026-02-11 00:11:00
+2025-06-03 01:56:22,148 [INFO] logger_config: 🔍 Fetching data from 2025-05-20 17:30:00 to 2026-02-11 00:11:00 for ENA/USDT:USDT [30m]...
+2025-06-03 01:56:23,674 [INFO] logger_config: ✅ Downloaded 635 new rows. (From 2025-05-20 17:30:00 to 2025-06-02 22:30:00)
+2025-06-03 01:56:23,676 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=19835, df_new=634
+2025-06-03 01:56:23,680 [INFO] logger_config: 📊 Final dataset size after merge: 20469 rows
+2025-06-03 01:56:24,002 [INFO] logger_config: ✅ Full dataset updated: c:\src\trading\download\data\binance_ENAUSDTUSDT_30m.csv
+2025-06-03 01:56:24,004 [INFO] logger_config: ✨ All data download tasks completed.

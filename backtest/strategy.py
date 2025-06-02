@@ -26,8 +26,8 @@ class DCAStrategy(Strategy):
     require_rsi_reset = strategy_params.get("require_rsi_reset")
     rsi_reset_percnetage = strategy_params.get("rsi_reset_percnetage")
     rsi_dynamic_threshold = strategy_params.get("rsi_dynamic_threshold", True)
-    rsi_dynamic_window = strategy_params.get("rsi_dynamic_window", rsi_window *10)
-    rsi_percentile = strategy_params.get("rsi_percentile", 0.005)
+    rsi_dynamic_window = strategy_params.get("rsi_dynamic_window", rsi_window *50)
+    rsi_percentile = strategy_params.get("rsi_percentile", 0.5)
     safety_order_price_mode = strategy_params.get("safety_order_price_mode")
     start_trading_time = datetime.strptime(
         strategy_params.get("start_trading_time", "2025-02-01 00:00:00"),
@@ -111,6 +111,7 @@ class DCAStrategy(Strategy):
         calculate_laguerre = self.show_indicators.get('laguerre', False) or self.enable_laguere_calculation
         calculate_bbw = self.show_indicators.get('bbw', False)   
         calculate_cv = self.show_indicators.get('cv', False)
+        calculate_dynamic_rsi = self.show_indicators.get('dynamic_rsi', False) or self.rsi_dynamic_threshold
          
         df = self.data.df
 
@@ -126,12 +127,12 @@ class DCAStrategy(Strategy):
                     self.I(lambda _: self.rsi_values, self.data.Close, name="RSI")
                     
         # Compute dynamic RSI threshold if enabled            
-        if self.enable_rsi_calculation and self.rsi_dynamic_threshold:
+        if calculate_dynamic_rsi:
             self.rsi_dynamic_threshold_series = (
                 self.rsi_values.rolling(window=self.rsi_dynamic_window)
                 .quantile(self.rsi_percentile)
             )
-            if self.show_indicators.get('dynamic_rsi_threshold', True):
+            if self.show_indicators.get('dynamic_rsi', True):
                 self.I(
                     lambda _: self.rsi_dynamic_threshold_series,
                     self.data.Close,

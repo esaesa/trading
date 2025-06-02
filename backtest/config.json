@@ -10,8 +10,8 @@
         "enable_optimization": false,
         "debug": true,
         "debug_loop": false,
-        "start_date": "2023-05-01 12:00:00",
-        "end_date":   "2025-05-22 11:59:59",
+        "start_date": "2024-05-01 12:00:00",
+        "end_date":   "2025-06-22 11:59:59",
     
         "cash": 10000,
         "commission": 0.0005,
@@ -54,7 +54,7 @@
             "process": false
           },
           "show_indicators": {
-            "dynamic_rsi_threshold": false,
+            "dynamic_rsi": true,
             "rsi": true,
             "bbw": false,
             "atr": false,
