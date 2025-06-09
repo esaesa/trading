@@ -1,7 +1,7 @@
 {
     "backtest_params": {
         "symbols": [
-            "ENAUSDTUSDT"
+            "DOGEUSDTUSDT"
         ],
         "timeframes": [
             "1m"
@@ -10,8 +10,8 @@
         "enable_optimization": false,
         "debug": true,
         "debug_loop": false,
-        "start_date": "2025-01-01 00:00:00",
-        "end_date":   "2025-06-22 11:59:59",
+        "start_date": "2023-10-01 00:00:00",
+        "end_date":   "2025-04-22 11:59:59",
     
         "cash": 100000000,
         "commission": 0.0005,
@@ -26,11 +26,11 @@
         "so_size_multiplier": 2,
         "first_safety_order_multiplier": 1.5,
         "initial_deviation_percent": 1,
-        "price_multiplier": 1.5,
+        "price_multiplier": 1.6,
         "rsi_threshold":33,
-        "rsi_window": 21,
+        "rsi_window": 7,
         "enable_rsi_calculation": true,
-        "rsi_dynamic_threshold": false,
+        "rsi_dynamic_threshold": true,
         "require_rsi_reset": false,
         "rsi_reset_percentage": 10,
         "safety_order_price_mode": "dynamic",
@@ -47,7 +47,7 @@
     
         "enable_cv_calculation": false,
         "enable_laguere_calculation": false,
-        "start_trading_time" : "2023-02-03 16:01:00",
+        "start_trading_time" : "2024-01-01 00:00:00",
         "debug": {
             "trade": false,
             "loop": false,

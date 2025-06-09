@@ -26,8 +26,8 @@ class DCAStrategy(Strategy):
     require_rsi_reset = strategy_params.get("require_rsi_reset")
     rsi_reset_percentage = strategy_params.get("rsi_reset_percentage")
     rsi_dynamic_threshold = strategy_params.get("rsi_dynamic_threshold")
-    rsi_dynamic_window = strategy_params.get("rsi_dynamic_window", rsi_window *100)
-    rsi_percentile = strategy_params.get("rsi_percentile", 0.5)
+    rsi_dynamic_window = strategy_params.get("rsi_dynamic_window", rsi_window *10000)
+    rsi_percentile = strategy_params.get("rsi_percentile", 0.05)
     safety_order_price_mode = strategy_params.get("safety_order_price_mode")
     start_trading_time = datetime.strptime(
         strategy_params.get("start_trading_time", "2025-02-01 00:00:00"),
@@ -620,7 +620,7 @@ class DCAStrategy(Strategy):
         
         dynamic_thr = (
             self.rsi_dynamic_threshold_series.loc[current_time]
-            if self.rsi_dynamic_threshold
+            if self.rsi_dynamic_threshold and not  np.isnan (self.rsi_dynamic_threshold_series.loc[current_time])
             else self.rsi_threshold)
         
         current_idx = len(self.data) - 1
