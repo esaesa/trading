@@ -24,9 +24,9 @@ class DCAStrategy(Strategy):
     rsi_threshold = strategy_params.get("rsi_threshold")
     rsi_window = strategy_params.get("rsi_window")
     require_rsi_reset = strategy_params.get("require_rsi_reset")
-    rsi_reset_percnetage = strategy_params.get("rsi_reset_percnetage")
-    rsi_dynamic_threshold = strategy_params.get("rsi_dynamic_threshold", True)
-    rsi_dynamic_window = strategy_params.get("rsi_dynamic_window", rsi_window *50)
+    rsi_reset_percentage = strategy_params.get("rsi_reset_percentage")
+    rsi_dynamic_threshold = strategy_params.get("rsi_dynamic_threshold")
+    rsi_dynamic_window = strategy_params.get("rsi_dynamic_window", rsi_window *100)
     rsi_percentile = strategy_params.get("rsi_percentile", 0.5)
     safety_order_price_mode = strategy_params.get("safety_order_price_mode")
     start_trading_time = datetime.strptime(
@@ -171,6 +171,7 @@ class DCAStrategy(Strategy):
 
         self.take_profit_prices = np.full(len(self.data), np.nan)
         self.tp_indicator = self.I(lambda: self.take_profit_prices, name='Take Profit', overlay=True, color='red')
+
     
     # --- Debug Helper Functions ---
     def debug_loop_info(self, price, rsi_val, current_time):
@@ -205,6 +206,13 @@ class DCAStrategy(Strategy):
         computed_price = last_filled_price * ((100 - deviation) / 100)
         return computed_price
 
+    def compute_order_quantity(self, price: float, fraction: float) -> int:
+        """
+        Compute maximum integer quantity based on available cash and fraction.
+        """
+        investment = self._broker._cash * fraction
+        return math.floor(investment / price)
+    
     def calculate_safety_order_qty(self, so_price, multiplier, level):
         if self.safety_order_mode.lower() == "value":
             if level == 1:
@@ -243,6 +251,7 @@ class DCAStrategy(Strategy):
             multiplier = 2 if (self.enable_ema_calculation and self.ema_dynamic is not None and price > self.ema_dynamic[-1]) else 1
             initial_investment = self._broker._cash * (self.entry_fraction * multiplier)
             base_order_quantity = math.floor(initial_investment / price)
+            effective_fraction = self.entry_fraction * multiplier
             if base_order_quantity * price >= self.minimum_notional:
                 if base_order_quantity < 1:
                     raise ValueError("Backtesting.py does not support fractional units. Adjust your entry fraction.")
@@ -374,13 +383,13 @@ class DCAStrategy(Strategy):
         console.print(table)
 
     
-    def process_dca(self, price, rsi_val, current_time):
+    def process_dca(self, price, rsi_val, dynamic_thr, current_time):
         if self.dca_level < self.max_dca_levels and self.rsi_reset:
             if self.safety_order_price_mode.lower() == "dynamic":
                 so_price = self.dynamic_safety_price(self.last_filled_price, self.dca_level + 1)
             else:
                 so_price = self.static_safety_price(self.base_order_price, self.dca_level + 1)
-            if price <= so_price and (np.isnan(rsi_val ) or rsi_val < self.rsi_threshold):
+            if price <= so_price and (np.isnan(rsi_val) or rsi_val < dynamic_thr):
                 
                 so_size = self.calculate_safety_order_qty(so_price, self.first_safety_order_multiplier, self.dca_level + 1)
                 # Calculate maximum affordable size considering commission and available cash
@@ -608,6 +617,12 @@ class DCAStrategy(Strategy):
         current_time = self.data.index[-1]
         if current_time < self.start_trading_time:
             return
+        
+        dynamic_thr = (
+            self.rsi_dynamic_threshold_series.loc[current_time]
+            if self.rsi_dynamic_threshold
+            else self.rsi_threshold)
+        
         current_idx = len(self.data) - 1
         if self.debug_backtest or self.show_indicators.get('average_entry_price', True):
             if self.position:
@@ -638,7 +653,8 @@ class DCAStrategy(Strategy):
                 rsi_val = self.rsi_values.iloc[-1]  # Fallback to positional
         else:
             rsi_val = np.nan
-        if np.isnan(rsi_val) or rsi_val >= self.rsi_threshold * (1 + self.rsi_reset_percnetage/100):
+        #if np.isnan(rsi_val) or rsi_val >= self.rsi_threshold * (1 + self.rsi_reset_percentage/100):
+        if np.isnan(rsi_val) or rsi_val >= dynamic_thr * (1 + self.rsi_reset_percentage/100):    
             self.rsi_reset = True
         self.debug_loop_info(price, rsi_val, current_time)
         if self.position:
@@ -647,7 +663,7 @@ class DCAStrategy(Strategy):
             else:
                 if not self.enable_rsi_calculation: # Value may be a number in other cases i.e visualization only
                     rsi_val = np.nan
-                self.process_dca(current_low, rsi_val, current_time)
+                self.process_dca(current_low, rsi_val, dynamic_thr, current_time)
         else:
             self.process_entry(price, current_time)
             return True

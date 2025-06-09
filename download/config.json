@@ -5,9 +5,7 @@
         "exchange": "binance",
         "timezone": "UTC",
         "timeframes": [
-            "1m",
-            "15m",
-           "30m"
+            "1m"
    
         ],
         "alltimes":[
@@ -15,11 +13,12 @@
         
         ],
         "symbols": [
-        
-            "DOGE/USDT:USDT",
-            "1000PEPE/USDT:USDT",
-            "XRP/USDT:USDT",
-            "ENA/USDT:USDT"
+        "1000SHIB/USDT:USDT",
+"BTC/USDT:USDT",
+           "DOGE/USDT:USDT",
+        "1000PEPE/USDT:USDT",
+
+        "XRP/USDT:USDT"
         ],
         "all_symbol":[
         "AIXBT/USDT:USDT",
@@ -31,7 +30,7 @@
         "1000SHIB/USDT:USDT",
         "ENA/USDT:USDT"
     ],
-        "start_date": "2021-01-01 00:00:00",
+        "start_date": "2020-01-01 00:00:00",
         "end_date": "2026-02-11 00:11:00",
         "data_path": "data"
     }

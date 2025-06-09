@@ -6,16 +6,30 @@ from logger_config import logger
 
 
 def load_data(file_path, start_date=None, end_date=None, resample_freq=None):
-    """Load historical price data from CSV."""
-    if not os.path.exists(file_path):
-        raise FileNotFoundError(f"CSV file not found: {file_path}")
+    """
+    Load OHLCV data from Feather, filter by [start_date, end_date], 
+    rename columns, set timestamp index, and optionally resample.
+    """
+    # ★ always target .feather
+    feather_path = file_path.replace('.csv', '.feather')
+    if not os.path.exists(feather_path):
+        raise FileNotFoundError(f"Feather file not found: {feather_path}")
+    logger.info(f"Loading data from {feather_path}...")
 
-    logger.info(f"Loading data from {file_path}...")
-    data = pd.read_csv(file_path, parse_dates=["timestamp"])
-    data.set_index("timestamp", inplace=True)
+    # ★ direct Feather load
+    df = pd.read_feather(feather_path)
+    
+    # ★ filter BEFORE indexing
+    if start_date:
+        df = df[df['timestamp'] >= start_date]
+    if end_date:
+        df = df[df['timestamp'] <= end_date]
+
+    # ★ then set index
+    df.set_index('timestamp', inplace=True)
 
     # Rename columns to standard format
-    data = data.rename(
+    df = df.rename(
         columns={
             "open": "Open",
             "high": "High",
@@ -27,36 +41,36 @@ def load_data(file_path, start_date=None, end_date=None, resample_freq=None):
 
     # Validate required columns
     required_columns = {"Open", "High", "Low", "Close", "Volume"}
-    if not required_columns.issubset(data.columns):
-        missing_cols = required_columns - set(data.columns)
+    if not required_columns.issubset(df.columns):
+        missing_cols = required_columns - set(df.columns)
         raise ValueError(f"Missing required columns: {missing_cols}")
 
     # Check for duplicate indices
-    if data.index.has_duplicates:
+    if df.index.has_duplicates:
         warnings.warn("Duplicate timestamps found in the data. Dropping duplicates...")
-        data = data[~data.index.duplicated(keep='first')]
+        df = df[~df.index.duplicated(keep='first')]
 
     # Check if the index is sorted
-    if not data.index.is_monotonic_increasing:
+    if not df.index.is_monotonic_increasing:
         warnings.warn("DatetimeIndex is not sorted. Sorting the data...")
-        data.sort_index(inplace=True)
+        df.sort_index(inplace=True)
 
     # Handle missing values
-    if data.isnull().values.any():
+    if df.isnull().values.any():
         warnings.warn("Data contains missing values. Filling NaNs with forward fill...")
-        data = data.ffill().bfill()
+        df = df.ffill().bfill()
 
-    # Resample data if requested
+    # Resample data if requested. As it is prices we need the last value of the period.
     if resample_freq:
         logger.info(f"Resampling data to {resample_freq} frequency...")
-        data = data.resample(resample_freq).last().ffill()
+        df = df.resample(resample_freq).last().ffill()
 
     # Filter data by date range
-    if start_date:
-        data = data.loc[start_date:]
-    if end_date:
-        data = data.loc[:end_date]
+    """     if start_date:
+            df = df.loc[start_date:]
+        if end_date:
+            df = df.loc[:end_date] """
 
 
 
-    return data
+    return df

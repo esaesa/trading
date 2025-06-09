@@ -1,7 +1,7 @@
 {
     "backtest_params": {
         "symbols": [
-            "DOGEUSDTUSDT"
+            "ENAUSDTUSDT"
         ],
         "timeframes": [
             "1m"
@@ -10,10 +10,10 @@
         "enable_optimization": false,
         "debug": true,
         "debug_loop": false,
-        "start_date": "2024-05-01 12:00:00",
+        "start_date": "2025-01-01 00:00:00",
         "end_date":   "2025-06-22 11:59:59",
     
-        "cash": 10000,
+        "cash": 100000000,
         "commission": 0.0005,
         "show_optimization_graphs": false,
         "slippage_probability": 0.0,
@@ -32,7 +32,7 @@
         "enable_rsi_calculation": true,
         "rsi_dynamic_threshold": false,
         "require_rsi_reset": false,
-        "rsi_reset_percnetage": 10,
+        "rsi_reset_percentage": 10,
         "safety_order_price_mode": "dynamic",
         "safety_order_mode":"value",
         "price_growth_type": "exponential",

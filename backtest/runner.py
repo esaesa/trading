@@ -68,8 +68,9 @@ def run_backtest(symbol, timeframe):
     Runs a backtest for a given symbol and timeframe.
     """
     data_dir = os.path.dirname(__file__)
-    data_file = f"{data_folder}/binance_{symbol}_{timeframe}.csv"
-    data_file = os.path.join(data_dir, data_file)
+    #data_file = f"{data_folder}/binance_{symbol}_{timeframe}.csv"
+    #data_file = os.path.join(data_dir, data_file)
+    data_file = os.path.join(data_dir, f"{data_folder}/binance_{symbol}_{timeframe}.feather")
 
     console.print(f"\n[bold cyan]Running backtest for {symbol} on {timeframe} timeframe...[/bold cyan]")
     try:

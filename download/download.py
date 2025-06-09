@@ -276,15 +276,18 @@ if __name__ == "__main__":
 
             # Set the file name for the consolidated dataset
             safe_symbol = symbol.replace("/", "").replace(":", "")  # Remove invalid characters
-            full_data_filename = os.path.join(data_folder, f"{exchange_name}_{safe_symbol}_{timeframe}.csv")
+            full_data_filename = os.path.join(data_folder, f"{exchange_name}_{safe_symbol}_{timeframe}.feather")
 
             # Get the oldest available timestamp on Binance for this symbol and timeframe
             oldest_binance_timestamp = get_binance_oldest_timestamp(exchange, symbol, timeframe)
 
             if os.path.exists(full_data_filename):
                 logger.info(f"📂 Found existing dataset: {full_data_filename}")
-                df_existing = pd.read_csv(full_data_filename)
-                df_existing['timestamp'] = pd.to_datetime(df_existing['timestamp'])
+                # df_existing = pd.read_csv(full_data_filename)
+                # df_existing['timestamp'] = pd.to_datetime(df_existing['timestamp'])
+                feather_path = full_data_filename.replace('.csv', '.feather')
+                df_existing = pd.read_feather(feather_path)
+
 
                 # Get the earliest and latest timestamps from the existing data
                 earliest_existing_timestamp = df_existing['timestamp'].min().replace(tzinfo=timezone.utc)
@@ -356,8 +359,13 @@ if __name__ == "__main__":
                         logger.warning("⚠️ Combined dataset is empty. Skipping save.")
                     else:
                         assert all(col in df_combined.columns for col in ['timestamp', 'open', 'high', 'low', 'close', 'volume']), "Missing required OHLCV columns"
-                        df_combined.to_csv(full_data_filename, index=False)
-                        logger.info(f"✅ Full dataset updated: {full_data_filename}")
+                        #df_combined.to_csv(full_data_filename, index=False)
+                        #logger.info(f"✅ Full dataset updated: {full_data_filename}")
+                        # ★ NEW: also save Feather
+                        feather_path = full_data_filename.replace('.csv', '.feather')
+                        df_combined.to_feather(feather_path)
+                        logger.info(f"✅ Feather saved: {feather_path}")
+
 
 
 
@@ -373,8 +381,13 @@ if __name__ == "__main__":
                 df_new = fetch_new_binance_ohlcv(exchange, symbol, timeframe, since=config_start_date.strftime('%Y-%m-%d %H:%M:%S'), end=utc_end_str)
 
                 if not df_new.empty:
-                    df_new.to_csv(full_data_filename, index=False)
-                    logger.info(f"✅ Full dataset saved to {full_data_filename}")
+                    #df_new.to_csv(full_data_filename, index=False)
+                    #logger.info(f"✅ Full dataset saved to {full_data_filename}")
+                    # ★ NEW: also save Feather
+                    feather_path = full_data_filename.replace('.csv', '.feather')
+                    df_new.to_feather(feather_path)
+                    logger.info(f"✅ Feather saved: {feather_path}")
+
                 else:
                     logger.warning("⚠️ No data fetched.")
 
