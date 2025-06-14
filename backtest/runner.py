@@ -11,7 +11,7 @@ from data_loader import load_data
 from rich.console import Console
 from visualization import visualize_results
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 
 console = Console()
@@ -90,7 +90,7 @@ def run_backtest(symbol, timeframe):
         DCAStrategy,
         cash=backtest_params["cash"],
         #commission=backtest_params["commission"],
-        commission = lambda size, price:  price * 0.0005,
+        commission = lambda size, price:  price * 0.0005 * abs(size) ,  # 0.05% commission
         trade_on_close=True,
         finalize_trades=False,
         margin=1/1,
@@ -134,8 +134,8 @@ def run_backtest(symbol, timeframe):
             **scaled_optimization_params,
             # constraint=constraint_func,
             maximize=maximize_func,
-            max_tries=1000,
-            random_state=2,
+            max_tries=400,
+            random_state=3,
             method="sambo",
             # return_heatmap=False,
             # return_optimization=False

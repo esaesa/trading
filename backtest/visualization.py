@@ -144,7 +144,7 @@ def visualize_results(stats, bt, optimize_result=None, param_names=None, show_op
         filename=plot_file_name,
         plot_drawdown=True,
         plot_return=False,
-        resample=True, # True make error in 1m large data
+        resample = True, # True make error in 1m large data
         relative_equity=True,
         plot_volume = False
         
