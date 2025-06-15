@@ -497,6 +497,12 @@ class DCAStrategy(Strategy):
         take_profit_reduction_duration_hours.
         """
         original_tp = self.take_profit_percentage
+        current_atr = self.get_current_atr(current_time)
+        if self.enable_atr_calculation and current_atr > 0:
+            original_tp = current_atr/6
+
+            
+        #original_tp = self.get_current_atr(current_time)/7 if self.enable_atr_calculation and current_atr > 0 else original_tp
         min_tp = .05 * 2 # Get the new minimum TP. i.e use double commission percentage
 
         # Determine the relevant timestamp for reduction
@@ -798,13 +804,13 @@ class DCAStrategy(Strategy):
                 self.avoid_rsi_overbought           # feature ON
                 and self.enable_rsi_calculation     # RSI series exists
                 and not np.isnan(rsi_val)           # valid reading
-                and rsi_val >= 50          # ≥ threshold → over-bought
+                and rsi_val >= 70          # ≥ threshold → over-bought
             ):
                 if self.debug_loop:
                     logger.debug(
                         f"Skip BO – RSI={rsi_val:.2f} ≥ thr={50:.2f}"
                     )
-                return                              # **abort entry this bar**
+                return   False                           # **abort entry this bar**
             # ---------------------------------------------------------------- #
             self.process_entry(price, current_time)
             return True
