@@ -1,45 +1,48 @@
 {
     "backtest_params": {
         "symbols": [
-            "DOGEUSDTUSDT"
+            "1000PEPEUSDTUSDT"
         ],
         "timeframes": [
             "1m"
         ],
         "data_folder": "../download/data",
         "enable_optimization": false,
-        "debug": true,
+        "debug": false,
         "debug_loop": false,
-        "start_date": "2024-01-01 00:00:00",
+        "start_date": "2025-06-10 00:00:00",
         "end_date":   "2025-07-09 00:59:59",
     
-        "cash": 100,
+        "cash": 1000,
         "commission": 0.0005,
         "show_optimization_graphs": false,
-        "slippage_probability": 0.0,
+        "slippage_probability": 0.1,
         "enable_quantstats_analysis": false
     },
     "strategy_params": {
         "max_dca_levels": 11,
         "take_profit_percentage": 0.8,
-        "entry_fraction": 0.03,
-        "so_size_multiplier": 2.1,
-        "first_safety_order_multiplier": 3.5,
-        "initial_deviation_percent": 2.5,
-        "price_multiplier": 2.0,
+        "entry_fraction": 0.01,
+        "so_size_multiplier": 2.0,
+        "first_safety_order_multiplier": 2.0,
+        "initial_deviation_percent": 1.0,
+        "price_multiplier": 1.0,
         "rsi_threshold":35,
         "rsi_window": 17,
-        "enable_rsi_calculation": true,
+        "enable_rsi_calculation": false,
         "rsi_dynamic_threshold": false,
         "require_rsi_reset": false,
-        "avoid_rsi_overbought": true,
-        "rsi_reset_percentage": 25,
+        "avoid_rsi_overbought": false,
+        "rsi_overbought_level": 70,
+        "rsi_oversold_level": 30,
+        "rsi_reset_percentage": 50,
         "safety_order_price_mode": "dynamic",
         "safety_order_mode":"value",
         "price_growth_type": "exponential",
         "size_growth_type": "exponential",
+        "take_profit_reduction_duration_hours": 48,
         "minimum_notional": 0.0,
-        "enable_atr_calculation": true,
+        "enable_atr_calculation": false,
         "atr_window": 14,
         "atr_resample_interval": "1h",  
         "enable_ema_calculation": false,
@@ -55,13 +58,13 @@
             "process": false
           },
           "show_indicators": {
-            "dynamic_rsi": true,
-            "rsi": true,
+            "dynamic_rsi": false,
+            "rsi": false,
             "bbw": false,
             "atr": true,
             "ema": false,
-            "laguerre": true,
-            "cv": true,
+            "laguerre": false,
+            "cv": false,
             "average_entry_price"  : true
     }
 

@@ -20,7 +20,7 @@ class DCAStrategy(Strategy):
     take_profit_percentage = strategy_params['take_profit_percentage']
     initial_deviation_percent = strategy_params['initial_deviation_percent']
     price_multiplier = strategy_params['price_multiplier']
-    minimum_notional = strategy_params.get('minimum_notional', 5.0)
+    minimum_notional = strategy_params.get('minimum_notional', 0.0)
     rsi_threshold = strategy_params.get("rsi_threshold")
     rsi_window = strategy_params.get("rsi_window")
     require_rsi_reset = strategy_params.get("require_rsi_reset")
@@ -28,6 +28,8 @@ class DCAStrategy(Strategy):
     rsi_dynamic_threshold = strategy_params.get("rsi_dynamic_threshold")
     rsi_dynamic_window = strategy_params.get("rsi_dynamic_window", rsi_window *1000)
     rsi_percentile = strategy_params.get("rsi_percentile", 0.05)
+    rsi_overbought_level = strategy_params.get("rsi_overbought_level")
+    rsi_oversold_level = strategy_params.get("rsi_oversold_level")
     safety_order_price_mode = strategy_params.get("safety_order_price_mode")
     start_trading_time = datetime.strptime(
         strategy_params.get("start_trading_time", "2025-02-01 00:00:00"),
@@ -757,6 +759,7 @@ class DCAStrategy(Strategy):
                 # Calculate take profit price
                 
                 adjusted_tp_percentage = self.calculate_adjusted_take_profit(current_time)
+                # take_profit_percent is in percent, so divide by 100
                 tp_price = entry_price * (1 + adjusted_tp_percentage / 100)
                 self.take_profit_prices[current_idx] = tp_price
             else:
@@ -804,11 +807,11 @@ class DCAStrategy(Strategy):
                 self.avoid_rsi_overbought           # feature ON
                 and self.enable_rsi_calculation     # RSI series exists
                 and not np.isnan(rsi_val)           # valid reading
-                and rsi_val >= 70          # ≥ threshold → over-bought
+                and rsi_val >= self.rsi_overbought_level          # ≥ threshold → over-bought
             ):
                 if self.debug_loop:
                     logger.debug(
-                        f"Skip BO – RSI={rsi_val:.2f} ≥ thr={50:.2f}"
+                        f"Skip BO – RSI={rsi_val:.2f} ≥ thr={self.rsi_overbought_level:.2f}"
                     )
                 return   False                           # **abort entry this bar**
             # ---------------------------------------------------------------- #
