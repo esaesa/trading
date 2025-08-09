@@ -26,7 +26,7 @@ class DCAStrategy(Strategy):
     require_rsi_reset = strategy_params.get("require_rsi_reset")
     rsi_reset_percentage = strategy_params.get("rsi_reset_percentage")
     rsi_dynamic_threshold = strategy_params.get("rsi_dynamic_threshold")
-    rsi_dynamic_window = strategy_params.get("rsi_dynamic_window", rsi_window *1000)
+
     rsi_percentile = strategy_params.get("rsi_percentile", 0.05)
     rsi_overbought_level = strategy_params.get("rsi_overbought_level")
     rsi_oversold_level = strategy_params.get("rsi_oversold_level")
@@ -127,6 +127,15 @@ class DCAStrategy(Strategy):
         # ----------------------
         # Initialize Indicators
         # ----------------------        
+        
+        # Resolve dynamic rsi window safely (class-level default could have None)
+        # rsi_dynamic_window at run time as it may be based on rsi_window
+        if strategy_params.get("rsi_dynamic_window") is not None:
+            self.rsi_dynamic_window = strategy_params["rsi_dynamic_window"]
+        else:
+            # safe fallback: if rsi_window missing, use 1000
+            self.rsi_dynamic_window = (self.rsi_window or 14) * 1000
+            
         # Determine calculation needs (show OR strategy use)
         calculate_rsi = self.show_indicators.get('rsi', False) or self.enable_rsi_calculation
         calculate_atr = self.show_indicators.get('atr', False) or self.enable_atr_calculation
@@ -135,6 +144,11 @@ class DCAStrategy(Strategy):
         calculate_bbw = self.show_indicators.get('bbw', False)   
         calculate_cv = self.show_indicators.get('cv', False)
         calculate_dynamic_rsi = self.show_indicators.get('dynamic_rsi', False) or self.rsi_dynamic_threshold
+        
+        # --- Dependencies ---
+        # If we need dynamic RSI, RSI reset, or overbought-gate, we must have RSI computed.
+        if calculate_dynamic_rsi or self.require_rsi_reset or self.avoid_rsi_overbought:
+            calculate_rsi = True
          
         df = self.data.df
 
@@ -149,8 +163,8 @@ class DCAStrategy(Strategy):
                 if self.show_indicators.get('rsi', False):
                     self.I(lambda _: self.rsi_values, self.data.Close, name="RSI")
                     
-        # Compute dynamic RSI threshold if enabled            
-        if calculate_dynamic_rsi:
+        # Compute dynamic RSI threshold if enabled and RSI exists       
+        if calculate_dynamic_rsi and (self.rsi_values is not None):
             self.rsi_dynamic_threshold_series = (
                 self.rsi_values.rolling(window=self.rsi_dynamic_window)
                 .quantile(self.rsi_percentile)
@@ -164,6 +178,7 @@ class DCAStrategy(Strategy):
                     
         if calculate_ema:
             ema_series = self.indicators.compute_ema(window=self.ema_window, resample_interval='1h')
+            self.ema_dynamic = ema_series
             if self.show_indicators.get('ema', False):
                 self.I(lambda _: ema_series, self.data.Close, name="EMA")
 
@@ -283,11 +298,14 @@ class DCAStrategy(Strategy):
         if not self.position:
             if self.enable_rsi_calculation and self.rsi_values is None:
                 return False
-            multiplier = 2 if (self.enable_ema_calculation and self.ema_dynamic is not None and price > self.ema_dynamic[-1]) else 1
+            multiplier = 2 if (self.enable_ema_calculation and getattr(self, "ema_dynamic", None) is not None and price > self.ema_dynamic.iloc[-1]) else 1
             initial_investment = self._broker._cash * (self.entry_fraction * multiplier)
-            base_order_quantity = math.floor(initial_investment / price)
+            commission_rate = backtest_params.get("commission", 0.0)
+            price_gross = price * (1 + commission_rate)  # entry fee counted for affordability
+            base_order_quantity = math.floor(initial_investment / price_gross)
+
             effective_fraction = self.entry_fraction * multiplier
-            if base_order_quantity * price >= self.minimum_notional:
+            if base_order_quantity * price >= self.minimum_notional:  # min notional is on net (price*qty)
                 if base_order_quantity < 1:
                     raise ValueError("Backtesting.py does not support fractional units. Adjust your entry fraction.")
                 order = self.buy(size=base_order_quantity, tag="BO")
@@ -434,7 +452,7 @@ class DCAStrategy(Strategy):
             if price <= so_price:
                 if (np.isnan(rsi_val) or rsi_val < dynamic_thr):
                     so_size = self.calculate_safety_order_qty(so_price, self.first_safety_order_multiplier, self.dca_level + 1)
-                    # Calculate maximum affordable size considering commission and available cash
+                    # Affordability (gross with commission). Min-notional remains net.
                     commission_rate = backtest_params.get("commission", 0.0)
                     available_cash = self._broker.margin_available * self._broker._leverage
                     cost_per_share = so_price * (1 + commission_rate)
@@ -475,8 +493,9 @@ class DCAStrategy(Strategy):
                         logger.debug(f"RSI={rsi_val:.2f} not below dynamic threshold={dynamic_thr:.2f}, skipping DCA-{self.dca_level + 1}")
             else:
                 if self.debug_trade:
-                    return
-                    logger.debug(f"Current price {price:.10f} not below DCA-{self.dca_level + 1} price {so_price:.10f}, skipping DCA.")
+                    logger.debug(f"Price {price:.10f} > DCA-{self.dca_level + 1} trigger {so_price:.10f} → skip")
+                return
+
     # def corrected_pl_pct(self) -> float:
     #     x = self.position.pl_pct
     #     """Returns the actual percentage P/L relative to total position size."""
@@ -499,8 +518,8 @@ class DCAStrategy(Strategy):
         take_profit_reduction_duration_hours.
         """
         original_tp = self.take_profit_percentage
-        min_tp = .05 * 2 # Get the new minimum TP. i.e use double commission percentage
-
+        commission_rate = backtest_params.get("commission", 0.0)  # e.g., 0.0005 = 0.05%
+        min_tp = 2 * commission_rate * 100.0  # cover entry+exit fees in %
         # Determine the relevant timestamp for reduction
         reference_time = self.last_safety_order_time if self.last_safety_order_time else self.base_order_time
 
@@ -801,11 +820,11 @@ class DCAStrategy(Strategy):
                 self.avoid_rsi_overbought           # feature ON
                 and self.enable_rsi_calculation     # RSI series exists
                 and not np.isnan(rsi_val)           # valid reading
-                and rsi_val >= 50          # ≥ threshold → over-bought
+                and rsi_val >= (self.rsi_overbought_level or 70)
             ):
                 if self.debug_loop:
                     logger.debug(
-                        f"Skip BO – RSI={rsi_val:.2f} ≥ thr={self.rsi_overbought_level:.2f}"
+                        f"Skip BO – RSI={rsi_val:.2f} ≥ thr={(self.rsi_overbought_level or 70):.2f}"
                     )
                 return                              # **abort entry this bar**
             # ---------------------------------------------------------------- #
