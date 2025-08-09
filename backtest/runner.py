@@ -89,8 +89,8 @@ def run_backtest(symbol, timeframe):
         data,
         DCAStrategy,
         cash=backtest_params["cash"],
-        #commission=backtest_params["commission"],
-        commission = lambda size, price:  price * 0.0005 * abs(size) ,  # 0.05% commission
+        commission=backtest_params["commission"],
+        #commission = lambda size, price:  price * 0.0005 * abs(size) ,  # 0.05% commission
         trade_on_close=True,
         finalize_trades=False,
         margin=1/1,
