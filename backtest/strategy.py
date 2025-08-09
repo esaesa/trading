@@ -801,11 +801,7 @@ class DCAStrategy(Strategy):
                 self.avoid_rsi_overbought           # feature ON
                 and self.enable_rsi_calculation     # RSI series exists
                 and not np.isnan(rsi_val)           # valid reading
-<<<<<<< HEAD
-                and rsi_val >= self.rsi_overbought_level          # ≥ threshold → over-bought
-=======
                 and rsi_val >= 50          # ≥ threshold → over-bought
->>>>>>> parent of 785f488 (Take profit based on ATR)
             ):
                 if self.debug_loop:
                     logger.debug(
