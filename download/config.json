@@ -13,11 +13,7 @@
         
         ],
         "symbols": [
-        "1000SHIB/USDT:USDT",
-        "BTC/USDT:USDT",
-        "DOGE/USDT:USDT",
-        "1000PEPE/USDT:USDT",
-        "XRP/USDT:USDT"
+        "SUI/USDT:USDT"
         ],
         "all_symbol":[
         "AIXBT/USDT:USDT",
@@ -29,7 +25,7 @@
         "1000SHIB/USDT:USDT",
         "ENA/USDT:USDT"
     ],
-        "start_date": "2020-01-01 00:00:00",
+        "start_date": "2025-01-01 00:00:00",
         "end_date": "2026-02-11 00:11:00",
         "data_path": "data"
     }

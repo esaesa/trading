@@ -16,10 +16,12 @@
         "cash": 1000,
         "commission": 0.0005,
         "show_optimization_graphs": false,
-        "slippage_probability": 0.1,
+        "slippage_probability": 0.0,
         "enable_quantstats_analysis": false
     },
     "strategy_params": {
+        "so_cooldown_minutes": 1440,
+        "safety_conditions": ["RSIUnderDynamicThreshold", "CooldownBetweenSOs"],
         "max_dca_levels": 11,
         "take_profit_percentage": 0.8,
         "entry_fraction": 0.03,

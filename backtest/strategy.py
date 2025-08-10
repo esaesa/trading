@@ -10,8 +10,39 @@ from logger_config import logger
 import numpy as np
 import pandas as pd
 from indicator_manager import IndicatorManager
+
+# --- tiny pipeline wrapper (already added earlier; keep if you have it) ---
+class Pipeline:
+    def __init__(self, checks):
+        self.checks = list(checks)  # each check(ctx) returns bool or (bool, reason)
+    def ok(self, ctx):
+        for chk in self.checks:
+            res = chk(ctx)
+            ok = res[0] if isinstance(res, tuple) else bool(res)
+            if not ok:
+                return False
+        return True
+
+# --- NEW: registry from config names -> DCAStrategy method names
+ENTRY_GATE_MAP = {
+    "RSIOverboughtGate": "_entry_gate_rsi",
+}
+
+SAFETY_GATE_MAP = {
+    "RSIUnderDynamicThreshold": "_safety_gate_rsi",
+    "CooldownBetweenSOs": "_safety_gate_cooldown",
+}
+
+EXIT_GATE_MAP = {
+    "TPDecayReached": "_exit_gate_tp",
+}
+
+
+
 class DCAStrategy(Strategy):
     # Strategy Parameters
+    # Optional: minimum minutes between safety orders (off when 0)
+    so_cooldown_minutes = strategy_params.get("so_cooldown_minutes", 0)
     entry_fraction = strategy_params['entry_fraction']
     so_size_multiplier = strategy_params['so_size_multiplier']
     first_safety_order_multiplier = strategy_params['first_safety_order_multiplier']
@@ -210,6 +241,21 @@ class DCAStrategy(Strategy):
         self.take_profit_prices = np.full(len(self.data), np.nan)
         self.tp_indicator = self.I(lambda: self.take_profit_prices, name='Take Profit', overlay=True, color='red')
 
+        # --- NEW: data-driven pipelines from strategy_params ---
+        default_entry = ["RSIOverboughtGate"] if self.avoid_rsi_overbought else []
+        default_safety = ["RSIUnderDynamicThreshold"]  # same as before
+        default_exit = ["TPDecayReached"]              # same as before
+
+        entry_names = strategy_params.get("entry_conditions", default_entry)
+        safety_names = strategy_params.get("safety_conditions", default_safety)
+        exit_names = strategy_params.get("exit_conditions", default_exit)
+
+        self._entry_pipeline = self._build_pipeline(entry_names, ENTRY_GATE_MAP)
+        self._safety_pipeline = self._build_pipeline(safety_names, SAFETY_GATE_MAP)
+        self._exit_pipeline = self._build_pipeline(exit_names, EXIT_GATE_MAP)
+
+
+
     
     # --- Debug Helper Functions ---
     def debug_loop_info(self, price, rsi_val, current_time):
@@ -292,44 +338,204 @@ class DCAStrategy(Strategy):
         # END CHANGED
 
         return base_price * compounded_factor
+    
+    def _safety_allows(self, rsi_val: float, dynamic_thr: float, level: int) -> bool:
+        """
+        Returns True if safety order is allowed by safety gates.
+        (Currently only the RSI-under-dynamic-threshold gate; identical logic to old inline code.)
+        """
+        if (np.isnan(rsi_val) or rsi_val < dynamic_thr):
+            return True
+        # identical debug message as before
+        if self.debug_trade:
+            logger.debug(f"RSI={rsi_val:.2f} not below dynamic threshold={dynamic_thr:.2f}, skipping DCA-{level}")
+        return False
+    
+    def _entry_allows(self, rsi_val: float) -> bool:
+        """
+        Returns True if base order is allowed by all entry gates.
+        (Currently only the RSI-overbought gate; identical logic to the old inline code.)
+        """
+        if (
+            self.avoid_rsi_overbought
+            and self.enable_rsi_calculation
+            and not np.isnan(rsi_val)
+            and rsi_val >= (self.rsi_overbought_level or 70)
+        ):
+            if self.debug_loop:
+                logger.debug(
+                    f"Skip BO – RSI={rsi_val:.2f} ≥ thr={(self.rsi_overbought_level or 70):.2f}"
+                )
+            return False
+        return True
+
+
+    def _compute_so_price(self, level: int, current_time) -> float:
+        """Compute SO trigger price for a given level (keeps old dynamic/static behavior)."""
+        current_atr = self.get_current_atr(current_time)
+        if self.safety_order_price_mode.lower() == "dynamic":
+            return self.dynamic_safety_price(self.last_filled_price, level, current_atr)
+        return self.static_safety_price(self.base_order_price, level)
+
+    def _safety_price_trigger_ok(self, price: float, so_price: float, level: int) -> bool:
+        """Returns True if market price has reached the SO trigger; logs same debug on skip."""
+        if price <= so_price:
+            return True
+        if self.debug_trade:
+            logger.debug(
+                f"Price {price:.10f} > DCA-{level} trigger {so_price:.10f} → skip"
+            )
+        return False
+
+    def _safety_affordable_size(self, so_price: float, desired_size: float) -> int:
+        """
+        Returns actual executable size (>=1) after cash & min-notional checks.
+        0 means 'do nothing'. Logs & warnings match the old behavior.
+        """
+        commission_rate = backtest_params.get("commission", 0.0)
+        available_cash = self._broker.margin_available * self._broker._leverage
+        cost_per_share = so_price * (1 + commission_rate)
+
+        max_possible = int(available_cash // cost_per_share) if cost_per_share > 0 else 0
+        if max_possible < 1:
+            if self.debug_trade:
+                logger.warning(
+                    f"Insufficient funds for DCA-{self.dca_level + 1}. "
+                    f"Available cash: {available_cash:.2f}, cost per share: {cost_per_share:.2f}"
+                )
+            return 0
+
+        desired_floor = math.floor(desired_size)
+        if desired_floor > max_possible:
+            print('WARNING: order will be reduced due to insufficient funds')
+
+        size_to_buy = max(1, min(desired_floor, max_possible))
+
+        # Min-notional check uses net (price*qty) same as before
+        if size_to_buy * so_price < self.minimum_notional:
+            if self.debug_trade:
+                logger.warning(
+                    f"DCA-{self.dca_level} order below minimum notional, skipping DCA level."
+                )
+            return 0
+
+        return size_to_buy
+
+    def _entry_multiplier(self, price: float) -> int:
+        """EMA-aware entry multiplier (identical to your inline logic)."""
+        return 2 if (
+            self.enable_ema_calculation and
+            getattr(self, "ema_dynamic", None) is not None and
+            price > self.ema_dynamic.iloc[-1]
+        ) else 1
+
+    def _entry_size_and_investment(self, price: float, multiplier: int):
+        """Compute base-order quantity (int) and initial_investment (float)."""
+        commission_rate = backtest_params.get("commission", 0.0)
+        initial_investment = self._broker._cash * (self.entry_fraction * multiplier)
+        price_gross = price * (1 + commission_rate)
+        base_order_quantity = math.floor(initial_investment / price_gross)
+        return base_order_quantity, initial_investment
+
+    def _entry_affordable_ok(self, qty: int, price: float) -> bool:
+        """
+        Keep exact original order:
+        1) min-notional check (warn & skip if fail)
+        2) qty >= 1 (raise ValueError if fail)
+        """
+        if qty * price < self.minimum_notional:
+            if self.debug_trade:
+                logger.warning("Initial order below minimum notional, skipping entry.")
+            return False
+        if qty < 1:
+            raise ValueError("Backtesting.py does not support fractional units. Adjust your entry fraction.")
+        return True
+
+    def _exit_allows(self, current_time) -> bool:
+        """
+        Returns True if exit is allowed by exit gates.
+        (Currently only the 'TP decay reached' check; identical behavior.)
+        """
+        if not self.position:
+            return False
+
+        adjusted_tp_percentage = self.calculate_adjusted_take_profit(current_time)
+        pl = self.position.pl_pct
+
+        ok = pl >= adjusted_tp_percentage
+        if self.debug_process and not ok:
+            logger.debug(f"Exit blocked: pl {pl:.3f}% < tp {adjusted_tp_percentage:.3f}%")
+        return ok
+
+    def _entry_gate_rsi(self, ctx):
+        return self._entry_allows(ctx['rsi_val']), ""
+
+    def _safety_gate_rsi(self, ctx):
+        return self._safety_allows(ctx['rsi_val'], ctx['dynamic_thr'], ctx['level']), ""
+
+    def _exit_gate_tp(self, ctx):
+        return self._exit_allows(ctx['current_time']), ""
+
+    def _safety_gate_cooldown(self, ctx):
+        mins = getattr(self, "so_cooldown_minutes", 0) or 0
+        if mins <= 0:
+            return True, ""  # disabled
+        now = ctx["current_time"]
+        level = ctx["level"]
+        last = self.last_safety_order_time or self.base_order_time
+        if last is None or now - last >= timedelta(minutes=mins):
+            return True, ""
+        if self.debug_trade:
+            logger.debug(f"Skip DCA-{level}: cooldown {(now - last)} < {mins}m")
+        return False, "Cooldown not elapsed"
+
+
+    def _build_pipeline(self, names, name_to_method):
+        """Builds a Pipeline from a list of condition names using the registry map."""
+        checks = []
+        for n in names:
+            m = name_to_method.get(n)
+            if m:
+                checks.append(getattr(self, m))
+            else:
+                raise ValueError(f"Unknown condition name: {n}")
+        return Pipeline(checks)
+
 
 
     def process_entry(self, price, current_time):
         if not self.position:
             if self.enable_rsi_calculation and self.rsi_values is None:
                 return False
-            multiplier = 2 if (self.enable_ema_calculation and getattr(self, "ema_dynamic", None) is not None and price > self.ema_dynamic.iloc[-1]) else 1
-            initial_investment = self._broker._cash * (self.entry_fraction * multiplier)
-            commission_rate = backtest_params.get("commission", 0.0)
-            price_gross = price * (1 + commission_rate)  # entry fee counted for affordability
-            base_order_quantity = math.floor(initial_investment / price_gross)
 
-            effective_fraction = self.entry_fraction * multiplier
-            if base_order_quantity * price >= self.minimum_notional:  # min notional is on net (price*qty)
-                if base_order_quantity < 1:
-                    raise ValueError("Backtesting.py does not support fractional units. Adjust your entry fraction.")
-                order = self.buy(size=base_order_quantity, tag="BO")
-                # Record the timestamp of the base order
-                self.base_order_time = current_time
-                # RESET: Ensure last SO time is None for the new cycle
-                self.last_safety_order_time = None
-                self.dca_level = 0
-                self.base_order_price = price
-                self.initial_investment = initial_investment
-                self.last_filled_price = price
-                self.base_order_quantity = base_order_quantity
-                self.base_order_value = base_order_quantity * self.base_order_price
-                # self.setup_safety_orders(base_order_quantity, self.base_order_price)
-                if self.debug_trade:
-                    self.log_entry_details(current_time, price, base_order_quantity)
-                    self.debug_trade_info("Entry", order, price, base_order_quantity * price)
-                if self._need_reset():
-                    self.rsi_reset = False    
-                return True
-            else:
-                if self.debug_trade:
-                    logger.warning("Initial order below minimum notional, skipping entry.")
+            # 1) Multiplier (EMA gate) – unchanged logic, now centralized
+            multiplier = self._entry_multiplier(price)
+
+            # 2) Size & investment – same math as before
+            base_order_quantity, initial_investment = self._entry_size_and_investment(price, multiplier)
+
+            # 3) Affordability & qty validity – same order as before
+            if not self._entry_affordable_ok(base_order_quantity, price):
                 return False
+
+            # 4) Place order & state updates – unchanged
+            order = self.buy(size=base_order_quantity, tag="BO")
+            self.base_order_time = current_time
+            self.last_safety_order_time = None
+            self.dca_level = 0
+            self.base_order_price = price
+            self.initial_investment = initial_investment
+            self.last_filled_price = price
+            self.base_order_quantity = base_order_quantity
+            self.base_order_value = base_order_quantity * self.base_order_price
+
+            if self.debug_trade:
+                self.log_entry_details(current_time, price, base_order_quantity)
+                self.debug_trade_info("Entry", order, price, base_order_quantity * price)
+
+            self._consume_rsi_reset()
+            return True
+
         return False
 
     def log_entry_details(self, current_time, price, base_order_quantity):
@@ -443,71 +649,40 @@ class DCAStrategy(Strategy):
 
     
     def process_dca(self, price, rsi_val, dynamic_thr, current_time):
-        current_atr = self.get_current_atr(current_time)
         if self.dca_level < self.max_dca_levels and self.rsi_reset:
-            if self.safety_order_price_mode.lower() == "dynamic":
-                so_price = self.dynamic_safety_price(self.last_filled_price, self.dca_level + 1, current_atr)
-            else:
-                so_price = self.static_safety_price(self.base_order_price, self.dca_level + 1)
-            if price <= so_price:
-                if (np.isnan(rsi_val) or rsi_val < dynamic_thr):
-                    so_size = self.calculate_safety_order_qty(so_price, self.first_safety_order_multiplier, self.dca_level + 1)
-                    # Affordability (gross with commission). Min-notional remains net.
-                    commission_rate = backtest_params.get("commission", 0.0)
-                    available_cash = self._broker.margin_available * self._broker._leverage
-                    cost_per_share = so_price * (1 + commission_rate)
-                
-                    if cost_per_share <= 0:
-                        max_possible = 0
-                    else:
-                        max_possible = int(available_cash // cost_per_share)
-                    
-                    if max_possible < 1:
-                        if self.debug_trade:
-                            logger.warning(f"Insufficient funds for DCA-{self.dca_level + 1}. Available cash: {available_cash:.2f}, cost per share: {cost_per_share:.2f}")
-                        return
-                    
-                    size_to_buy = min(math.floor(so_size), max_possible)
-                    size_to_buy = max(size_to_buy, 1)  # Ensure at least 1 share
-                    
-                    if size_to_buy > max_possible:
-                        print('WARNING: order will be reduced due to insufficient funds')
-                    
-                
-                    if size_to_buy * so_price >= self.minimum_notional:
-                        order = self.buy(size=size_to_buy, tag=f"S{self.dca_level+1}")
-                        # Record the timestamp of this safety order
-                        self.last_safety_order_time = current_time
-                        self.dca_level += 1
-                        if self._need_reset():
-                            self.rsi_reset = False
-                        if self.safety_order_price_mode.lower() == "dynamic":
-                            self.last_filled_price = price
-                        if self.debug_trade:
-                            self.debug_trade_info("DCA", order, so_price, size_to_buy * so_price)                    
-                    else:
-                        if self.debug_trade:
-                            logger.warning(f"DCA-{self.dca_level} order below minimum notional, skipping DCA level.")
-                else:
-                    if self.debug_trade:
-                        logger.debug(f"RSI={rsi_val:.2f} not below dynamic threshold={dynamic_thr:.2f}, skipping DCA-{self.dca_level + 1}")
-            else:
-                if self.debug_trade:
-                    logger.debug(f"Price {price:.10f} > DCA-{self.dca_level + 1} trigger {so_price:.10f} → skip")
+            level = self.dca_level + 1
+
+            # 1) Trigger price (dynamic/static) – unchanged logic, now centralized
+            so_price = self._compute_so_price(level, current_time)
+
+            # 2) Wait for price to hit the trigger
+            if not self._safety_price_trigger_ok(price, so_price, level):
                 return
 
-    # def corrected_pl_pct(self) -> float:
-    #     x = self.position.pl_pct
-    #     """Returns the actual percentage P/L relative to total position size."""
-    #     last_price = self.data.Close[-1]  # Current price
-    #     trades = self._broker.trades
-    #     if not trades:
-    #         return 0.0
-    #     total_pl = sum((last_price - trade.entry_price) * trade.size for trade in trades)
-    #     total_size = sum(abs(trade.size) for trade in trades)
-    #     if total_size == 0:
-    #         return 0.0  # Prevent division by zero
-    #     return (total_pl / total_size) * 100  # True PL percentage
+            # 3) Safety gates (already decoupled – currently only RSI gate)
+            if not self._safety_pipeline.ok({'rsi_val': rsi_val, 'dynamic_thr': dynamic_thr, 'level': level, 'current_time': current_time}):
+                return
+
+            # 4) Size calculation (unchanged math)
+            so_size = self.calculate_safety_order_qty(
+                so_price, self.first_safety_order_multiplier, level
+            )
+
+            # 5) Affordability & min-notional (unchanged behavior, centralized)
+            size_to_buy = self._safety_affordable_size(so_price, so_size)
+            if size_to_buy == 0:
+                return
+
+            # 6) Place order & update state (unchanged)
+            order = self.buy(size=size_to_buy, tag=f"S{level}")
+            self.last_safety_order_time = current_time
+            self.dca_level += 1
+            self._consume_rsi_reset()
+            if self.safety_order_price_mode.lower() == "dynamic":
+                self.last_filled_price = price
+            if self.debug_trade:
+                self.debug_trade_info("DCA", order, so_price, size_to_buy * so_price)
+
 
     def calculate_adjusted_take_profit(self, current_time):
         """
@@ -565,9 +740,9 @@ class DCAStrategy(Strategy):
     def process_exit(self, price, current_time):
         if not self.position:
             return False
-        adjusted_tp_percentage = self.calculate_adjusted_take_profit(current_time)
 
-        if self.position.pl_pct  >= adjusted_tp_percentage:
+        # Exit gates (decoupled – currently only TP-decay reached)
+        if self._exit_pipeline.ok({'current_time': current_time}):
             if self.debug_process:
                 self.log_exit_details(price, current_time)
                 logger.debug(f"Trade: Exit Triggered at {current_time} with Price: {price:.10f}")
@@ -576,6 +751,7 @@ class DCAStrategy(Strategy):
             return True
         else:
             return False
+
 
     
     
@@ -707,7 +883,29 @@ class DCAStrategy(Strategy):
         # console.log(self.trades)
 
     
-    
+    def _update_rsi_reset(self, rsi_val: float) -> None:
+        """
+        Static-RSI reset logic (no behavior change):
+        - Only when _need_reset() is True (static mode with reset enabled)
+        - RSI NaN ⇒ reset True
+        - RSI >= reset_thr ⇒ reset True
+        """
+        if not self._need_reset():
+            return
+        if np.isnan(rsi_val):
+            self.rsi_reset = True
+            return
+        reset_thr = self.rsi_threshold * (1 + self.rsi_reset_percentage / 100)
+        if rsi_val >= reset_thr:
+            self.rsi_reset = True
+
+    def _consume_rsi_reset(self) -> None:
+        """
+        Consume the reset immediately after we place BO/SO (same as old inline 'set False').
+        """
+        if self._need_reset():
+            self.rsi_reset = False
+
     
     
     # CHANGED: Renamed reset_cycle to reset_process
@@ -796,15 +994,7 @@ class DCAStrategy(Strategy):
                 rsi_val = self.rsi_values.iloc[-1]  # Fallback to positional
         else:
             rsi_val = np.nan
-        #if np.isnan(rsi_val) or rsi_val >= self.rsi_threshold * (1 + self.rsi_reset_percentage/100):
-        # ----- Static-RSI reset logic (only when required) -------------------- #
-        if self._need_reset():
-            if np.isnan(rsi_val):              # NaN ⇒ instant reset
-                self.rsi_reset = True
-            else:
-                reset_thr = self.rsi_threshold * (1 + self.rsi_reset_percentage / 100)
-                if rsi_val >= reset_thr:
-                    self.rsi_reset = True
+        self._update_rsi_reset(rsi_val)
                     
         self.debug_loop_info(price, rsi_val, current_time)
         if self.position:
@@ -815,19 +1005,11 @@ class DCAStrategy(Strategy):
                     rsi_val = np.nan
                 self.process_dca(current_low, rsi_val, dynamic_thr, current_time)
         else:
-            # --- NEW: avoid_rsi_overbought gate ----------------------------- #
-            if (
-                self.avoid_rsi_overbought           # feature ON
-                and self.enable_rsi_calculation     # RSI series exists
-                and not np.isnan(rsi_val)           # valid reading
-                and rsi_val >= (self.rsi_overbought_level or 70)
-            ):
-                if self.debug_loop:
-                    logger.debug(
-                        f"Skip BO – RSI={rsi_val:.2f} ≥ thr={(self.rsi_overbought_level or 70):.2f}"
-                    )
-                return                              # **abort entry this bar**
-            # ---------------------------------------------------------------- #
+ 
+            # Entry gates (decoupled – currently only RSI gate)
+            if not self._entry_pipeline.ok({'rsi_val': rsi_val}):
+                return
+ 
             self.process_entry(price, current_time)
             return True
 
