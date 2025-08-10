@@ -20,8 +20,11 @@
         "enable_quantstats_analysis": false
     },
     "strategy_params": {
-        "so_cooldown_minutes": 1440,
+        "entry_conditions": ["RSIOverbought"],
         "safety_conditions": ["RSIUnderDynamicThreshold", "CooldownBetweenSOs"],
+        "exit_conditions": ["TPDecayReached"],
+        "so_cooldown_minutes": 0,
+
         "max_dca_levels": 11,
         "take_profit_percentage": 0.8,
         "entry_fraction": 0.03,

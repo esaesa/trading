@@ -1,5 +1,6 @@
 # strategy.py
 
+from sizers import DCASizingParams, GeometricOrderSizer 
 from rich.console import Console
 from datetime import datetime, timedelta
 import math
@@ -10,32 +11,15 @@ from logger_config import logger
 import numpy as np
 import pandas as pd
 from indicator_manager import IndicatorManager
+from rule_chain import RuleChain, build_rule_chain
+from rules.entry import ENTRY_RULES
+from rules.safety import SAFETY_RULES
+from rules.exit import EXIT_RULES
+from contracts import Ctx
+from datetime import datetime
+import numpy as np
+from sizers import DCASizingParams, GeometricOrderSizer
 
-# --- tiny pipeline wrapper (already added earlier; keep if you have it) ---
-class Pipeline:
-    def __init__(self, checks):
-        self.checks = list(checks)  # each check(ctx) returns bool or (bool, reason)
-    def ok(self, ctx):
-        for chk in self.checks:
-            res = chk(ctx)
-            ok = res[0] if isinstance(res, tuple) else bool(res)
-            if not ok:
-                return False
-        return True
-
-# --- NEW: registry from config names -> DCAStrategy method names
-ENTRY_GATE_MAP = {
-    "RSIOverboughtGate": "_entry_gate_rsi",
-}
-
-SAFETY_GATE_MAP = {
-    "RSIUnderDynamicThreshold": "_safety_gate_rsi",
-    "CooldownBetweenSOs": "_safety_gate_cooldown",
-}
-
-EXIT_GATE_MAP = {
-    "TPDecayReached": "_exit_gate_tp",
-}
 
 
 
@@ -112,6 +96,61 @@ class DCAStrategy(Strategy):
         self.enable_optimization = backtest_params.get("enable_optimization", False)
         
 
+    def _ctx(self) -> Ctx:
+        now = self.data.index[-1]
+        price = float(self.data.Close[-1])
+
+        indicators = {}
+        if getattr(self, "rsi_values", None) is not None and len(self.rsi_values):
+            indicators["rsi"] = float(self.rsi_values.iloc[-1])
+        if getattr(self, "ema_dynamic", None) is not None and len(self.ema_dynamic):
+            indicators["ema"] = float(self.ema_dynamic.iloc[-1])
+        if getattr(self, "atr_pct_series", None) is not None and len(self.atr_pct_series):
+            indicators["atr_pct"] = float(self.atr_pct_series.iloc[-1])
+        if getattr(self, "laguerre_series", None) is not None and len(self.laguerre_series):
+            indicators["laguerre_rsi"] = float(self.laguerre_series.iloc[-1])
+        if getattr(self, "bbw_series", None) is not None and len(self.bbw_series):
+            indicators["bbw"] = float(self.bbw_series.iloc[-1])
+        if getattr(self, "cv_series", None) is not None and len(self.cv_series):
+            indicators["cv"] = float(self.cv_series.iloc[-1])
+
+        # latest dynamic RSI threshold if enabled
+        dyn_thr = None
+        if getattr(self, "rsi_dynamic_threshold", False) and hasattr(self, "rsi_dynamic_threshold_series"):
+            try:
+                dyn_thr = float(self.rsi_dynamic_threshold_series.loc[now])
+            except Exception:
+                dyn_thr = float(self.rsi_dynamic_threshold_series.iloc[-1])
+
+        entry_price = getattr(self, "base_order_price", None)
+        dca_level = getattr(self, "dca_level", 0) if self.position else 0
+
+        cfg = {
+            "last_so_dt": getattr(self, "last_safety_order_time", None),
+            "base_order_time": getattr(self, "base_order_time", None),
+            "safety_order_mode": self.safety_order_mode,
+            # helpful for safety rules: which SO is pending if we fire one now
+            "next_level": dca_level + 1
+        }
+
+        # cash baseline for this cycle and available cash with leverage
+        equity_per_cycle = float(self._broker._cash)
+        available_cash = float(self._broker.margin_available * self._broker._leverage)
+
+        return Ctx(
+            now=now,
+            price=price,
+            entry_price=entry_price,
+            position_size=self.position.size,
+            dca_level=dca_level,
+            indicators=indicators,
+            equity_per_cycle=equity_per_cycle,
+            config=cfg,
+            dynamic_rsi_thr=dyn_thr,
+            available_cash=available_cash,
+        )
+
+
     def unscale_parameter(self, key, value):
         if self.enable_optimization and optimization_params[key]['type'] == 'float':
             param_scale = optimization_params[key].get('scaling_factor')
@@ -177,7 +216,7 @@ class DCAStrategy(Strategy):
         calculate_dynamic_rsi = self.show_indicators.get('dynamic_rsi', False) or self.rsi_dynamic_threshold
         
         # --- Dependencies ---
-        # If we need dynamic RSI, RSI reset, or overbought-gate, we must have RSI computed.
+        # If we need dynamic RSI, RSI reset, or overbought-rule, we must have RSI computed.
         if calculate_dynamic_rsi or self.require_rsi_reset or self.avoid_rsi_overbought:
             calculate_rsi = True
          
@@ -185,6 +224,15 @@ class DCAStrategy(Strategy):
 
        
         self.indicators = IndicatorManager(df)
+        
+        p = strategy_params
+        self.order_sizer = GeometricOrderSizer(DCASizingParams(
+            entry_fraction=p['entry_fraction'],
+            first_so_multiplier=p['first_safety_order_multiplier'],
+            so_size_multiplier=p['so_size_multiplier'],
+            min_notional=p.get('minimum_notional', 0.0),
+            max_levels=p['max_dca_levels'],
+        ))
 
         if calculate_rsi:
                 self.rsi_values = self.indicators.compute_rsi(
@@ -250,13 +298,21 @@ class DCAStrategy(Strategy):
         safety_names = strategy_params.get("safety_conditions", default_safety)
         exit_names = strategy_params.get("exit_conditions", default_exit)
 
-        self._entry_pipeline = self._build_pipeline(entry_names, ENTRY_GATE_MAP)
-        self._safety_pipeline = self._build_pipeline(safety_names, SAFETY_GATE_MAP)
-        self._exit_pipeline = self._build_pipeline(exit_names, EXIT_GATE_MAP)
+        self._entry_rules = build_rule_chain(self, entry_names, ENTRY_RULES)
+        self._safety_rules = build_rule_chain(self, safety_names, SAFETY_RULES)
+        self._exit_rules = build_rule_chain(self, exit_names, EXIT_RULES)
+        
+        # [ADD] inside DCAStrategy.init()
+        p = strategy_params
+        self.order_sizer = GeometricOrderSizer(DCASizingParams(
+            entry_fraction=p['entry_fraction'],
+            first_so_multiplier=p['first_safety_order_multiplier'],
+            so_size_multiplier=p['so_size_multiplier'],
+            min_notional=p.get('minimum_notional', 0.0),
+            max_levels=p['max_dca_levels'],
+        ))
 
 
-
-    
     # --- Debug Helper Functions ---
     def debug_loop_info(self, price, rsi_val, current_time):
         """Log key loop details."""
@@ -284,8 +340,6 @@ class DCAStrategy(Strategy):
             f"Executed Price: {executed_price:.10f} | "
             f"Order Value: {order_value:.2f}$"
         )
-
-    # --- Modularized Functions ---
 
     def dynamic_safety_price(self, last_filled_price, order_num, current_atr_value=None) -> float:
         
@@ -323,8 +377,6 @@ class DCAStrategy(Strategy):
                 return self.base_order_quantity  * self.first_safety_order_multiplier * (self.so_size_multiplier ** (level - 1))
             
 
-
-
     def static_safety_price(self, base_price: float, target_level: int) -> float:
         if target_level < 1 or target_level > self.max_dca_levels:
             return 0.0
@@ -341,8 +393,8 @@ class DCAStrategy(Strategy):
     
     def _safety_allows(self, rsi_val: float, dynamic_thr: float, level: int) -> bool:
         """
-        Returns True if safety order is allowed by safety gates.
-        (Currently only the RSI-under-dynamic-threshold gate; identical logic to old inline code.)
+        Returns True if safety order is allowed by safety rules.
+        (Currently only the RSI-under-dynamic-threshold rule; identical logic to old inline code.)
         """
         if (np.isnan(rsi_val) or rsi_val < dynamic_thr):
             return True
@@ -353,8 +405,8 @@ class DCAStrategy(Strategy):
     
     def _entry_allows(self, rsi_val: float) -> bool:
         """
-        Returns True if base order is allowed by all entry gates.
-        (Currently only the RSI-overbought gate; identical logic to the old inline code.)
+        Returns True if base order is allowed by all entry rules.
+        (Currently only the RSI-overbought rule; identical logic to the old inline code.)
         """
         if (
             self.avoid_rsi_overbought
@@ -453,7 +505,7 @@ class DCAStrategy(Strategy):
 
     def _exit_allows(self, current_time) -> bool:
         """
-        Returns True if exit is allowed by exit gates.
+        Returns True if exit is allowed by exit rules.
         (Currently only the 'TP decay reached' check; identical behavior.)
         """
         if not self.position:
@@ -467,48 +519,15 @@ class DCAStrategy(Strategy):
             logger.debug(f"Exit blocked: pl {pl:.3f}% < tp {adjusted_tp_percentage:.3f}%")
         return ok
 
-    def _entry_gate_rsi(self, ctx):
-        return self._entry_allows(ctx['rsi_val']), ""
 
-    def _safety_gate_rsi(self, ctx):
-        return self._safety_allows(ctx['rsi_val'], ctx['dynamic_thr'], ctx['level']), ""
-
-    def _exit_gate_tp(self, ctx):
-        return self._exit_allows(ctx['current_time']), ""
-
-    def _safety_gate_cooldown(self, ctx):
-        mins = getattr(self, "so_cooldown_minutes", 0) or 0
-        if mins <= 0:
-            return True, ""  # disabled
-        now = ctx["current_time"]
-        level = ctx["level"]
-        last = self.last_safety_order_time or self.base_order_time
-        if last is None or now - last >= timedelta(minutes=mins):
-            return True, ""
-        if self.debug_trade:
-            logger.debug(f"Skip DCA-{level}: cooldown {(now - last)} < {mins}m")
-        return False, "Cooldown not elapsed"
-
-
-    def _build_pipeline(self, names, name_to_method):
-        """Builds a Pipeline from a list of condition names using the registry map."""
-        checks = []
-        for n in names:
-            m = name_to_method.get(n)
-            if m:
-                checks.append(getattr(self, m))
-            else:
-                raise ValueError(f"Unknown condition name: {n}")
-        return Pipeline(checks)
-
-
+ 
 
     def process_entry(self, price, current_time):
         if not self.position:
             if self.enable_rsi_calculation and self.rsi_values is None:
                 return False
 
-            # 1) Multiplier (EMA gate) – unchanged logic, now centralized
+            # 1) Multiplier (EMA rule) – unchanged logic, now centralized
             multiplier = self._entry_multiplier(price)
 
             # 2) Size & investment – same math as before
@@ -659,8 +678,9 @@ class DCAStrategy(Strategy):
             if not self._safety_price_trigger_ok(price, so_price, level):
                 return
 
-            # 3) Safety gates (already decoupled – currently only RSI gate)
-            if not self._safety_pipeline.ok({'rsi_val': rsi_val, 'dynamic_thr': dynamic_thr, 'level': level, 'current_time': current_time}):
+            # 3) Safety rules (already decoupled – currently only RSI rule)
+            ctx = self._ctx()
+            if not self._safety_rules.ok(ctx):
                 return
 
             # 4) Size calculation (unchanged math)
@@ -741,8 +761,9 @@ class DCAStrategy(Strategy):
         if not self.position:
             return False
 
-        # Exit gates (decoupled – currently only TP-decay reached)
-        if self._exit_pipeline.ok({'current_time': current_time}):
+        # Exit rules (decoupled – currently only TP-decay reached)
+        ctx = self._ctx()
+        if self._exit_rules.ok(ctx):
             if self.debug_process:
                 self.log_exit_details(price, current_time)
                 logger.debug(f"Trade: Exit Triggered at {current_time} with Price: {price:.10f}")
@@ -1006,8 +1027,9 @@ class DCAStrategy(Strategy):
                 self.process_dca(current_low, rsi_val, dynamic_thr, current_time)
         else:
  
-            # Entry gates (decoupled – currently only RSI gate)
-            if not self._entry_pipeline.ok({'rsi_val': rsi_val}):
+            # Entry rules (decoupled – currently only RSI rule)
+            ctx = self._ctx()
+            if not self._entry_rules.ok(ctx):
                 return
  
             self.process_entry(price, current_time)
