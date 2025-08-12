@@ -136,7 +136,7 @@ class DCAStrategy(Strategy):
         # cash baseline for this cycle and available cash with leverage
         equity_per_cycle = float(self._broker._cash)
         available_cash = float(self._broker.margin_available * self._broker._leverage)
-
+        last_entry_time = self.last_safety_order_time if self.last_safety_order_time else self.base_order_time
         return Ctx(
             now=now,
             price=price,
@@ -148,6 +148,7 @@ class DCAStrategy(Strategy):
             config=cfg,
             dynamic_rsi_thr=dyn_thr,
             available_cash=available_cash,
+            last_entry_time=last_entry_time
         )
 
 
@@ -300,7 +301,7 @@ class DCAStrategy(Strategy):
 
         self._entry_rules = build_rule_chain(self, entry_names, ENTRY_RULES)
         self._safety_rules = build_rule_chain(self, safety_names, SAFETY_RULES)
-        self._exit_rules = build_rule_chain(self, exit_names, EXIT_RULES)
+        self._exit_rules = build_rule_chain(self, exit_names, EXIT_RULES, mode="any")
         
         # [ADD] inside DCAStrategy.init()
         p = strategy_params

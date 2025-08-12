@@ -1,7 +1,7 @@
 {
     "backtest_params": {
         "symbols": [
-            "1000PEPEUSDTUSDT"
+            "SUIUSDTUSDT"
         ],
         "timeframes": [
             "1m"
@@ -10,7 +10,7 @@
         "enable_optimization": false,
         "debug": true,
         "debug_loop": false,
-        "start_date": "2025-06-01 00:00:00",
+        "start_date": "2025-05-01 00:00:00",
         "end_date":   "2025-09-09 00:59:59",
     
         "cash": 1000,
@@ -22,7 +22,7 @@
     "strategy_params": {
         "entry_conditions": ["RSIOverbought"],
         "safety_conditions": ["RSIUnderDynamicThreshold", "CooldownBetweenSOs"],
-        "exit_conditions": ["TPDecayReached"],
+        "exit_conditions": ["TPDecayReached","StopLossReached"],
         "so_cooldown_minutes": 0,
 
         "max_dca_levels": 11,

@@ -16,4 +16,5 @@ class Ctx:
     config: Mapping[str, Any]
     # NEW (optional)
     dynamic_rsi_thr: Optional[float] = None
-    available_cash: float = 0.0
+    available_cash: float = 0.0,
+    last_entry_time: Optional[datetime] = None
