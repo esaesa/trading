@@ -2,7 +2,7 @@
 
 from sizers import DCASizingParams, GeometricOrderSizer 
 from rich.console import Console
-from datetime import datetime, timedelta
+from datetime import datetime
 import math
 from backtesting import Strategy
 from config import strategy_params, backtest_params, optimization_params
@@ -11,14 +11,11 @@ from logger_config import logger
 import numpy as np
 import pandas as pd
 from indicator_manager import IndicatorManager
-from rule_chain import RuleChain, build_rule_chain
+from rule_chain import  build_rule_chain
 from rules.entry import ENTRY_RULES
 from rules.safety import SAFETY_RULES
 from rules.exit import EXIT_RULES, calculate_decaying_tp
 from contracts import Ctx
-from datetime import datetime
-import numpy as np
-from sizers import DCASizingParams, GeometricOrderSizer
 
 
 
@@ -121,6 +118,11 @@ class DCAStrategy(Strategy):
                 dyn_thr = float(self.rsi_dynamic_threshold_series.loc[now])
             except Exception:
                 dyn_thr = float(self.rsi_dynamic_threshold_series.iloc[-1])
+                
+        # Get current ATR value
+        current_atr = None
+        if self.enable_atr_calculation and hasattr(self, 'atr_pct_series') and not self.atr_pct_series.empty:
+            current_atr = self.get_current_atr(now)               
 
         entry_price = getattr(self, "base_order_price", None)
         dca_level = getattr(self, "dca_level", 0) if self.position else 0
@@ -137,20 +139,33 @@ class DCAStrategy(Strategy):
 
         # cash baseline for this cycle and available cash with leverage
         equity_per_cycle = float(self._broker._cash)
-        available_cash = float(self._broker.margin_available * self._broker._leverage)
         last_entry_time = self.last_safety_order_time if self.last_safety_order_time else self.base_order_time
         return Ctx(
-            now=now,
-            price=price,
             entry_price=entry_price,
-            position_size=self.position.size,
-            dca_level=dca_level,
-            indicators=indicators,
             equity_per_cycle=equity_per_cycle,
             config=cfg,
-            dynamic_rsi_thr=dyn_thr,
-            available_cash=available_cash,
-            last_entry_time=last_entry_time
+            last_entry_time=last_entry_time,
+            now=now,
+            price=price,
+            indicators=indicators,
+            # Position tracking
+            dca_level=getattr(self, 'dca_level', 0),
+            base_order_price=getattr(self, 'base_order_price', None),
+            base_order_value=getattr(self, 'base_order_value', None),
+            base_order_quantity=getattr(self, 'base_order_quantity', None),
+            last_filled_price=getattr(self, 'last_filled_price', None),
+            # Time tracking
+            last_so_dt=getattr(self, 'last_safety_order_time', None),
+            base_order_time=getattr(self, 'base_order_time', None),
+            # Dynamic values
+            dynamic_rsi_thr=(self.rsi_dynamic_threshold_series.loc[now] 
+                           if hasattr(self, 'rsi_dynamic_threshold_series') 
+                           else self.rsi_threshold),
+            # Broker data
+            available_cash=self._broker.margin_available * self._broker._leverage,
+            position_size=self.position.size if self.position else 0,
+            position_pl_pct=self.position.pl_pct if self.position else 0,
+             current_atr=current_atr
         )
 
 
@@ -301,19 +316,10 @@ class DCAStrategy(Strategy):
         safety_names = strategy_params.get("safety_conditions", default_safety)
         exit_names = strategy_params.get("exit_conditions", default_exit)
 
-        self._entry_rules = build_rule_chain(self, entry_names, ENTRY_RULES)
-        self._safety_rules = build_rule_chain(self, safety_names, SAFETY_RULES)
+        self._entry_rules = build_rule_chain(self, entry_names, ENTRY_RULES,mode="any")
+        self._safety_rules = build_rule_chain(self, safety_names, SAFETY_RULES,mode="any")
         self._exit_rules = build_rule_chain(self, exit_names, EXIT_RULES, mode="any")
         
-        # [ADD] inside DCAStrategy.init()
-        p = strategy_params
-        self.order_sizer = GeometricOrderSizer(DCASizingParams(
-            entry_fraction=p['entry_fraction'],
-            first_so_multiplier=p['first_safety_order_multiplier'],
-            so_size_multiplier=p['so_size_multiplier'],
-            min_notional=p.get('minimum_notional', 0.0),
-            max_levels=p['max_dca_levels'],
-        ))
 
 
     # --- Debug Helper Functions ---
@@ -358,13 +364,6 @@ class DCAStrategy(Strategy):
             return 1e-8
         computed_price = last_filled_price * ((100 - deviation) / 100)
         return computed_price
-
-    def compute_order_quantity(self, price: float, fraction: float) -> int:
-        """
-        Compute maximum integer quantity based on available cash and fraction.
-        """
-        investment = self._broker._cash * fraction
-        return math.floor(investment / price)
     
     def calculate_safety_order_qty(self, so_price, multiplier, level):
         if self.safety_order_mode.lower() == "value":
@@ -423,24 +422,6 @@ class DCAStrategy(Strategy):
                 )
             return False
         return True
-
-
-    def _compute_so_price(self, level: int, current_time) -> float:
-        """Compute SO trigger price for a given level (keeps old dynamic/static behavior)."""
-        current_atr = self.get_current_atr(current_time)
-        if self.safety_order_price_mode.lower() == "dynamic":
-            return self.dynamic_safety_price(self.last_filled_price, level, current_atr)
-        return self.static_safety_price(self.base_order_price, level)
-
-    def _safety_price_trigger_ok(self, price: float, so_price: float, level: int) -> bool:
-        """Returns True if market price has reached the SO trigger; logs same debug on skip."""
-        if price <= so_price:
-            return True
-        if self.debug_trade:
-            logger.debug(
-                f"Price {price:.10f} > DCA-{level} trigger {so_price:.10f} → skip"
-            )
-        return False
 
     def _safety_affordable_size(self, so_price: float, desired_size: float) -> int:
         """
@@ -510,39 +491,31 @@ class DCAStrategy(Strategy):
 
  
 
-    def process_entry(self, price, current_time):
-        if not self.position:
+    def process_entry(self, price: float, current_time):
+        ctx = self._ctx()
+        if not self.position and  self._should_enter_position(ctx):
             if self.enable_rsi_calculation and self.rsi_values is None:
                 return False
-
-            # 1) Multiplier (EMA rule) – unchanged logic, now centralized
-            multiplier = self._entry_multiplier(price)
-
-            # 2) Size & investment – same math as before
-            base_order_quantity, initial_investment = self._entry_size_and_investment(price, multiplier)
-
-            # 3) Affordability & qty validity – same order as before
-            if not self._entry_affordable_ok(base_order_quantity, price):
+            multiplier = 2 if (self.enable_ema_calculation and price > ctx.indicators.get('ema', 0)) else 1
+            qty, investment = self._entry_size_and_investment(price, multiplier)
+            if not self._entry_affordable_ok(qty, price):
                 return False
-
-            # 4) Place order & state updates – unchanged
-            order = self.buy(size=base_order_quantity, tag="BO")
+            order = self.buy(size=qty, tag="BO")
             self.base_order_time = current_time
             self.last_safety_order_time = None
             self.dca_level = 0
             self.base_order_price = price
-            self.initial_investment = initial_investment
+            self.initial_investment = investment
             self.last_filled_price = price
-            self.base_order_quantity = base_order_quantity
-            self.base_order_value = base_order_quantity * self.base_order_price
+            self.base_order_quantity = qty
+            self.base_order_value = qty * self.base_order_price
 
             if self.debug_trade:
-                self.log_entry_details(current_time, price, base_order_quantity)
-                self.debug_trade_info("Entry", order, price, base_order_quantity * price)
+                self.log_entry_details(current_time, price, qty)
+                self.debug_trade_info("Entry", order, price, qty * price)
 
             self._consume_rsi_reset()
             return True
-
         return False
 
     def log_entry_details(self, current_time, price, base_order_quantity):
@@ -655,45 +628,32 @@ class DCAStrategy(Strategy):
         console.print(table)
 
     
-    def process_dca(self, price, rsi_val, dynamic_thr, current_time):
-        if self.dca_level < self.max_dca_levels and self.rsi_reset:
-            level = self.dca_level + 1
-
-            # 1) Trigger price (dynamic/static) – unchanged logic, now centralized
-            so_price = self._compute_so_price(level, current_time)
-
-            # 2) Wait for price to hit the trigger
-            if not self._safety_price_trigger_ok(price, so_price, level):
-                return
-
-            # 3) Safety rules (already decoupled – currently only RSI rule)
-            ctx = self._ctx()
-            if not self._safety_rules.ok(ctx):
-                return
-
-            # 4) Size calculation (unchanged math)
-            so_size = self.calculate_safety_order_qty(
-                so_price, self.first_safety_order_multiplier, level
-            )
-
-            # 5) Affordability & min-notional (unchanged behavior, centralized)
-            size_to_buy = self._safety_affordable_size(so_price, so_size)
-            if size_to_buy == 0:
-                return
-
-            # 6) Place order & update state (unchanged)
-            order = self.buy(size=size_to_buy, tag=f"S{level}")
-            self.last_safety_order_time = current_time
-            self.dca_level += 1
-            self._consume_rsi_reset()
-            if self.safety_order_price_mode.lower() == "dynamic":
-                self.last_filled_price = price
+    def process_dca(self, price: float, rsi_val: float, dynamic_thr: float, current_time:datetime) -> None:
+        ctx = self._ctx()
+        if self.dca_level >= self.max_dca_levels:
+            return
+        if not self._should_add_safety_order(ctx):
+            return
+        level = self.dca_level + 1
+        so_price = self._calculate_so_price(ctx, level)
+        if price > so_price:
             if self.debug_trade:
-                self.debug_trade_info("DCA", order, so_price, size_to_buy * so_price)
+                logger.debug(f"Price {price:.10f} > SO-{level} trigger {so_price:.10f}")
+            return
+        so_size = self._calculate_position_size(ctx, so_price, level)
+        size_to_buy = self._safety_affordable_size(so_price, so_size)
+        
+        if size_to_buy > 0:
+            order = self.buy(size=size_to_buy, tag=f"S{level}")
+            
+        self.last_safety_order_time = current_time
+        self.dca_level += 1
+        self._consume_rsi_reset()
+        if self.safety_order_price_mode.lower() == "dynamic":
+            self.last_filled_price = price
+        if self.debug_trade:
+            self.debug_trade_info("DCA", order, so_price, size_to_buy * so_price)
 
-
- 
-    
     def process_exit(self, price, current_time):
         if not self.position:
             return False
@@ -976,3 +936,40 @@ class DCAStrategy(Strategy):
             self.process_entry(price, current_time)
             return True
 
+    #▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+    # DECISION POINT HELPERS (Future migration targets)
+    #▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+    
+    def _should_enter_position(self, ctx: Ctx) -> bool:
+        """Entry conditions - move to rules/entry.py later"""
+        rsi_val = ctx.indicators.get('rsi', np.nan)
+        return not (self.avoid_rsi_overbought 
+                  and not np.isnan(rsi_val) 
+                  and rsi_val >= (self.rsi_overbought_level or 70))
+
+    def _should_add_safety_order(self, ctx: Ctx) -> bool:
+        """Safety order conditions - move to rules/safety.py later"""
+        rsi_val = ctx.indicators.get('rsi', np.nan)
+        return (self.rsi_reset
+               and (np.isnan(rsi_val) or rsi_val < ctx.dynamic_rsi_thr)
+               and (self.so_cooldown_minutes == 0 or 
+                   ctx.last_so_dt is None or
+                   (ctx.now - ctx.last_so_dt).total_seconds() >= self.so_cooldown_minutes * 60))
+
+    def _calculate_so_price(self, ctx: Ctx, level: int) -> float:
+        """Compute SO trigger price for a given level"""
+        """Pricing logic - move to rules/pricing.py later"""
+        if self.safety_order_price_mode.lower() == "dynamic":
+            return self.dynamic_safety_price(ctx.last_filled_price, level,  ctx.current_atr if ctx.current_atr is not None else np.nan)
+        return self.static_safety_price(ctx.base_order_price, level)
+
+    def _calculate_position_size(self, ctx: Ctx, price: float, level: int) -> float:
+        """Sizing logic - move to rules/sizing.py later"""
+        if self.safety_order_mode.lower() == "value":
+            if level == 1:
+                return ctx.base_order_value * self.first_safety_order_multiplier / price
+            return ctx.base_order_value * self.first_safety_order_multiplier * (self.so_size_multiplier ** (level - 1)) / price
+        else:  # volume mode
+            if level == 1:
+                return ctx.base_order_quantity * self.first_safety_order_multiplier
+            return ctx.base_order_quantity * self.first_safety_order_multiplier * (self.so_size_multiplier ** (level - 1))

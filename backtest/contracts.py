@@ -14,7 +14,18 @@ class Ctx:
     indicators: Mapping[str, Any]
     equity_per_cycle: float
     config: Mapping[str, Any]
-    # NEW (optional)
+    position_pl_pct: float
+    # Optional fields with default values
     dynamic_rsi_thr: Optional[float] = None
-    available_cash: float = 0.0,
+    available_cash: float = 0.0
     last_entry_time: Optional[datetime] = None
+    base_order_price: Optional[float] = None
+    base_order_value: Optional[float] = None
+    base_order_quantity: Optional[float] = None
+    last_filled_price: Optional[float] = None
+    last_so_dt: Optional[datetime] = None
+    base_order_time: Optional[datetime] = None
+    current_atr: Optional[float] = None
+    
+    
+    

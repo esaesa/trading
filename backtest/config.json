@@ -22,7 +22,7 @@
     "strategy_params": {
         "entry_conditions": ["RSIOverbought"],
         "safety_conditions": ["RSIUnderDynamicThreshold", "CooldownBetweenSOs"],
-        "exit_conditions": ["TPDecayReached"],
+        "exit_conditions": ["TakeProfitReached"],
         "exit_conditions_all" : ["TPDecayReached","StopLossReached", "TakeProfitReached"],
         "so_cooldown_minutes": 0,
 

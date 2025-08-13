@@ -13,7 +13,9 @@
         
         ],
         "symbols": [
-        "SUI/USDT:USDT"
+        "SUI/USDT:USDT",
+        "1000PEPE/USDT:USDT",
+        "DOGE/USDT:USDT"
         ],
         "all_symbol":[
         "AIXBT/USDT:USDT",

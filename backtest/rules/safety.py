@@ -32,3 +32,5 @@ SAFETY_RULES = {
     "RSIUnderDynamicThreshold": rsi_under_dynamic_threshold,
     "CooldownBetweenSOs": cooldown_between_sos,
 }
+
+
