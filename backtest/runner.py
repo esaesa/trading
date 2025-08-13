@@ -184,46 +184,6 @@ def unscale_parameter(value, param_name):
         if param_scale is not None:
             return value / param_scale
     return value
-# def strategy_str_to_json(strategy_str,scaling_factor=1000):
-#     """
-#     Convert a string like:
-#       "DCAStrategy(max_dca_levels=7,price_multiplier=1.1121534677123819,so_size_multiplier=6.0,entry_fraction=0.001,take_profit_percentage=0.15151337053315078,first_safety_order_multiplier=10.0,initial_deviation_percent=0.5)"
-#     into a JSON string.
-#     """
-#     # Find the part inside the parentheses.
-#     start = strategy_str.find("(")
-#     end = strategy_str.rfind(")")
-#     if start == -1 or end == -1:
-#         raise ValueError("Invalid strategy string format")
-    
-#     content = strategy_str[start+1:end]  # everything between '(' and ')'
-    
-#     # Split on commas. (Assumes parameter values do not contain commas.)
-#     pairs = content.split(",")
-    
-#     params = {}
-#     for pair in pairs:
-#         if "=" not in pair:
-#             continue
-#         key, value = pair.split("=", 1)
-#         key = key.strip()
-#         value = value.strip()
-        
-#         # Try to convert the value to int or float.
-#         try:
-#             # If the value contains a dot or exponent indicator, parse as float.
-#             if '.' in value or 'e' in value.lower():
-#                 converted = float(value)
-#             else:
-#                 converted = int(value)
-#             # Unscale the parameter if it was scaled during optimization
-#             converted = unscale_parameter(converted, key)    
-#             params[key] = converted
-#         except Exception:
-#             # Otherwise, leave it as a string.
-#             params[key] = value
-
-#     return json.dumps(params, indent=4)
 
 def run_all_backtests():
     """

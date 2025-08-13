@@ -2,27 +2,47 @@
 from typing import Dict, Any, Tuple, Callable
 
 from contracts import Ctx
-from datetime import datetime
+from datetime import datetime, timedelta
 
-def tp_decay_reached(self: Any,ctx: Ctx) -> Tuple[bool, str]:
-    """Exit rule based on take profit decay"""
-    current_time = ctx.now
-    entry_time = ctx.last_entry_time
+def take_profit_reached(self: Any, ctx: Ctx) -> Tuple[bool, str]:
+    """Exit rule based on fixed take profit percentage"""
+    if not self.position:
+        return False, "No position"
+    
     profit_pct = self.position.pl_pct
+    take_profit_pct = self.take_profit_percentage  # From strategy config
     
-    # Time-based decay logic
-    time_diff = (current_time - entry_time).total_seconds() / 3600  # hours
-    min_profit = max(0.2, 1.0 - (time_diff * 0.1))  # Decay rate of 0.1 per hour
-    
-    should_exit = profit_pct > min_profit
-    reason = f"TP decay: current profit {profit_pct:.2f}% > minimum {min_profit:.2f}%"
+    should_exit = profit_pct >= take_profit_pct
+    reason = f"Take profit: current profit {profit_pct:.2f}% >= target {take_profit_pct:.2f}%"
     
     return should_exit, reason
 
+
+def tp_decay_reached(self: Any, ctx: Ctx) -> Tuple[bool, str]:
+    """Exit rule using shared logic"""
+    if not ctx.entry_price or not ctx.last_entry_time:
+        return False, "No position"
+    
+    profit_pct = self.position.pl_pct
+    adjusted_tp = calculate_decaying_tp(
+        ctx.last_entry_time,
+        ctx.now,
+        self.take_profit_percentage,  # Could be passed through context
+        self.take_profit_reduction_duration_hours
+    )
+    
+    should_exit = profit_pct >= adjusted_tp
+    reason = f"TP decay: current profit {profit_pct:.2f}% >= adjusted TP {adjusted_tp:.2f}%"
+    
+    return should_exit, reason
+
+
 def stop_loss_reached(self: Any,ctx: Ctx) -> Tuple[bool, str]:
     """Exit rule for stop loss"""
-    stop_loss_threshold = -20  # -2% stop loss
+    stop_loss_threshold = -25  # -2% stop loss
     should_exit = self.position.pl_pct <= stop_loss_threshold
+    if should_exit:
+        pass
     reason = f"Stop loss triggered at { self.position.pl_pct:.2f}%"
     
     return should_exit, reason
@@ -39,5 +59,32 @@ def trailing_stop_reached(self: Any,ctx: Ctx) -> Tuple[bool, str]:
 EXIT_RULES = {
     "TPDecayReached": tp_decay_reached,
     "StopLossReached": stop_loss_reached,
+    "TakeProfitReached": take_profit_reached
     
 }
+
+def calculate_decaying_tp(entry_time, current_time, initial_tp, reduction_duration_hours, min_tp=0.2):
+    """Shared function for calculating decaying take profit"""
+    if entry_time is None:
+        return initial_tp
+    
+    time_since_entry = current_time - entry_time
+    initial_delay_td = timedelta(hours=reduction_duration_hours)
+    
+    # If initial delay period has not passed, return original TP
+    if time_since_entry <= initial_delay_td:
+        return initial_tp
+    
+    # Calculate time into reduction phase
+    time_into_reduction = time_since_entry - initial_delay_td
+    reduction_span_td = initial_delay_td
+    
+    # If reduction phase is complete
+    if time_into_reduction >= reduction_span_td:
+        return min_tp
+    
+    # Linear reduction
+    reduction_factor = time_into_reduction / reduction_span_td
+    adjusted_tp = initial_tp - (initial_tp - min_tp) * reduction_factor
+    
+    return max(min_tp, min(initial_tp, adjusted_tp))

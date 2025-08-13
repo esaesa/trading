@@ -14,7 +14,7 @@ from indicator_manager import IndicatorManager
 from rule_chain import RuleChain, build_rule_chain
 from rules.entry import ENTRY_RULES
 from rules.safety import SAFETY_RULES
-from rules.exit import EXIT_RULES
+from rules.exit import EXIT_RULES, calculate_decaying_tp
 from contracts import Ctx
 from datetime import datetime
 import numpy as np
@@ -129,8 +129,10 @@ class DCAStrategy(Strategy):
             "last_so_dt": getattr(self, "last_safety_order_time", None),
             "base_order_time": getattr(self, "base_order_time", None),
             "safety_order_mode": self.safety_order_mode,
+            "take_profit": self.take_profit_percentage,
             # helpful for safety rules: which SO is pending if we fire one now
-            "next_level": dca_level + 1
+            "next_level": dca_level + 1,
+            "commission_rate" : backtest_params.get("commission", 0.0)
         }
 
         # cash baseline for this cycle and available cash with leverage
@@ -504,22 +506,7 @@ class DCAStrategy(Strategy):
             raise ValueError("Backtesting.py does not support fractional units. Adjust your entry fraction.")
         return True
 
-    def _exit_allows(self, current_time) -> bool:
-        """
-        Returns True if exit is allowed by exit rules.
-        (Currently only the 'TP decay reached' check; identical behavior.)
-        """
-        if not self.position:
-            return False
-
-        adjusted_tp_percentage = self.calculate_adjusted_take_profit(current_time)
-        pl = self.position.pl_pct
-
-        ok = pl >= adjusted_tp_percentage
-        if self.debug_process and not ok:
-            logger.debug(f"Exit blocked: pl {pl:.3f}% < tp {adjusted_tp_percentage:.3f}%")
-        return ok
-
+ 
 
  
 
@@ -705,58 +692,7 @@ class DCAStrategy(Strategy):
                 self.debug_trade_info("DCA", order, so_price, size_to_buy * so_price)
 
 
-    def calculate_adjusted_take_profit(self, current_time):
-        """
-        Calculates the adjusted take profit percentage based on time since last safety order.
-        The reduction starts *after* take_profit_reduction_duration_hours has passed.
-        Linearly reduces take profit from original_take_profit_percentage to
-        minimum_take_profit_percentage over an *additional*
-        take_profit_reduction_duration_hours.
-        """
-        original_tp = self.take_profit_percentage
-        commission_rate = backtest_params.get("commission", 0.0)  # e.g., 0.0005 = 0.05%
-        min_tp = 2 * commission_rate * 100.0  # cover entry+exit fees in %
-        # Determine the relevant timestamp for reduction
-        reference_time = self.last_safety_order_time if self.last_safety_order_time else self.base_order_time
-
-        if reference_time is None:
-            return original_tp
-
-        # Define the total duration for the *initial delay* + *reduction phase*
-        initial_delay_td = timedelta(hours=self.take_profit_reduction_duration_hours)
-        
-        time_since_reference = current_time - reference_time
-
-        # If the initial delay period has not passed, return the original TP
-        if time_since_reference <= initial_delay_td:
-            return original_tp
-        
-        # If we are past the initial delay, calculate time elapsed *since the delay ended*
-        time_into_reduction_phase = time_since_reference - initial_delay_td
-
-        # The reduction itself happens over a duration equal to initial_delay_td
-        reduction_span_td = initial_delay_td # The duration over which TP goes from original to min_tp
-
-        # If the reduction phase is complete (or exceeded)
-        if time_into_reduction_phase >= reduction_span_td:
-            return min_tp # Take profit reduced to the defined minimum
-
-        else:
-            # Linear reduction starts now
-            reduction_factor = time_into_reduction_phase / reduction_span_td
-            
-            # Interpolate between original_tp and min_tp
-            # When reduction_factor is 0, it's original_tp
-            # When reduction_factor is 1, it's min_tp
-            adjusted_tp = original_tp - (original_tp - min_tp) * reduction_factor
-            
-            # Ensure it doesn't go beyond the bounds, although the interpolation should handle it
-            # This max/min depends on whether min_tp is positive or negative.
-            # If min_tp is positive, we want max(min_tp, adjusted_tp)
-            # If min_tp is negative, we want min(original_tp, adjusted_tp) to make sure it can go negative
-            # A simpler way to handle both is to clamp it.
-            return max(min_tp, min(original_tp, adjusted_tp))
-
+ 
     
     def process_exit(self, price, current_time):
         if not self.position:
@@ -773,9 +709,6 @@ class DCAStrategy(Strategy):
             return True
         else:
             return False
-
-
-    
     
         # --- RSI-reset utility ---------------------------------------------------- #
     def _need_reset(self) -> bool:                            
@@ -991,7 +924,14 @@ class DCAStrategy(Strategy):
                 self.breakeven_prices[current_idx] = entry_price
                 # Calculate take profit price
                 
-                adjusted_tp_percentage = self.calculate_adjusted_take_profit(current_time)
+                #adjusted_tp_percentage = self.calculate_adjusted_take_profit(current_time)
+                        # Use shared function for plotting
+                adjusted_tp_percentage = calculate_decaying_tp(
+                    self.last_safety_order_time or self.base_order_time,
+                    current_time,
+                    self.take_profit_percentage,
+                    self.take_profit_reduction_duration_hours
+                )
                 # take_profit_percent is in percent, so divide by 100
                 tp_price = entry_price * (1 + adjusted_tp_percentage / 100)
                 self.take_profit_prices[current_idx] = tp_price
