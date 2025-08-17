@@ -1,14 +1,23 @@
 # wiring.py
 from __future__ import annotations
 from typing import Any
-
-from contracts import Ctx
-from ports import EntryDecider, SafetyDecider, ExitDecider, PriceEngine, SizeEngine
+from order_alloc import (
+    FractionalCashEntrySizer,
+    EmaEntryMultiplier,
+    FixedEntryMultiplier,
+    DefaultAffordabilityGuard,
+)
+from commissions import FixedRateCommission
+from ports import PriceEngine, SizeEngine
 from rules.pricing import StaticPriceEngine, DynamicATRPriceEngine
 from rules.sizing import ValueModeSizeEngine, VolumeModeSizeEngine
 from rules.exit import ExitRuleDecider
 from rules.entry import EntryRuleDecider
 from rules.safety import SafetyRuleDecider
+from indicators_provider import StrategyIndicatorProvider
+from position_view import BacktestingPositionView
+from preflight import EntryPreflight
+
 
 # === default rule selection lives in wiring, not strategy ===
 def _apply_default_rules(owner, params: dict) -> dict:
@@ -68,3 +77,32 @@ def wire_strategy(strategy: Any, strategy_params: dict) -> None:
 
     strategy.price_engine   = _build_price_engine(strategy)
     strategy.size_engine    = _build_size_engine(strategy)
+    # Entry sizing policy
+    if getattr(strategy, "enable_ema_calculation", False):
+        entry_mult = EmaEntryMultiplier(mult_above=2, default=1)
+    else:
+        entry_mult = FixedEntryMultiplier(1)
+
+    strategy.entry_sizer = FractionalCashEntrySizer(
+        entry_fraction=strategy.entry_fraction,
+        multiplier=entry_mult,
+    )
+    
+    # Commission policy (single source of truth)
+    strategy.commission_calc = FixedRateCommission(rate=getattr(strategy, "commission_rate", 0.0))
+
+
+    # Affordability policy (for DCA & optionally entry)
+    strategy.affordability_guard = DefaultAffordabilityGuard()
+  
+    # Position view adapter
+    strategy.position_view = BacktestingPositionView(
+        last_price_fn=lambda: strategy._broker.last_price,
+        position_fn=lambda: strategy.position,
+    )
+    # Indicator provider (so engines/rules don’t couple to Strategy fields)
+    strategy.indicator_provider = StrategyIndicatorProvider(strategy)
+    
+    strategy.entry_preflight = EntryPreflight(strategy.entry_sizer, strategy.commission_calc)
+
+

@@ -1,57 +1,57 @@
-# runner.py
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Callable, Tuple, Optional, Protocol
 from backtesting import Backtest
 import numpy as np
 import pandas as pd
-from common_utils import beep
-from config import strategy_params
-from config import backtest_params, optimization_params, maximize_func, constraint_func,data_folder, symbols, timeframes
-from strategy import DCAStrategy
-from data_loader import load_data
 from rich.console import Console
-from visualization import visualize_results
-import json
-from datetime import datetime, timedelta
+from datetime import datetime
 import os
+import json
 
-
+# Current concrete deps; we’ll still import them, but allow injection.
+from common_utils import beep
+from config import (
+    strategy_params, backtest_params, optimization_params, maximize_func,
+    data_folder, symbols, timeframes,
+)
+from data_loader import load_data
+from visualization import visualize_results
+from strategy import DCAStrategy
 
 console = Console()
 
-def aggregate_cycle_metrics(processes : List[Dict]) ->Dict[str, Any] :
+
+# --------- Utilities kept from your file (unchanged or tiny tweaks) ---------
+
+def aggregate_cycle_metrics(processes: List[Dict]) -> Dict[str, Any]:
     if not processes:
         console.print("[bold red]No completed processes found.[/bold red]")
         return {}
-    
+
     import statistics
     from collections import Counter
-    
-    # Extract DCA levels and their corresponding dates from each cycle
-    dca_levels = [(cycle["dca_levels_executed"], cycle["date"]) for cycle in processes]
-    price_changes = [(cycle["cycle_price_change_pct"], cycle["date"]) for cycle in processes]
-    rois = [(cycle["roi_percentage"], cycle["date"]) for cycle in processes]
 
-    # Get the max and min values with their dates
+    dca_levels = [(c["dca_levels_executed"], c["date"]) for c in processes]
+    price_changes = [(c["cycle_price_change_pct"], c["date"]) for c in processes]
+    rois = [(c["roi_percentage"], c["date"]) for c in processes]
+
     max_dca_level, max_dca_date = max(dca_levels, key=lambda x: x[0])
     min_dca_level, min_dca_date = min(dca_levels, key=lambda x: x[0])
-
     max_cycle_price_change, max_price_change_date = max(price_changes, key=lambda x: x[0])
     min_cycle_price_change, min_price_change_date = min(price_changes, key=lambda x: x[0])
-
     max_roi, max_roi_date = max(rois, key=lambda x: x[0])
     min_roi, min_roi_date = min(rois, key=lambda x: x[0])
 
-    # New: list all dates where the executed DCA level is exactly 7
     target_level = 3
-    dates_at_target_level = [date.strftime("%Y-%m-%d %H:%M:%S") for level, date in dca_levels if level == target_level]
+    dates_at_target_level = [
+        date.strftime("%Y-%m-%d %H:%M:%S") for level, date in dca_levels if level == target_level
+    ]
 
-    # New: frequency distribution of DCA levels (how many processes reached each level)
     levels_only = [level for level, _ in dca_levels]
     freq_distribution = dict(sorted(Counter(levels_only).items()))
 
-    aggregated = {
+    return {
         "max_dca_level": {"value": max_dca_level, "date": max_dca_date},
-        "avg_dca_level": statistics.mean([level for level, _ in dca_levels]),
+        "avg_dca_level": statistics.mean(levels_only),
         "min_dca_level": {"value": min_dca_level, "date": min_dca_date},
         "max_cycle_price_change_pct": {"value": max_cycle_price_change, "date": max_price_change_date},
         "avg_cycle_price_change_pct": statistics.mean([pc for pc, _ in price_changes]),
@@ -59,196 +59,250 @@ def aggregate_cycle_metrics(processes : List[Dict]) ->Dict[str, Any] :
         "max_roi_percentage": {"value": max_roi, "date": max_roi_date},
         "avg_roi_percentage": statistics.mean([roi for roi, _ in rois]),
         "min_roi_percentage": {"value": min_roi, "date": min_roi_date},
-        f"max_dca_level_{target_level}_dates": dates_at_target_level,  # New metric: all dates when DCA level equals 7
-        "dca_level_frequency_distribution": freq_distribution  # New metric: frequency of each DCA level
+        f"max_dca_level_{target_level}_dates": dates_at_target_level,
+        "dca_level_frequency_distribution": freq_distribution,
     }
-    return aggregated
 
 
-def run_backtest(symbol, timeframe):
-    """
-    Runs a backtest for a given symbol and timeframe.
-    """
-    data_dir = os.path.dirname(__file__)
-    data_file = os.path.join(data_dir, f"{data_folder}/binance_{symbol}_{timeframe}.feather")
-    console.print(f"\n[bold cyan]Running backtest for {symbol} on {timeframe} timeframe...[/bold cyan]")
-    try:
-            data = load_data(data_file, backtest_params["start_date"], backtest_params["end_date"])
-            params = {
-                "backtest_params": backtest_params,
-                "strategy_params": strategy_params,  # Get current strategy params
-                "optimization_params": optimization_params,
-                "data": data.head(100).to_dict()  # Sample data for verification
-            }
-    except FileNotFoundError:
-            console.print(f"[bold red]Data file not found: {data_file}. Skipping...[/bold red]")
-            return
-
-    bt = Backtest(
-        data,
-        DCAStrategy,
-        cash=backtest_params["cash"],
-        commission=backtest_params["commission"],
-        #commission = lambda size, price:  price * 0.0005 * abs(size) ,  # 0.05% commission
-        trade_on_close=True,
-        finalize_trades=False,
-        margin=1/1,
-    )
-    # Scale optimization parameters
-    scaled_optimization_params = {}
-    debug = backtest_params.get("debug", False) and not backtest_params["enable_optimization"]
-    
-
-
-    # Print the scaled optimization parameters
-    # print("Scaled Optimization Parameters:")
-    #for key, values in scaled_optimization_params.items():
-        #print(f"{key}: {values}")
-
-
-    # ... after running optimization ...
-    if backtest_params["enable_optimization"]:
-            # Convert optimization parameters: scale floats, leave integers unchanged
-        scaled_optimization_params = {}
-        for key, param_info in optimization_params.items():
-            if param_info['type'] == 'float':  # Check if the parameter is a float
-                # Check for a parameter-specific scaling factor.
-                param_scale = param_info.get('scaling_factor')
-                if param_scale is not None:
-                    scaled_optimization_params[key] = [int(v * param_scale) for v in param_info['values']]
-                else:
-                    # No scaling factor provided, so leave the float values unchanged.
-                    scaled_optimization_params[key] = param_info['values']
-                
-            elif param_info['type'] == 'int':  # Leave integer parameters unchanged
-                scaled_optimization_params[key] = param_info['values']
-            else:
-                raise ValueError(f"Unsupported parameter type: {param_info['type']}")
-
-        print("Running optimization...")
-        print("Optimization parameters:", scaled_optimization_params)
-        optimize_result = None
-        heatmap = None
-        stats   = bt.optimize(
-            **scaled_optimization_params,
-            # constraint=constraint_func,
-            maximize=maximize_func,
-            max_tries=400,
-            random_state=3,
-            method="sambo",
-            # return_heatmap=False,
-            # return_optimization=False
-        )
-        beep()
-        param_names = list(optimization_params.keys())
-        visualize_results(stats, bt, optimize_result=optimize_result, heatmap=heatmap,
-                            param_names=param_names, 
-                            show_optimization_graphs=backtest_params.get("show_optimization_graphs", True))
-    
-        best_params = stats._strategy
-        results = {
-            "best_params": best_params,
-            "performance": stringify_stats(stats),
-            "heatmap": heatmap.to_dict() if heatmap else None
-        }
-    else:
-        stats = bt.run()
-
-        if debug:
-            # Get completed processes from the strategy instance
-            completed_processes = stats._strategy.completed_processes
-            aggregated_metrics = aggregate_cycle_metrics(completed_processes)
-            print("=== Cumulative DCA Cycle Performance Metrics ===")
-            for key, value in aggregated_metrics.items():
-                if isinstance(value, dict) and "value" in value and "date" in value:
-                    print(f"{key}: {value['value']} (Date: {value['date']})")
-                else:
-                    print(f"{key}: {value}")
-
-            results = {
-                "performance": stringify_stats(stats),
-                "aggregated_metrics": aggregated_metrics
-            }
-            saved_file = save_backtest_results(results, symbol, timeframe, params, optimization_enabled=False)
-            console.print(f"[bold green]Saved results to: {saved_file}[/bold green]")
-        visualize_results(stats, bt)
-        
-        
-
-def unscale_parameter(value, param_name):
-    if optimization_params.get(param_name, {}).get('type') == 'float':
-        param_scale = optimization_params.get(param_name, {}).get('scaling_factor')
-        if param_scale is not None:
-            return value / param_scale
-    return value
-
-def run_all_backtests():
-    """
-    Run backtests for all symbols and timeframes.
-    """
-    for symbol in symbols:
-        for timeframe in timeframes:
-            run_backtest(symbol, timeframe)
-
-
-def stringify_stats(stats):
-    """Convert all stats keys/values to strings"""
-    string_stats = {}
+def stringify_stats(stats) -> Dict[str, str]:
+    """Convert all stats keys/values to strings; skip heavy internals."""
+    string_stats: Dict[str, str] = {}
     exclude_keys = {"_trades", "_equity_curve"}
-    
+
     for key in stats.keys():
         if key in exclude_keys:
-                continue  # Skip these keys
+            continue
         try:
             value = stats[key]
-            
-            # Convert special types first
             if isinstance(value, pd.Timestamp):
                 string_stats[str(key)] = value.isoformat()
             elif isinstance(value, pd.Timedelta):
                 string_stats[str(key)] = str(value)
-            elif isinstance(value, (np.generic, np.ndarray)):
-                string_stats[str(key)] = str(value.item())  # Convert numpy types
+            elif isinstance(value, np.generic):
+                string_stats[str(key)] = str(value.item())
             else:
-                # Convert everything else directly to string
                 string_stats[str(key)] = str(value)
-                
         except Exception as e:
-            string_stats[str(key)] = f"Error: {str(e)}"
-    
+            string_stats[str(key)] = f"Error: {e}"
+
     return string_stats
 
-def save_backtest_results(results, symbol, timeframe, params, optimization_enabled=False):
-    """Save backtest results with metadata to JSON file"""
-    results_dir =  os.path.join(os.path.dirname(__file__), "backtest_results")
+
+def save_backtest_results(
+    results: Dict[str, Any],
+    symbol: str,
+    timeframe: str,
+    params: Dict[str, Any],
+    optimization_enabled: bool = False,
+) -> str:
+    results_dir = os.path.join(os.path.dirname(__file__), "backtest_results")
     os.makedirs(results_dir, exist_ok=True)
-    
-    filename = os.path.join(results_dir, f"{symbol}_{timeframe}_{datetime.now().strftime('%Y%m%d%H%M%S')}.json")
-    
+
+    filename = os.path.join(
+        results_dir, f"{symbol}_{timeframe}_{datetime.now().strftime('%Y%m%d%H%M%S')}.json"
+    )
+
     output = {
         "metadata": {
             "symbol": symbol,
             "timeframe": timeframe,
             "data_file": f"binance_{symbol}_{timeframe}.csv",
             "timestamp": datetime.now().isoformat(),
-            "sample_size": len(params.get('data', [])),
-            "optimization_enabled": optimization_enabled  # Add this flag
+            "sample_size": len(params.get("data", [])),
+            "optimization_enabled": optimization_enabled,
         },
         "parameters": {
-            "backtest_params": params.get('backtest_params', {}),
-            "strategy_params": params.get('strategy_params', {})
-        }
+            "backtest_params": params.get("backtest_params", {}),
+            "strategy_params": params.get("strategy_params", {}),
+        },
+        "results": results,
     }
-    
-    # Only include optimization params if optimization was enabled
+
     if optimization_enabled:
-        output["parameters"]["optimization_params"] = params.get('optimization_params', {})
-    
-    output["results"] = results
-    
-    with open(filename, 'w') as f:
+        output["parameters"]["optimization_params"] = params.get("optimization_params", {})
+
+    with open(filename, "w") as f:
         json.dump(output, f, indent=2, default=str)
-    
+
     return filename
+
+
+# ------------------------- Small helpers (SRP) -------------------------
+
+def data_path(symbol: str, timeframe: str) -> str:
+    data_dir = os.path.dirname(__file__)
+    return os.path.join(data_dir, f"{data_folder}/binance_{symbol}_{timeframe}.feather")
+
+
+def prepare_data(
+    symbol: str,
+    timeframe: str,
+    loader: Callable[[str, str, str], pd.DataFrame],
+    bt_params: Dict[str, Any],
+) -> Tuple[pd.DataFrame, Dict[str, Any]]:
+    fp = data_path(symbol, timeframe)
+    console.print(f"\n[bold cyan]Running backtest for {symbol} on {timeframe} timeframe...[/bold cyan]")
+    data = loader(fp, bt_params["start_date"], bt_params["end_date"])
+    # light metadata snapshot for the file
+    meta = {
+        "backtest_params": bt_params,
+        "strategy_params": strategy_params,
+        "optimization_params": optimization_params,
+        "data": data.head(100).to_dict(),  # small sample only
+    }
+    return data, meta
+
+
+def build_backtest(
+    data: pd.DataFrame,
+    strategy_cls: type,
+    bt_params: Dict[str, Any],
+) -> Backtest:
+    return Backtest(
+        data,
+        strategy_cls,
+        cash=bt_params["cash"],
+        commission=bt_params["commission"],
+        trade_on_close=True,
+        finalize_trades=False,
+        margin=1.0,
+    )
+
+
+def scale_optimization_params(raw: Dict[str, Any]) -> Dict[str, List[Any]]:
+    scaled: Dict[str, List[Any]] = {}
+    for key, info in raw.items():
+        t = info["type"]
+        values = info["values"]
+        if t == "float":
+            scale = info.get("scaling_factor")
+            if scale is not None:
+                scaled[key] = [int(v * scale) for v in values]
+            else:
+                scaled[key] = values
+        elif t == "int":
+            scaled[key] = values
+        else:
+            raise ValueError(f"Unsupported parameter type: {t}")
+    return scaled
+
+
+def run_or_optimize(
+    bt: Backtest,
+    enable_optimization: bool,
+    optimizer_params: Dict[str, Any],
+    maximize: Callable,
+    beeper: Callable[[], None],
+):
+    if not enable_optimization:
+        return bt.run(), None, None, False
+
+    scaled = scale_optimization_params(optimizer_params)
+    console.print("[bold yellow]Running optimization...[/bold yellow]")
+    console.print(f"Parameters: {scaled}")
+    stats = bt.optimize(
+        **scaled,
+        maximize=maximize,
+        max_tries=400,
+        random_state=3,
+        method="sambo",
+    )
+    beeper()
+    return stats, None, None, True  # optimize_result/heatmap omitted as before
+
+
+def handle_debug_and_persist(
+    stats,
+    bt: Backtest,
+    symbol: str,
+    timeframe: str,
+    params: Dict[str, Any],
+    is_optimization: bool,
+    debug: bool,
+) -> None:
+    if is_optimization:
+        # You previously visualized + returned; keep parity
+        visualize_results(stats, bt, optimize_result=None, heatmap=None,
+                          param_names=list(optimization_params.keys()),
+                          show_optimization_graphs=backtest_params.get("show_optimization_graphs", True))
+        results = {
+            "best_params": stats._strategy,
+            "performance": stringify_stats(stats),
+            "heatmap": None,
+        }
+        # Save if you’d like; making it optional
+        # save_backtest_results(results, symbol, timeframe, params, optimization_enabled=True)
+        return
+
+    # Non-optimization
+    if debug:
+        completed = getattr(stats._strategy, "completed_processes", [])
+        agg = aggregate_cycle_metrics(completed)
+        print("=== Cumulative DCA Cycle Performance Metrics ===")
+        for k, v in agg.items():
+            if isinstance(v, dict) and "value" in v and "date" in v:
+                print(f"{k}: {v['value']} (Date: {v['date']})")
+            else:
+                print(f"{k}: {v}")
+
+        results = {"performance": stringify_stats(stats), "aggregated_metrics": agg}
+        saved = save_backtest_results(results, symbol, timeframe, params, optimization_enabled=False)
+        console.print(f"[bold green]Saved results to: {saved}[/bold green]")
+
+    visualize_results(stats, bt)
+
+
+# ------------------------- Orchestrator (DIP-friendly) -------------------------
+
+def run_backtest(
+    symbol: str,
+    timeframe: str,
+    *,
+    strategy_cls: type = DCAStrategy,
+    loader: Callable[[str, str, str], pd.DataFrame] = load_data,
+    visualizer: Callable = visualize_results,      # kept for future swaps
+    beeper: Callable[[], None] = beep,
+    bt_params: Dict[str, Any] = backtest_params,
+    strat_params: Dict[str, Any] = strategy_params,
+    opt_params: Dict[str, Any] = optimization_params,
+    maximize: Callable = maximize_func,
+) -> None:
+    try:
+        data, meta = prepare_data(symbol, timeframe, loader, bt_params)
+    except FileNotFoundError:
+        console.print(f"[bold red]Data file not found: {data_path(symbol, timeframe)}. Skipping...[/bold red]")
+        return
+
+    bt = build_backtest(data, strategy_cls, bt_params)
+
+    debug = bt_params.get("debug", False) and not bt_params.get("enable_optimization", False)
+    stats, optimize_result, heatmap, is_opt = run_or_optimize(
+        bt, bt_params.get("enable_optimization", False), opt_params, maximize, beeper
+    )
+
+    # keep the visualization function DI-friendly
+    globals()["visualize_results"] = visualizer  # minimal change so the helper uses injected visualizer
+
+    handle_debug_and_persist(
+        stats=stats,
+        bt=bt,
+        symbol=symbol,
+        timeframe=timeframe,
+        params=meta,
+        is_optimization=is_opt,
+        debug=debug,
+    )
+
+
+def run_all_backtests(
+    *,
+    _symbols: List[str] = symbols,
+    _timeframes: List[str] = timeframes,
+) -> None:
+    for sym in _symbols:
+        for tf in _timeframes:
+            run_backtest(sym, tf)
+
+
 if __name__ == "__main__":
     run_all_backtests()

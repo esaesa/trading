@@ -28,13 +28,11 @@ class StaticPriceEngine(PriceEngine):
 
 
 class DynamicATRPriceEngine(PriceEngine):
-    """
-    Deviation(level) = d * m_eff^level
-    P_k = P_last * (1 - Deviation/100)
-    where m_eff = m * (1 - atr_reduction) if ATR% < threshold else m
-    """
-    def __init__(self, strategy) -> None:
+    def __init__(self, strategy):
         self.s = strategy
+        self.provider = getattr(strategy, "indicator_provider", None)
+
+   
 
     def _effective_multiplier(self, current_atr_value: float | None) -> float:
         if (
@@ -47,14 +45,40 @@ class DynamicATRPriceEngine(PriceEngine):
         return self.s.price_multiplier
 
     def so_price(self, ctx: Ctx, level: int) -> float:
-        last = ctx.last_filled_price
+        last = ctx.last_filled_price or ctx.base_order_price
         if last is None:
-            # during first SO in dynamic mode, we use base price as "last"
-            last = ctx.base_order_price
-        m_eff = self._effective_multiplier(ctx.current_atr)
+            # No reference price yet — can't compute an SO trigger.
+            return 0.0
+
+        
+        atr_now = getattr(ctx, "current_atr", None)
+
+        m_eff = self._effective_multiplier(atr_now)
         deviation = self.s.initial_deviation_percent * (m_eff ** level)  # %
+
         if deviation >= 100:
-            if self.s.debug_loop:
+            if getattr(self.s, "debug_loop", False):
                 logger.warning(f"Deviation for level {level} >= 100%. Returning minimum value.")
             return EPS
-        return last * ((100.0 - deviation) / 100.0)
+
+        return float(last) * ((100.0 - deviation) / 100.0)
+
+    
+    def _current_atr_pct(self, now):
+        # Prefer provider
+        if self.provider is not None:
+            v = self.provider.atr_pct(now)
+            if v is not None and not (isinstance(v, float) and np.isnan(v)):
+                return float(v)
+        # Fallback to legacy access
+        ser = getattr(self.s, "atr_pct_series", None)
+        if ser is not None:
+            try:
+                return float(ser.loc[now])
+            except Exception:
+                try:
+                    return float(ser.iloc[-1])
+                except Exception:
+                    return None
+        return None
+

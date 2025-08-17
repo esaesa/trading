@@ -1,22 +1,20 @@
 # strategy.py
+from indicators_bootstrap import IndicatorsBootstrap
 from reset_policy import need_reset, update_reset, consume_reset
 from simulation import apply_slippage
 from reporting import render_cycle_plan_table, render_exit_summary_table
 from wiring import wire_strategy
 from instrumentation import log_loop_info, log_trade_info
-from sizers import DCASizingParams, GeometricOrderSizer
 from rich.console import Console
 from datetime import datetime
-import math
 from backtesting import Strategy
 from config import strategy_params, backtest_params, optimization_params
 from logger_config import logger
 import numpy as np
 import pandas as pd
-from indicators_bootstrap import IndicatorsBootstrap
-from rules.exit import calculate_decaying_tp
 from contracts import Ctx
 from overlays import init_overlays, update_overlays
+from types import SimpleNamespace
 
 
 class DCAStrategy(Strategy):
@@ -79,26 +77,60 @@ class DCAStrategy(Strategy):
 
     def __init__(self, broker, data, params):
         super().__init__(broker, data, params)
-        self.commission_rate = float(backtest_params.get("commission", 0.0))
         self.enable_optimization = backtest_params.get("enable_optimization", False)
 
+    def _ind_value(self, name: str, now, default=np.nan):
+        """
+        Read indicator 'name' at time 'now' via indicator_provider if available,
+        otherwise fall back to legacy series on the Strategy.
+        Supported names: rsi, ema, atr_pct, laguerre_rsi, bbw, cv
+        """
+        # 1) Try provider (preferred)
+        provider = getattr(self, "indicator_provider", None)
+        if provider is not None:
+            # Expect methods named exactly like the indicator
+            fn = getattr(provider, name, None)
+            if callable(fn):
+                try:
+                    v = fn(now)
+                    if v is not None:
+                        return float(v)
+                except Exception:
+                    pass  # fall back
+
+        # 2) Fallback to legacy series on the Strategy
+        series_attr = {
+            "rsi": "rsi_values",
+            "ema": "ema_dynamic",
+            "atr_pct": "atr_pct_series",
+            "laguerre_rsi": "laguerre_series",
+            "bbw": "bbw_series",
+            "cv": "cv_series",
+        }.get(name)
+
+        if series_attr and hasattr(self, series_attr):
+            ser = getattr(self, series_attr)
+            if ser is not None and len(ser):
+                try:
+                    return float(ser.loc[now])
+                except Exception:
+                    try:
+                        return float(ser.iloc[-1])
+                    except Exception:
+                        pass
+
+        return default
+
+    
     def _ctx(self) -> Ctx:
         now = self.data.index[-1]
         price = float(self.data.Close[-1])
 
         indicators = {}
-        if getattr(self, "rsi_values", None) is not None and len(self.rsi_values):
-            indicators["rsi"] = float(self.rsi_values.iloc[-1])
-        if getattr(self, "ema_dynamic", None) is not None and len(self.ema_dynamic):
-            indicators["ema"] = float(self.ema_dynamic.iloc[-1])
-        if getattr(self, "atr_pct_series", None) is not None and len(self.atr_pct_series):
-            indicators["atr_pct"] = float(self.atr_pct_series.iloc[-1])
-        if getattr(self, "laguerre_series", None) is not None and len(self.laguerre_series):
-            indicators["laguerre_rsi"] = float(self.laguerre_series.iloc[-1])
-        if getattr(self, "bbw_series", None) is not None and len(self.bbw_series):
-            indicators["bbw"] = float(self.bbw_series.iloc[-1])
-        if getattr(self, "cv_series", None) is not None and len(self.cv_series):
-            indicators["cv"] = float(self.cv_series.iloc[-1])
+        for n in ("rsi", "ema", "atr_pct", "laguerre_rsi", "bbw", "cv"):
+            v = self._ind_value(n, now, default=np.nan)
+            if v is not None and not (isinstance(v, float) and np.isnan(v)):
+                indicators[n] = v
 
         dyn_thr = None
         if getattr(self, "rsi_dynamic_threshold", False) and hasattr(self, "rsi_dynamic_threshold_series"):
@@ -125,9 +157,6 @@ class DCAStrategy(Strategy):
 
         equity_per_cycle = float(self._broker._cash)
         last_entry_time = self.last_safety_order_time if self.last_safety_order_time else self.base_order_time
-         # Compute entry multiplier & budget for BO pre-flight
-        entry_mult = self._entry_multiplier(price)
-        entry_budget = self._broker._cash * (self.entry_fraction * entry_mult)
 
         ctx = Ctx(
             entry_price=entry_price,
@@ -154,11 +183,7 @@ class DCAStrategy(Strategy):
             available_cash=self._broker.margin_available * self._broker._leverage,
             position_size=self.position.size if self.position else 0,
             position_pl_pct=self.position.pl_pct if self.position else 0,
-            current_atr=current_atr,
-            # Entry pre-flight context
-            entry_multiplier=entry_mult,
-            entry_budget=entry_budget,
-            
+            current_atr=current_atr,   
         )
 
         # Pre-compute next SO trigger so rules can pre-flight funds/notional
@@ -171,7 +196,21 @@ class DCAStrategy(Strategy):
             ctx.next_so_price = None
         
         return ctx
-
+    
+    @property
+    def commission_rate(self) -> float:
+        """
+        Read-only view of the commission rate coming from the wired calculator.
+        Falls back to config before wiring occurs.
+        """
+        calc = getattr(self, "commission_calc", None)
+        if calc is not None and hasattr(calc, "rate"):
+            try:
+                return float(calc.rate)
+            except Exception:
+                pass
+        # Fallback before wiring happens
+        return float(backtest_params.get("commission", 0.0))
 
     def unscale_parameter(self, key, value):
         if self.enable_optimization and optimization_params[key]['type'] == 'float':
@@ -181,14 +220,9 @@ class DCAStrategy(Strategy):
         return value
 
     def get_current_atr(self, current_time):
-        """Fetches the current ATR value, or NaN if not available."""
-        if self.atr_pct_series is not None and not self.atr_pct_series.empty:
-            try:
-                return self.atr_pct_series.loc[current_time]
-            except KeyError:
-                return self.atr_pct_series.iloc[-1]
-        return np.nan
-
+        """Fetch the current ATR% via provider first, then legacy series."""
+        v = self._ind_value("atr_pct", current_time, default=np.nan)
+        return v
     
     def init(self):
         self.console = Console(record=True)
@@ -217,92 +251,32 @@ class DCAStrategy(Strategy):
         # Time tracking
         self.base_order_time = None
         self.last_safety_order_time = None
-
-        # Order sizing
-        p = strategy_params
-        self.order_sizer = GeometricOrderSizer(DCASizingParams(
-            entry_fraction=p['entry_fraction'],
-            first_so_multiplier=p['first_safety_order_multiplier'],
-            so_size_multiplier=p['so_size_multiplier'],
-            min_notional=p.get('minimum_notional', 0.0),
-            max_levels=p['max_dca_levels'],
-        ))
-
+        # Compute indicators (this sets self.rsi_values, ema_dynamic, atr_pct_series, etc.)
+        IndicatorsBootstrap(strategy_params).run(self)
         init_overlays(self)
-        # Rules wiring (defaults applied inside wiring.py)
+        # Wire rules/engines/providers (provider will read the series computed above)
         wire_strategy(self, strategy_params)  
-
-
-    def _safety_affordable_size(self, so_price: float, desired_size: float) -> int:
-        """
-        Clamp to available cash (after commission), return >=1 if possible.
-        Keep a final order-notional guard (skip if the clamped order would be < min_notional).
-        Pre-flight rule 'SufficientFundsAndNotional' should make skips rare.
-        """
-        commission_rate = self.commission_rate
-        available_cash = self._broker.margin_available * self._broker._leverage
-        cost_per_share = so_price * (1 + commission_rate)
-        max_possible = int(available_cash // cost_per_share) if cost_per_share > 0 else 0
-        if max_possible < 1:
-            if self.debug_trade:
-                logger.debug(
-                    f"[DCA affordability] No cash for ≥1 unit | cash={available_cash:.2f}, cps={cost_per_share:.6f}"
-                )
-            return 0
-
-        desired_floor = math.floor(desired_size)
-        if desired_floor > max_possible and self.debug_trade:
-            logger.debug(
-                f"[DCA affordability] Reducing order | desired={desired_floor} > max={max_possible}"
-            )
-
-        size_to_buy = max(1, min(desired_floor, max_possible))
-
-        # Final order-notional guard (rare with the pre-flight rule)
-        if size_to_buy * so_price < self.minimum_notional:
-            if self.debug_trade:
-                logger.debug(
-                    f"[DCA notional] clamped_order={size_to_buy * so_price:.6f} < min={self.minimum_notional:.6f} → skip"
-                )
-            return 0
-
-        return size_to_buy
-
-    def _entry_multiplier(self, price: float) -> int:
-        return 2 if (
-            self.enable_ema_calculation and
-            getattr(self, "ema_dynamic", None) is not None and
-            price > self.ema_dynamic.iloc[-1]
-        ) else 1
-
-    def _entry_size_and_investment(self, price: float, multiplier: int):
-        """Compute base-order quantity (int) and initial_investment (float)."""
-        commission_rate = self.commission_rate
-        initial_investment = self._broker._cash * (self.entry_fraction * multiplier)
-        price_gross = price * (1 + commission_rate)
-        base_order_quantity = math.floor(initial_investment / price_gross)
-        return base_order_quantity, initial_investment
-
-
-    def _entry_affordable_ok(self, qty: int, price: float) -> bool:
-        """
-        DEPRECATED: funds & order-notional are enforced by EntryFundsAndNotional rule.
-        Keep only the fractional-units guard for safety when users disable that rule.
-        """
-        if qty < 1:
-            raise ValueError("Backtesting.py does not support fractional units. Adjust your entry fraction.")
-        return True
+        assert (hasattr(self, "entry_sizer")
+                and hasattr(self, "affordability_guard")
+                and hasattr(self, "commission_calc")
+                and hasattr(self, "indicator_provider")
+                and hasattr(self, "entry_preflight")), \
+            "Wiring failed: missing one of entry_sizer, affordability_guard, commission_calc, indicator_provider, entry_preflight"
 
 
     def process_entry(self, price: float, current_time):
         ctx = self._ctx()
         if not self.position and self.entry_decider.ok(ctx):
-            if self.enable_rsi_calculation and self.rsi_values is None:
+            rsi_now = self._ind_value("rsi", current_time, default=np.nan)
+            if self.enable_rsi_calculation and (rsi_now is None or np.isnan(rsi_now)):
                 return False
-            multiplier = self._entry_multiplier(price)
-            qty, investment = self._entry_size_and_investment(price, multiplier)
-            if not self._entry_affordable_ok(qty, price):
-                return False
+            # use injected entry_sizer (EMA-aware via EntryMultiplier)
+            qty, investment = self.entry_sizer.qty_and_investment(ctx, price, self.commission_calc)
+
+
+            # keep fractional guard for safety if someone removes EntryFundsAndNotional rule
+            if qty < 1:
+                raise ValueError("Backtesting.py does not support fractional units. Adjust your entry fraction.")
             order = self.buy(size=qty, tag="BO")
             self.base_order_time = current_time
             self.last_safety_order_time = None
@@ -334,8 +308,13 @@ class DCAStrategy(Strategy):
                 logger.debug(f"Price {price:.10f} > SO-{level} trigger {so_price:.10f}")
             return
         so_size = self.size_engine.so_size(ctx, so_price, level)
-        size_to_buy = self._safety_affordable_size(so_price, so_size)
-
+        size_to_buy = self.affordability_guard.clamp_qty(
+            desired_qty=so_size,
+            price=so_price,
+            available_cash=self._broker.margin_available * self._broker._leverage,
+            commission=self.commission_calc,   # <-- pass the calculator, not a float
+            min_notional=self.minimum_notional,
+        )
         order = None
         if size_to_buy > 0:
             order = self.buy(size=size_to_buy, tag=f"S{level}")
@@ -374,19 +353,7 @@ class DCAStrategy(Strategy):
         self.last_safety_order_time = None
 
     def get_entry_price(self) -> float:
-        if not self.position:
-            raise ValueError("No open position exists.")
-        current_price = self._broker.last_price
-        position = self.position
-        size = position.size
-        if size == 0:
-            raise ValueError("Position size cannot be zero.")
-        if hasattr(position, 'pl'):
-            return current_price - (position.pl / size)
-        elif hasattr(position, 'pl_pct'):
-            return current_price / (1 + position.pl_pct)
-        else:
-            raise AttributeError("Position has neither 'pl' nor 'pl_pct' attributes.")
+        return self.position_view.avg_entry_price()
 
     def next(self):
         current_time = self.data.index[-1]
@@ -397,15 +364,7 @@ class DCAStrategy(Strategy):
         current_low = self.data.Low[-1]
         current_high = self.data.High[-1]
         price, current_low, current_high = apply_slippage(price, current_low, current_high, self.slippage_probability)
-
-        if self.rsi_values is not None and not self.rsi_values.empty:
-            try:
-                rsi_val = self.rsi_values.loc[current_time]
-            except KeyError:
-                rsi_val = self.rsi_values.iloc[-1]
-        else:
-            rsi_val = np.nan
-            
+        rsi_val = self._ind_value("rsi", current_time, default=np.nan)
         update_reset(self, rsi_val)
         log_loop_info(self, price, rsi_val, current_time)
 

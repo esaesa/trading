@@ -29,6 +29,19 @@ def rsi_under_dynamic_threshold(self, ctx: Ctx) -> Tuple[bool, str]:
 
     return ok, f"RSI {rsi_val:.2f} < thr {threshold:.2f}" if ok else f"RSI {rsi_val:.2f} ≥ thr {threshold:.2f}"
 
+def rsi_under_static_threshold(self, ctx: Ctx) -> Tuple[bool, str]:
+    rsi_val = ctx.indicators.get("rsi", np.nan)
+    threshold = 21
+    if np.isnan(rsi_val):
+        return True, "RSI NaN → allow"
+    ok = rsi_val < threshold
+
+    if getattr(self, "debug_trade", False) and not ok:
+        level = ctx.config.get("next_level", ctx.dca_level + 1)
+        logger.debug(f"RSI={rsi_val:.2f} not below threshold={threshold:.2f}, skipping DCA-{level}")
+
+    return ok, f"RSI {rsi_val:.2f} < thr {threshold:.2f}" if ok else f"RSI {rsi_val:.2f} ≥ thr {threshold:.2f}"
+
 def cooldown_between_sos(self, ctx: Ctx) -> Tuple[bool, str]:
     """
     Enforce a minimum elapsed time between BO/SO and the next SO.
@@ -126,6 +139,7 @@ SAFETY_RULES = {
     "StaticRSIReset": static_rsi_reset,
     "MaxLevelsNotReached": max_levels_not_reached,
     "SufficientFundsAndNotional": sufficient_funds_and_notional,
+    "RSIUnderStaticThreshold":rsi_under_static_threshold
 }
 
 # Keep the decider as-is
