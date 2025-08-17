@@ -20,8 +20,15 @@
         "enable_quantstats_analysis": false
     },
     "strategy_params": {
-        "entry_conditions": ["RSIOverbought"],
-        "safety_conditions": ["RSIUnderDynamicThreshold", "CooldownBetweenSOs"],
+        "entry_conditions": ["EntryFundsAndNotional", "RSIOverbought"],
+        "safety_conditions": {
+            "all": [
+                "MaxLevelsNotReached",
+                { "all": ["RSIUnderDynamicThreshold", "CooldownBetweenSOs"] },
+                { "any": ["StaticRSIReset"] }
+            ]
+        },
+
         "exit_conditions": ["TakeProfitReached"],
         "exit_conditions_all" : ["TPDecayReached","StopLossReached", "TakeProfitReached"],
         "so_cooldown_minutes": 0,
@@ -66,9 +73,9 @@
           "show_indicators": {
             "dynamic_rsi": false,
             "rsi": false,
-            "bbw": false,
+            "bbw": true,
             "atr": true,
-            "ema": false,
+            "ema": true,
             "laguerre": false,
             "cv": false,
             "average_entry_price"  : true

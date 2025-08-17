@@ -1,6 +1,7 @@
 logs/*
 !logs/.gitkeep
 data/
+logs
 backtest_results/
 
 # Ignore all __pycache__ directories everywhere

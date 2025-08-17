@@ -26,6 +26,8 @@ class Ctx:
     last_so_dt: Optional[datetime] = None
     base_order_time: Optional[datetime] = None
     current_atr: Optional[float] = None
-    
+    next_so_price: Optional[float] = None  # Pre-computed trigger for the next SO
+    entry_multiplier: int = 1
+    entry_budget: Optional[float] = None
     
     

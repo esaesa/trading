@@ -88,3 +88,17 @@ def calculate_decaying_tp(entry_time, current_time, initial_tp, reduction_durati
     adjusted_tp = initial_tp - (initial_tp - min_tp) * reduction_factor
     
     return max(min_tp, min(initial_tp, adjusted_tp))
+
+
+from ports import ExitDecider
+from rule_chain import build_rule_chain
+
+class ExitRuleDecider(ExitDecider):
+    """
+    Builds its own RuleChain from config (strings or nested ANY/ALL dicts).
+    """
+    def __init__(self, strategy, names, default_mode: str = "any") -> None:
+        self._chain = build_rule_chain(strategy, names, EXIT_RULES, mode=default_mode)  # type: ignore[arg-type]
+    def ok(self, ctx):
+        return self._chain.ok(ctx)
+
