@@ -34,6 +34,7 @@ class DCAStrategy(Strategy):
     require_rsi_reset = strategy_params.get("require_rsi_reset")
     rsi_reset_percentage = strategy_params.get("rsi_reset_percentage")
     rsi_dynamic_threshold = strategy_params.get("rsi_dynamic_threshold")
+    rsi_static_threshold_under = strategy_params.get("rsi_static_threshold_under")
 
     rsi_percentile = strategy_params.get("rsi_percentile", 0.05)
     rsi_overbought_level = strategy_params.get("rsi_overbought_level")
@@ -308,6 +309,8 @@ class DCAStrategy(Strategy):
             if self.debug_trade:
                 logger.debug(f"Price {price:.10f} > SO-{level} trigger {so_price:.10f}")
             return
+        else:
+            pass
         so_size = self.size_engine.so_size(ctx, so_price, level)
         size_to_buy = self.affordability_guard.clamp_qty(
             desired_qty=so_size,
@@ -319,6 +322,8 @@ class DCAStrategy(Strategy):
         order = None
         if size_to_buy > 0:
             order = self.buy(size=size_to_buy, tag=f"S{level}")
+        else:
+            pass
 
         self.last_safety_order_time = current_time
         self.dca_level += 1

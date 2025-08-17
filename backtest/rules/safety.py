@@ -16,12 +16,17 @@ def rsi_under_dynamic_threshold(self, ctx: Ctx) -> Tuple[bool, str]:
     rsi_val = ctx.indicators.get("rsi", np.nan)
 
     dyn_thr = ctx.dynamic_rsi_thr
+    if  np.isnan(dyn_thr):
+        return False, "Dyn RSI NaN → deny"
+    
     use_dyn = bool(getattr(self, "rsi_dynamic_threshold", False)) and dyn_thr is not None and not np.isnan(dyn_thr)
     threshold = float(dyn_thr) if use_dyn else float(getattr(self, "rsi_threshold", 50) or 50.0)
 
     if np.isnan(rsi_val):
-        return True, "RSI NaN → allow"
+        return False, "RSI NaN → deny"
     ok = rsi_val < threshold
+    if not ok:
+        pass
 
     if getattr(self, "debug_trade", False) and not ok:
         level = ctx.config.get("next_level", ctx.dca_level + 1)
@@ -31,10 +36,12 @@ def rsi_under_dynamic_threshold(self, ctx: Ctx) -> Tuple[bool, str]:
 
 def rsi_under_static_threshold(self, ctx: Ctx) -> Tuple[bool, str]:
     rsi_val = ctx.indicators.get("rsi", np.nan)
-    threshold = 21
+    threshold = float(getattr(self, "rsi_static_threshold_under", 21) or 21.0)
     if np.isnan(rsi_val):
         return True, "RSI NaN → allow"
     ok = rsi_val < threshold
+    if ok:
+        pass
 
     if getattr(self, "debug_trade", False) and not ok:
         level = ctx.config.get("next_level", ctx.dca_level + 1)
