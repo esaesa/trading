@@ -30,7 +30,8 @@ def update_overlays(strategy, current_time) -> None:
                 strategy.last_safety_order_time or strategy.base_order_time,
                 current_time,
                 strategy.take_profit_percentage,
-                strategy.take_profit_reduction_duration_hours
+                strategy.take_profit_decay_grace_period_hours,
+                strategy.take_profit_decay_duration_hours
             )
             strategy.take_profit_prices[idx] = entry_price * (1 + adjusted_tp_percentage / 100)
         else:

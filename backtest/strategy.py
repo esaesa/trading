@@ -45,7 +45,8 @@ class DCAStrategy(Strategy):
     )
 
     # Duration over which TP reduces to zero (in hours)
-    take_profit_reduction_duration_hours = strategy_params.get("take_profit_reduction_duration_hours", 24 * 1)
+    take_profit_decay_grace_period_hours = strategy_params.get("take_profit_decay_grace_period_hours", 48)
+    take_profit_decay_duration_hours = strategy_params.get("take_profit_decay_duration_hours", 24)
 
     # ATR Parameters
     enable_atr_calculation = strategy_params.get("enable_atr_calculation", False)

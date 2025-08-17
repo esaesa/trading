@@ -1,8 +1,8 @@
 # rules/safety.py
 from datetime import timedelta
+import math
 from typing import Tuple
 import numpy as np
-
 from contracts import Ctx
 from logger_config import logger
 

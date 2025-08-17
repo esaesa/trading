@@ -27,8 +27,9 @@ def tp_decay_reached(self: Any, ctx: Ctx) -> Tuple[bool, str]:
     adjusted_tp = calculate_decaying_tp(
         ctx.last_entry_time,
         ctx.now,
-        self.take_profit_percentage,  # Could be passed through context
-        self.take_profit_reduction_duration_hours
+        self.take_profit_percentage,
+        self.take_profit_decay_grace_period_hours,
+        self.take_profit_decay_duration_hours
     )
     
     should_exit = profit_pct >= adjusted_tp
@@ -63,28 +64,28 @@ EXIT_RULES = {
     
 }
 
-def calculate_decaying_tp(entry_time, current_time, initial_tp, reduction_duration_hours, min_tp=0.2):
+def calculate_decaying_tp(entry_time, current_time, initial_tp, grace_period_hours, decay_duration_hours, min_tp=0.2):
     """Shared function for calculating decaying take profit"""
     if entry_time is None:
         return initial_tp
     
     time_since_entry = current_time - entry_time
-    initial_delay_td = timedelta(hours=reduction_duration_hours)
+    grace_period_td = timedelta(hours=grace_period_hours)
     
-    # If initial delay period has not passed, return original TP
-    if time_since_entry <= initial_delay_td:
+    # If grace period has not passed, return original TP
+    if time_since_entry <= grace_period_td:
         return initial_tp
     
-    # Calculate time into reduction phase
-    time_into_reduction = time_since_entry - initial_delay_td
-    reduction_span_td = initial_delay_td
+    # Calculate time into decay phase
+    time_into_decay = time_since_entry - grace_period_td
+    decay_span_td = timedelta(hours=decay_duration_hours)
     
-    # If reduction phase is complete
-    if time_into_reduction >= reduction_span_td:
+    # If decay phase is complete
+    if time_into_decay >= decay_span_td:
         return min_tp
     
     # Linear reduction
-    reduction_factor = time_into_reduction / reduction_span_td
+    reduction_factor = time_into_decay / decay_span_td
     adjusted_tp = initial_tp - (initial_tp - min_tp) * reduction_factor
     
     return max(min_tp, min(initial_tp, adjusted_tp))
@@ -101,4 +102,3 @@ class ExitRuleDecider(ExitDecider):
         self._chain = build_rule_chain(strategy, names, EXIT_RULES, mode=default_mode)  # type: ignore[arg-type]
     def ok(self, ctx):
         return self._chain.ok(ctx)
-

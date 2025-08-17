@@ -20,18 +20,16 @@
         "enable_quantstats_analysis": false
     },
     "strategy_params": {
-        "entry_conditions": {"all":["EntryFundsAndNotional", "RSIOverbought"]},
+        "entry_conditions": {"all":["EntryFundsAndNotional"]},
         "safety_conditions": {
             "all": [
-                "MaxLevelsNotReached",
-                { "all": ["RSIUnderStaticThreshold", "CooldownBetweenSOs"] },
-                { "any": ["StaticRSIReset"] }
-            ]
+                "MaxLevelsNotReached","SufficientFundsAndNotional", "RSIUnderStaticThreshold", "CooldownBetweenSOs"  ]
         },
 
-        "exit_conditions": ["TakeProfitReached"],
+        "exit_conditions": ["TPDecayReached"],
+        "entry_conditions_all": {"all":["EntryFundsAndNotional", "RSIOverbought"]},
         "exit_conditions_all" : ["TPDecayReached","StopLossReached", "TakeProfitReached"],
-        "so_cooldown_minutes": 0,
+        "so_cooldown_minutes": 14400,
 
         "max_dca_levels": 11,
         "take_profit_percentage": 1.8,
@@ -53,7 +51,8 @@
         "safety_order_mode":"value",
         "price_growth_type": "exponential",
         "size_growth_type": "exponential",
-        "take_profit_reduction_duration_hours": 48,
+        "take_profit_decay_grace_period_hours": 48,
+        "take_profit_decay_duration_hours": 24,
         "minimum_notional": 20.0,
         "enable_atr_calculation": false,
         "atr_window": 14,
