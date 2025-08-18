@@ -1,7 +1,7 @@
 {
     "backtest_params": {
         "symbols": [
-            "BNBUSDTUSDT"
+            "1000PEPEUSDTUSDT"
         ],
         "timeframes": [
             "1m"
