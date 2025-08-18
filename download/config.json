@@ -15,6 +15,10 @@
         "symbols": [
         "SUI/USDT:USDT",
         "1000PEPE/USDT:USDT",
+        "DOGE/USDT:USDT",
+        "XRP/USDT:USDT",
+        "1000SHIB/USDT:USDT",
+        "BNB/USDT:USDT",
         "DOGE/USDT:USDT"
         ],
         "all_symbol":[

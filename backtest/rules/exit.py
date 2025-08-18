@@ -1,8 +1,53 @@
 # rules/exit.py
 from typing import Dict, Any, Tuple, Callable
-
+import numpy as np
 from contracts import Ctx
 from datetime import datetime, timedelta
+
+
+def atr_take_profit_reached(self: Any, ctx: Ctx) -> Tuple[bool, str]:
+    """
+    Exit rule: TP dynamically set from ATR%.
+
+    TP% = clip( atr_tp_fraction * ATR%, atr_tp_min_pct, atr_tp_max_pct )
+
+    Expected (optional) strategy fields:
+      - atr_tp_fraction (float)        default 1.85
+      - atr_tp_min_pct (float, %)      default 0.40
+      - atr_tp_max_pct (float, %)      default 1.20
+    """
+    if not self.position:
+        return False, "No position"
+
+    # Get current ATR% from context (preferred) or provider as fallback
+    atr_pct = getattr(ctx, "current_atr", None)
+    if atr_pct is None or (isinstance(atr_pct, float) and np.isnan(atr_pct)):
+        prov = getattr(self, "indicator_provider", None)
+        if prov is not None:
+            try:
+                atr_pct = prov.atr_pct(getattr(ctx, "now", None))
+            except Exception:
+                atr_pct = None
+
+    if atr_pct is None or (isinstance(atr_pct, float) and np.isnan(atr_pct)):
+        return False, "ATR% unavailable"
+
+    # Read tuning knobs (use safe defaults if not present)
+    f    = float(getattr(self, "atr_tp_fraction", 0.65))     
+    tp_min = float(getattr(self, "atr_tp_min_pct", 1.09))
+    tp_max = float(getattr(self, "atr_tp_max_pct", 5))
+
+    tp_target = max(tp_min, min(tp_max, float(atr_pct) * f))
+    profit_pct = float(self.position.pl_pct)
+
+    ok = profit_pct >= tp_target
+    if ok:
+        pass
+    reason = (
+        f"ATR TP: profit {profit_pct:.2f}% >= target {tp_target:.2f}% "
+        f"(ATR% {float(atr_pct):.2f} × f {f:.2f}, clamp [{tp_min:.2f}–{tp_max:.2f}])"
+    )
+    return ok, reason
 
 def take_profit_reached(self: Any, ctx: Ctx) -> Tuple[bool, str]:
     """Exit rule based on fixed take profit percentage"""
@@ -60,7 +105,8 @@ def trailing_stop_reached(self: Any,ctx: Ctx) -> Tuple[bool, str]:
 EXIT_RULES = {
     "TPDecayReached": tp_decay_reached,
     "StopLossReached": stop_loss_reached,
-    "TakeProfitReached": take_profit_reached
+    "TakeProfitReached": take_profit_reached,
+    "ATRTakeProfitReached": atr_take_profit_reached,
     
 }
 

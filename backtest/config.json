@@ -1,7 +1,7 @@
 {
     "backtest_params": {
         "symbols": [
-            "1000PEPEUSDTUSDT"
+            "BNBUSDTUSDT"
         ],
         "timeframes": [
             "1m"
@@ -11,9 +11,9 @@
         "debug": true,
         "debug_loop": false,
         "start_date": "2025-01-01 00:00:00",
-        "end_date":   "2025-09-28 00:59:59",
+        "end_date":   "2025-12-28 00:59:59",
     
-        "cash": 1000,
+        "cash": 1000000,
         "commission": 0.0005,
         "show_optimization_graphs": false,
         "slippage_probability": 0.0,
@@ -27,19 +27,19 @@
             {"any":["RSIUnderDynamicThreshold"]}
             ]
         },
-        "exit_conditions": ["TakeProfitReached"],
+        "exit_conditions": ["ATRTakeProfitReached"],
         "safety_conditions_all": ["RSIUnderStaticThreshold","RSIUnderDynamicThreshold"],
         "entry_conditions_all": {"all":["EntryFundsAndNotional", "RSIOverbought"]},
-        "exit_conditions_all" : ["TPDecayReached","StopLossReached", "TakeProfitReached"],
+        "exit_conditions_all" : ["TPDecayReached","StopLossReached", "TakeProfitReached","ATRTakeProfitReached"],
         "so_cooldown_minutes": 0,
 
         "max_dca_levels": 11,
-        "take_profit_percentage": 1.8,
-        "entry_fraction": 0.02,
+        "take_profit_percentage": 0.8,
+        "entry_fraction": 0.01,
         "so_size_multiplier": 2.1,
         "first_safety_order_multiplier": 3.5,
-        "initial_deviation_percent": 1.7,
-        "price_multiplier": 1.7,
+        "initial_deviation_percent": 1.8,
+        "price_multiplier": 1.9,
         "rsi_static_threshold_under": 32,
         "rsi_threshold":50,
         "rsi_window": 17,
@@ -66,7 +66,7 @@
     
         "enable_cv_calculation": false,
         "enable_laguere_calculation": false,
-        "start_trading_time" : "2025-01-15 00:00:00",
+        "start_trading_time" : "2023-06-01 00:00:00",
         "debug": {
             "trade": false,
             "loop": false,
@@ -76,8 +76,8 @@
             "dynamic_rsi": true,
             "rsi": true,
             "bbw": false,
-            "atr": false,
-            "ema": false,
+            "atr": true,
+            "ema": true,
             "laguerre": false,
             "cv": false,
             "average_entry_price"  : true,
