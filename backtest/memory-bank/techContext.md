@@ -22,3 +22,10 @@ The project is a standard Python application. To set up the development environm
 1.  Install Python 3.
 2.  Create a virtual environment.
 3.  Install the required dependencies using `pip install -r requirements.txt`.
+
+## Configuration Files
+
+Configuration files are located in their respective modules:
+- Backtest: `backtest/config.json`, `backtest/common-parameters.json`
+- Data Download: `download/config.json`
+- Live Trading: `live/config_live.json`

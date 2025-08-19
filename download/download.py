@@ -38,7 +38,7 @@ def resolve_data_path(config):
     return data_path
 
 def safe_fetch_ohlcv( symbol, timeframe, since_ms, limit):
-    time.sleep(0.1)  # Conservative rate limiting
+    #time.sleep(0.1)  # Conservative rate limiting
     return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
 
 # NEW: Build absolute path to the cache file
@@ -256,7 +256,10 @@ if __name__ == "__main__":
     exchange = ccxt.binance({
         'apiKey': api_key,
         'secret': api_secret,
-        'enableRateLimit': True
+        'enableRateLimit': True,
+        'options': {
+        'defaultType': 'future',
+    }
     })
 
     # Resolve the data path

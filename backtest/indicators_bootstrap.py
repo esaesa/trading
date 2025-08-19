@@ -1,6 +1,6 @@
 # indicators_bootstrap.py
 from __future__ import annotations
-from indicator_manager import IndicatorManager
+from indicators_manager import IndicatorManager
 import numpy as np
 
 class IndicatorsBootstrap:

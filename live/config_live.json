@@ -1,0 +1,37 @@
+{
+    "api_key": "YOUR_KEY",
+    "api_secret": "YOUR_SECRET",
+    "testnet": true,
+  
+    "exchange": "binanceusdm", 
+    "symbol": "BTC/USDT",
+    "timeframe": "1m",
+    "lookback_bars": 500,
+  
+    "mode": "futures",            
+    "leverage": 6,
+    "margin_mode": "ISOLATED",
+  
+    "order_type": "market",       
+    "reduce_only": true,
+  
+    "equity_per_cycle_usdt": 100.0,
+  
+    "strategy_params": {
+      "entry_fraction": 0.2,
+      "max_dca_levels": 5,
+      "so_size_multiplier": 1.4,
+      "initial_deviation_percent": 1.5,
+      "price_multiplier": 1.2,
+      "take_profit_percentage": 0.8
+    },
+  
+    "indicator_params": {
+      "rsi_window": 14,
+      "rsi_threshold": 35
+    },
+  
+    "persistence_path": "live_state.json",
+    "poll_seconds": 3
+  }
+  

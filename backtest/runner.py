@@ -203,7 +203,7 @@ def run_or_optimize(
     stats = bt.optimize(
         **scaled,
         maximize=maximize,
-        max_tries=400,
+        max_tries=100,
         random_state=3,
         method="sambo",
     )
