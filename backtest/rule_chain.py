@@ -15,17 +15,21 @@ class RuleChain:
         self.rules = list(rules)
         self.mode = mode
 
-    def ok(self, ctx: Dict[str, Any]) -> bool:
-        results: List[bool] = []
-        for rule in self.rules:
-            res = rule(ctx)
-            ok = res[0] if isinstance(res, tuple) else bool(res)
-            results.append(bool(ok))
-
+    def ok(self, ctx) -> bool:
         if self.mode == "any":
-            return any(results)
+            for rule in self.rules:
+                res = rule(ctx)
+                ok = res[0] if isinstance(res, tuple) else bool(res)
+                if ok:
+                    return True
+            return False
         elif self.mode == "all":
-            return all(results)
+            for rule in self.rules:
+                res = rule(ctx)
+                ok = res[0] if isinstance(res, tuple) else bool(res)
+                if not ok:
+                    return False
+            return True
         else:
             raise ValueError(f"Invalid mode: {self.mode}")
 

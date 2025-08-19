@@ -7765,3 +7765,1691 @@ ccxt.base.errors.RequestTimeout: binance GET https://api.binance.com/sapi/v1/cap
 2025-08-18 14:58:48,399 [INFO] logger_config: 📊 Final dataset size after merge: 2685779 rows
 2025-08-18 14:58:48,605 [INFO] logger_config: ✅ Feather saved: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.feather
 2025-08-18 14:58:48,606 [INFO] logger_config: ✨ All data download tasks completed.
+2025-08-19 07:52:33,591 [INFO] logger_config: Starting data download...
+2025-08-19 07:52:33,655 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-08-19 07:52:33,665 [INFO] logger_config: Converted local startt 2025-01-01 00:00:00 (UTC) to UTC start: 2025-01-01 00:00:00
+2025-08-19 07:52:33,665 [INFO] logger_config: 🚀 Processing SUI/USDT:USDT with timeframe 1m...
+2025-08-19 07:52:33,667 [INFO] logger_config: 📌 Found cached oldest timestamp for SUI/USDT:USDT [1m]: 2023-05-03 16:00:00+00:00
+2025-08-19 07:52:33,667 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_SUIUSDTUSDT_1m.feather
+2025-08-19 07:52:33,823 [INFO] logger_config: 🕒 Existing data range: 2023-05-03 16:00:00+00:00 to 2025-08-18 11:56:00
+2025-08-19 07:52:33,825 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-18 11:56:00, New since: 2025-08-18 11:56:00
+2025-08-19 07:52:33,826 [INFO] logger_config: 🔄 Fetching new data from 2025-08-18 11:56:00 to 2026-02-11 00:11:00
+2025-08-19 07:52:33,826 [INFO] logger_config: 🔍 Fetching data from 2025-08-18 11:56:00 to 2026-02-11 00:11:00 for SUI/USDT:USDT [1m]...
+2025-08-19 07:52:44,021 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1755518160000: binance GET https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1755579153940&recvWindow=10000&signature=66ff937968522e72f7a1e1609cad89574cc06beeeefed02c301b8d628e612330
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 198, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\connection.py", line 85, in create_connection
+    raise err
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\connection.py", line 73, in create_connection
+    sock.connect(sa)
+    ~~~~~~~~~~~~^^^^
+TimeoutError: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 704, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 207, in _new_conn
+    raise ConnectTimeoutError(
+    ...<2 lines>...
+    ) from e
+urllib3.exceptions.ConnectTimeoutError: (<urllib3.connection.HTTPSConnection object at 0x0000020CCDD9CAD0>, 'Connection to api.binance.com timed out. (connect timeout=10.0)')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.binance.com', port=443): Max retries exceeded with url: /sapi/v1/capital/config/getall?timestamp=1755579153940&recvWindow=10000&signature=66ff937968522e72f7a1e1609cad89574cc06beeeefed02c301b8d628e612330 (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x0000020CCDD9CAD0>, 'Connection to api.binance.com timed out. (connect timeout=10.0)'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 548, in fetch
+    response = self.session.request(
+        method,
+    ...<5 lines>...
+        verify=self.verify and self.validateServerSsl
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 688, in send
+    raise ConnectTimeout(e, request=request)
+requests.exceptions.ConnectTimeout: HTTPSConnectionPool(host='api.binance.com', port=443): Max retries exceeded with url: /sapi/v1/capital/config/getall?timestamp=1755579153940&recvWindow=10000&signature=66ff937968522e72f7a1e1609cad89574cc06beeeefed02c301b8d628e612330 (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x0000020CCDD9CAD0>, 'Connection to api.binance.com timed out. (connect timeout=10.0)'))
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1509, in load_markets
+    currencies = self.fetch_currencies()
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 2992, in fetch_currencies
+    promises = [self.sapiGetCapitalConfigGetall(params)]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 578, in fetch
+    raise RequestTimeout(details) from e
+ccxt.base.errors.RequestTimeout: binance GET https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1755579153940&recvWindow=10000&signature=66ff937968522e72f7a1e1609cad89574cc06beeeefed02c301b8d628e612330
+2025-08-19 07:52:44,063 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-08-19 07:52:44,108 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-08-19 07:52:44,108 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 1m...
+2025-08-19 07:52:44,110 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [1m]: 2023-05-05 16:30:00+00:00
+2025-08-19 07:52:44,110 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.feather
+2025-08-19 07:52:44,253 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-08-18 11:56:00
+2025-08-19 07:52:44,254 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-18 11:56:00, New since: 2025-08-18 11:56:00
+2025-08-19 07:52:44,254 [INFO] logger_config: 🔄 Fetching new data from 2025-08-18 11:56:00 to 2026-02-11 00:11:00
+2025-08-19 07:52:44,254 [INFO] logger_config: 🔍 Fetching data from 2025-08-18 11:56:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [1m]...
+2025-08-19 07:52:55,364 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1755518160000: binance GET https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1755579164356&recvWindow=10000&signature=b066a8e28a5c234ce0cbc09da34093028558b8e25da5c29a509a72d6b15211b4
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 741, in connect
+    sock_and_verified = _ssl_wrap_socket_and_match_hostname(
+        sock=sock,
+    ...<14 lines>...
+        assert_fingerprint=self.assert_fingerprint,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 920, in _ssl_wrap_socket_and_match_hostname
+    ssl_sock = ssl_wrap_socket(
+        sock=sock,
+    ...<8 lines>...
+        tls_in_tls=tls_in_tls,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 460, in ssl_wrap_socket
+    ssl_sock = _ssl_wrap_socket_impl(sock, context, tls_in_tls, server_hostname)
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 504, in _ssl_wrap_socket_impl
+    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 455, in wrap_socket
+    return self.sslsocket_class._create(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sock=sock,
+        ^^^^^^^^^^
+    ...<5 lines>...
+        session=session
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 1076, in _create
+    self.do_handshake()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 1372, in do_handshake
+    self._sslobj.do_handshake()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+TimeoutError: _ssl.c:1011: The handshake operation timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\retry.py", line 474, in increment
+    raise reraise(type(error), error, _stacktrace)
+          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\util.py", line 39, in reraise
+    raise value
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 466, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=conn.timeout)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 367, in _raise_timeout
+    raise ReadTimeoutError(
+        self, url, f"Read timed out. (read timeout={timeout_value})"
+    ) from err
+urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='api.binance.com', port=443): Read timed out. (read timeout=10.0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 548, in fetch
+    response = self.session.request(
+        method,
+    ...<5 lines>...
+        verify=self.verify and self.validateServerSsl
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 713, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='api.binance.com', port=443): Read timed out. (read timeout=10.0)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1509, in load_markets
+    currencies = self.fetch_currencies()
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 2992, in fetch_currencies
+    promises = [self.sapiGetCapitalConfigGetall(params)]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 578, in fetch
+    raise RequestTimeout(details) from e
+ccxt.base.errors.RequestTimeout: binance GET https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1755579164356&recvWindow=10000&signature=b066a8e28a5c234ce0cbc09da34093028558b8e25da5c29a509a72d6b15211b4
+2025-08-19 07:52:55,389 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-08-19 07:52:55,434 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-08-19 07:52:55,435 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-08-19 07:52:55,436 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-08-19 07:52:55,436 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.feather
+2025-08-19 07:52:55,651 [INFO] logger_config: 🕒 Existing data range: 2020-07-10 09:00:00+00:00 to 2025-08-18 11:58:00
+2025-08-19 07:52:55,652 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-18 11:58:00, New since: 2025-08-18 11:58:00
+2025-08-19 07:52:55,653 [INFO] logger_config: 🔄 Fetching new data from 2025-08-18 11:58:00 to 2026-02-11 00:11:00
+2025-08-19 07:52:55,653 [INFO] logger_config: 🔍 Fetching data from 2025-08-18 11:58:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-08-19 07:53:04,108 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1755518280000: binance GET https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1755579175754&recvWindow=10000&signature=41ef5324226f5020ed676e393fb14a6c8648559de7c4674ebbbfe48fa540ab43
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 741, in connect
+    sock_and_verified = _ssl_wrap_socket_and_match_hostname(
+        sock=sock,
+    ...<14 lines>...
+        assert_fingerprint=self.assert_fingerprint,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 920, in _ssl_wrap_socket_and_match_hostname
+    ssl_sock = ssl_wrap_socket(
+        sock=sock,
+    ...<8 lines>...
+        tls_in_tls=tls_in_tls,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 460, in ssl_wrap_socket
+    ssl_sock = _ssl_wrap_socket_impl(sock, context, tls_in_tls, server_hostname)
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 504, in _ssl_wrap_socket_impl
+    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 455, in wrap_socket
+    return self.sslsocket_class._create(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sock=sock,
+        ^^^^^^^^^^
+    ...<5 lines>...
+        session=session
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 1076, in _create
+    self.do_handshake()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 1372, in do_handshake
+    self._sslobj.do_handshake()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+ssl.SSLEOFError: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1028)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+urllib3.exceptions.SSLError: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1028)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.binance.com', port=443): Max retries exceeded with url: /sapi/v1/capital/config/getall?timestamp=1755579175754&recvWindow=10000&signature=41ef5324226f5020ed676e393fb14a6c8648559de7c4674ebbbfe48fa540ab43 (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1028)')))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 548, in fetch
+    response = self.session.request(
+        method,
+    ...<5 lines>...
+        verify=self.verify and self.validateServerSsl
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 698, in send
+    raise SSLError(e, request=request)
+requests.exceptions.SSLError: HTTPSConnectionPool(host='api.binance.com', port=443): Max retries exceeded with url: /sapi/v1/capital/config/getall?timestamp=1755579175754&recvWindow=10000&signature=41ef5324226f5020ed676e393fb14a6c8648559de7c4674ebbbfe48fa540ab43 (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1028)')))
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1509, in load_markets
+    currencies = self.fetch_currencies()
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 2992, in fetch_currencies
+    promises = [self.sapiGetCapitalConfigGetall(params)]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 601, in fetch
+    raise NetworkError(details) from e
+ccxt.base.errors.NetworkError: binance GET https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1755579175754&recvWindow=10000&signature=41ef5324226f5020ed676e393fb14a6c8648559de7c4674ebbbfe48fa540ab43
+2025-08-19 07:53:04,129 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-08-19 07:53:04,232 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-08-19 07:53:04,233 [INFO] logger_config: 🚀 Processing XRP/USDT:USDT with timeframe 1m...
+2025-08-19 07:53:04,234 [INFO] logger_config: 📌 Found cached oldest timestamp for XRP/USDT:USDT [1m]: 2020-01-06 08:21:00+00:00
+2025-08-19 07:53:04,234 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_XRPUSDTUSDT_1m.feather
+2025-08-19 07:53:04,460 [INFO] logger_config: 🕒 Existing data range: 2020-01-06 08:21:00+00:00 to 2025-08-18 11:56:00
+2025-08-19 07:53:04,461 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-18 11:56:00, New since: 2025-08-18 11:56:00
+2025-08-19 07:53:04,461 [INFO] logger_config: 🔄 Fetching new data from 2025-08-18 11:56:00 to 2026-02-11 00:11:00
+2025-08-19 07:53:04,461 [INFO] logger_config: 🔍 Fetching data from 2025-08-18 11:56:00 to 2026-02-11 00:11:00 for XRP/USDT:USDT [1m]...
+2025-08-19 07:53:13,742 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1755518160000: binance GET https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1755579184563&recvWindow=10000&signature=1b4d1b0de3159690a5ba21d094a3f92e3381e6d8ee1796e83363bcb00a2c1669
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 741, in connect
+    sock_and_verified = _ssl_wrap_socket_and_match_hostname(
+        sock=sock,
+    ...<14 lines>...
+        assert_fingerprint=self.assert_fingerprint,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 920, in _ssl_wrap_socket_and_match_hostname
+    ssl_sock = ssl_wrap_socket(
+        sock=sock,
+    ...<8 lines>...
+        tls_in_tls=tls_in_tls,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 460, in ssl_wrap_socket
+    ssl_sock = _ssl_wrap_socket_impl(sock, context, tls_in_tls, server_hostname)
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 504, in _ssl_wrap_socket_impl
+    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 455, in wrap_socket
+    return self.sslsocket_class._create(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sock=sock,
+        ^^^^^^^^^^
+    ...<5 lines>...
+        session=session
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 1076, in _create
+    self.do_handshake()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 1372, in do_handshake
+    self._sslobj.do_handshake()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+ssl.SSLEOFError: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1028)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+urllib3.exceptions.SSLError: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1028)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.binance.com', port=443): Max retries exceeded with url: /sapi/v1/capital/config/getall?timestamp=1755579184563&recvWindow=10000&signature=1b4d1b0de3159690a5ba21d094a3f92e3381e6d8ee1796e83363bcb00a2c1669 (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1028)')))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 548, in fetch
+    response = self.session.request(
+        method,
+    ...<5 lines>...
+        verify=self.verify and self.validateServerSsl
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 698, in send
+    raise SSLError(e, request=request)
+requests.exceptions.SSLError: HTTPSConnectionPool(host='api.binance.com', port=443): Max retries exceeded with url: /sapi/v1/capital/config/getall?timestamp=1755579184563&recvWindow=10000&signature=1b4d1b0de3159690a5ba21d094a3f92e3381e6d8ee1796e83363bcb00a2c1669 (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1028)')))
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1509, in load_markets
+    currencies = self.fetch_currencies()
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 2992, in fetch_currencies
+    promises = [self.sapiGetCapitalConfigGetall(params)]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 601, in fetch
+    raise NetworkError(details) from e
+ccxt.base.errors.NetworkError: binance GET https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1755579184563&recvWindow=10000&signature=1b4d1b0de3159690a5ba21d094a3f92e3381e6d8ee1796e83363bcb00a2c1669
+2025-08-19 07:53:13,767 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-08-19 07:53:13,892 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-08-19 07:53:13,892 [INFO] logger_config: 🚀 Processing 1000SHIB/USDT:USDT with timeframe 1m...
+2025-08-19 07:53:13,893 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000SHIB/USDT:USDT [1m]: 2021-05-10 17:37:00+00:00
+2025-08-19 07:53:13,894 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000SHIBUSDTUSDT_1m.feather
+2025-08-19 07:53:14,099 [INFO] logger_config: 🕒 Existing data range: 2021-05-10 17:37:00+00:00 to 2025-08-18 11:56:00
+2025-08-19 07:53:14,100 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-18 11:56:00, New since: 2025-08-18 11:56:00
+2025-08-19 07:53:14,101 [INFO] logger_config: 🔄 Fetching new data from 2025-08-18 11:56:00 to 2026-02-11 00:11:00
+2025-08-19 07:53:14,101 [INFO] logger_config: 🔍 Fetching data from 2025-08-18 11:56:00 to 2026-02-11 00:11:00 for 1000SHIB/USDT:USDT [1m]...
+2025-08-19 07:53:16,153 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1755518160000: binance GET https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1755579194203&recvWindow=10000&signature=dcd581ed6b1f16639307eaa393fc61f24c987c116d214b6d6c0af47f0f6252bf
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 741, in connect
+    sock_and_verified = _ssl_wrap_socket_and_match_hostname(
+        sock=sock,
+    ...<14 lines>...
+        assert_fingerprint=self.assert_fingerprint,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 920, in _ssl_wrap_socket_and_match_hostname
+    ssl_sock = ssl_wrap_socket(
+        sock=sock,
+    ...<8 lines>...
+        tls_in_tls=tls_in_tls,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 460, in ssl_wrap_socket
+    ssl_sock = _ssl_wrap_socket_impl(sock, context, tls_in_tls, server_hostname)
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 504, in _ssl_wrap_socket_impl
+    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 455, in wrap_socket
+    return self.sslsocket_class._create(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sock=sock,
+        ^^^^^^^^^^
+    ...<5 lines>...
+        session=session
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 1076, in _create
+    self.do_handshake()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 1372, in do_handshake
+    self._sslobj.do_handshake()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+ssl.SSLEOFError: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1028)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+urllib3.exceptions.SSLError: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1028)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.binance.com', port=443): Max retries exceeded with url: /sapi/v1/capital/config/getall?timestamp=1755579194203&recvWindow=10000&signature=dcd581ed6b1f16639307eaa393fc61f24c987c116d214b6d6c0af47f0f6252bf (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1028)')))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 548, in fetch
+    response = self.session.request(
+        method,
+    ...<5 lines>...
+        verify=self.verify and self.validateServerSsl
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 698, in send
+    raise SSLError(e, request=request)
+requests.exceptions.SSLError: HTTPSConnectionPool(host='api.binance.com', port=443): Max retries exceeded with url: /sapi/v1/capital/config/getall?timestamp=1755579194203&recvWindow=10000&signature=dcd581ed6b1f16639307eaa393fc61f24c987c116d214b6d6c0af47f0f6252bf (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1028)')))
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1509, in load_markets
+    currencies = self.fetch_currencies()
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 2992, in fetch_currencies
+    promises = [self.sapiGetCapitalConfigGetall(params)]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 601, in fetch
+    raise NetworkError(details) from e
+ccxt.base.errors.NetworkError: binance GET https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1755579194203&recvWindow=10000&signature=dcd581ed6b1f16639307eaa393fc61f24c987c116d214b6d6c0af47f0f6252bf
+2025-08-19 07:53:16,173 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-08-19 07:53:16,253 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-08-19 07:53:16,254 [INFO] logger_config: 🚀 Processing BNB/USDT:USDT with timeframe 1m...
+2025-08-19 07:53:16,255 [INFO] logger_config: 📌 Found cached oldest timestamp for BNB/USDT:USDT [1m]: 2020-02-10 08:01:00+00:00
+2025-08-19 07:53:16,255 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_BNBUSDTUSDT_1m.feather
+2025-08-19 07:53:16,486 [INFO] logger_config: 🕒 Existing data range: 2020-02-10 08:01:00+00:00 to 2025-08-18 11:57:00
+2025-08-19 07:53:16,487 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-18 11:57:00, New since: 2025-08-18 11:57:00
+2025-08-19 07:53:16,487 [INFO] logger_config: 🔄 Fetching new data from 2025-08-18 11:57:00 to 2026-02-11 00:11:00
+2025-08-19 07:53:16,487 [INFO] logger_config: 🔍 Fetching data from 2025-08-18 11:57:00 to 2026-02-11 00:11:00 for BNB/USDT:USDT [1m]...
+2025-08-19 07:53:41,028 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1755518220000: binance GET https://fapi.binance.com/fapi/v1/exchangeInfo
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 741, in connect
+    sock_and_verified = _ssl_wrap_socket_and_match_hostname(
+        sock=sock,
+    ...<14 lines>...
+        assert_fingerprint=self.assert_fingerprint,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 920, in _ssl_wrap_socket_and_match_hostname
+    ssl_sock = ssl_wrap_socket(
+        sock=sock,
+    ...<8 lines>...
+        tls_in_tls=tls_in_tls,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 460, in ssl_wrap_socket
+    ssl_sock = _ssl_wrap_socket_impl(sock, context, tls_in_tls, server_hostname)
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 504, in _ssl_wrap_socket_impl
+    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 455, in wrap_socket
+    return self.sslsocket_class._create(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sock=sock,
+        ^^^^^^^^^^
+    ...<5 lines>...
+        session=session
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 1076, in _create
+    self.do_handshake()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 1372, in do_handshake
+    self._sslobj.do_handshake()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+TimeoutError: _ssl.c:1011: The handshake operation timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\retry.py", line 474, in increment
+    raise reraise(type(error), error, _stacktrace)
+          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\util.py", line 39, in reraise
+    raise value
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 466, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=conn.timeout)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 367, in _raise_timeout
+    raise ReadTimeoutError(
+        self, url, f"Read timed out. (read timeout={timeout_value})"
+    ) from err
+urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='fapi.binance.com', port=443): Read timed out. (read timeout=10.0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 548, in fetch
+    response = self.session.request(
+        method,
+    ...<5 lines>...
+        verify=self.verify and self.validateServerSsl
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 713, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='fapi.binance.com', port=443): Read timed out. (read timeout=10.0)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1510, in load_markets
+    markets = self.fetch_markets(params)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 3225, in fetch_markets
+    promisesRaw.append(self.fapiPublicGetExchangeInfo(params))
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 578, in fetch
+    raise RequestTimeout(details) from e
+ccxt.base.errors.RequestTimeout: binance GET https://fapi.binance.com/fapi/v1/exchangeInfo
+2025-08-19 07:53:41,052 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-08-19 07:53:41,178 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-08-19 07:53:41,179 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-08-19 07:53:41,180 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-08-19 07:53:41,180 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.feather
+2025-08-19 07:53:41,288 [INFO] logger_config: 🕒 Existing data range: 2020-07-10 09:00:00+00:00 to 2025-08-18 11:58:00
+2025-08-19 07:53:41,289 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-18 11:58:00, New since: 2025-08-18 11:58:00
+2025-08-19 07:53:41,289 [INFO] logger_config: 🔄 Fetching new data from 2025-08-18 11:58:00 to 2026-02-11 00:11:00
+2025-08-19 07:53:41,289 [INFO] logger_config: 🔍 Fetching data from 2025-08-18 11:58:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-08-19 07:53:49,275 [INFO] logger_config: ✅ Downloaded 1016 new rows. (From 2025-08-18 11:58:00 to 2025-08-19 04:53:00)
+2025-08-19 07:53:49,394 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=2685779, df_new=1015
+2025-08-19 07:53:49,485 [INFO] logger_config: 📊 Final dataset size after merge: 2686794 rows
+2025-08-19 07:53:49,696 [INFO] logger_config: ✅ Feather saved: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.feather
+2025-08-19 07:53:49,697 [INFO] logger_config: ✨ All data download tasks completed.
+2025-08-19 07:54:34,371 [INFO] logger_config: Starting data download...
+2025-08-19 07:54:34,431 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-08-19 07:54:34,442 [INFO] logger_config: Converted local startt 2025-01-01 00:00:00 (UTC) to UTC start: 2025-01-01 00:00:00
+2025-08-19 07:54:34,443 [INFO] logger_config: 🚀 Processing SUI/USDT:USDT with timeframe 1m...
+2025-08-19 07:54:34,444 [INFO] logger_config: 📌 Found cached oldest timestamp for SUI/USDT:USDT [1m]: 2023-05-03 16:00:00+00:00
+2025-08-19 07:54:34,444 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_SUIUSDTUSDT_1m.feather
+2025-08-19 07:54:34,524 [INFO] logger_config: 🕒 Existing data range: 2023-05-03 16:00:00+00:00 to 2025-08-18 11:56:00
+2025-08-19 07:54:34,526 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-18 11:56:00, New since: 2025-08-18 11:56:00
+2025-08-19 07:54:34,526 [INFO] logger_config: 🔄 Fetching new data from 2025-08-18 11:56:00 to 2026-02-11 00:11:00
+2025-08-19 07:54:34,527 [INFO] logger_config: 🔍 Fetching data from 2025-08-18 11:56:00 to 2026-02-11 00:11:00 for SUI/USDT:USDT [1m]...
+2025-08-19 07:54:45,698 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1755518160000: binance GET https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1755579274638&recvWindow=10000&signature=a82bac8b897852dbecb5c1bf372aa551e3060c340c0129891ad3fe3f1424bc92
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 198, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 977, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 704, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 205, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: <urllib3.connection.HTTPSConnection object at 0x000002888734CAD0>: Failed to resolve 'api.binance.com' ([Errno 11001] getaddrinfo failed)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.binance.com', port=443): Max retries exceeded with url: /sapi/v1/capital/config/getall?timestamp=1755579274638&recvWindow=10000&signature=a82bac8b897852dbecb5c1bf372aa551e3060c340c0129891ad3fe3f1424bc92 (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000002888734CAD0>: Failed to resolve 'api.binance.com' ([Errno 11001] getaddrinfo failed)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 548, in fetch
+    response = self.session.request(
+        method,
+    ...<5 lines>...
+        verify=self.verify and self.validateServerSsl
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='api.binance.com', port=443): Max retries exceeded with url: /sapi/v1/capital/config/getall?timestamp=1755579274638&recvWindow=10000&signature=a82bac8b897852dbecb5c1bf372aa551e3060c340c0129891ad3fe3f1424bc92 (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000002888734CAD0>: Failed to resolve 'api.binance.com' ([Errno 11001] getaddrinfo failed)"))
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1509, in load_markets
+    currencies = self.fetch_currencies()
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 2992, in fetch_currencies
+    promises = [self.sapiGetCapitalConfigGetall(params)]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 601, in fetch
+    raise NetworkError(details) from e
+ccxt.base.errors.NetworkError: binance GET https://api.binance.com/sapi/v1/capital/config/getall?timestamp=1755579274638&recvWindow=10000&signature=a82bac8b897852dbecb5c1bf372aa551e3060c340c0129891ad3fe3f1424bc92
+2025-08-19 07:54:45,744 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-08-19 07:54:45,786 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-08-19 07:54:45,787 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 1m...
+2025-08-19 07:54:45,788 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [1m]: 2023-05-05 16:30:00+00:00
+2025-08-19 07:54:45,788 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.feather
+2025-08-19 07:54:45,843 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-08-18 11:56:00
+2025-08-19 07:54:45,844 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-18 11:56:00, New since: 2025-08-18 11:56:00
+2025-08-19 07:54:45,845 [INFO] logger_config: 🔄 Fetching new data from 2025-08-18 11:56:00 to 2026-02-11 00:11:00
+2025-08-19 07:54:45,845 [INFO] logger_config: 🔍 Fetching data from 2025-08-18 11:56:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [1m]...
+2025-08-19 07:55:07,423 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1755518160000: binance GET https://fapi.binance.com/fapi/v1/exchangeInfo
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 198, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 977, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 704, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 205, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: <urllib3.connection.HTTPSConnection object at 0x0000028886EA3C50>: Failed to resolve 'fapi.binance.com' ([Errno 11001] getaddrinfo failed)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='fapi.binance.com', port=443): Max retries exceeded with url: /fapi/v1/exchangeInfo (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000028886EA3C50>: Failed to resolve 'fapi.binance.com' ([Errno 11001] getaddrinfo failed)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 548, in fetch
+    response = self.session.request(
+        method,
+    ...<5 lines>...
+        verify=self.verify and self.validateServerSsl
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='fapi.binance.com', port=443): Max retries exceeded with url: /fapi/v1/exchangeInfo (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000028886EA3C50>: Failed to resolve 'fapi.binance.com' ([Errno 11001] getaddrinfo failed)"))
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1510, in load_markets
+    markets = self.fetch_markets(params)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 3225, in fetch_markets
+    promisesRaw.append(self.fapiPublicGetExchangeInfo(params))
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 601, in fetch
+    raise NetworkError(details) from e
+ccxt.base.errors.NetworkError: binance GET https://fapi.binance.com/fapi/v1/exchangeInfo
+2025-08-19 07:55:07,441 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-08-19 07:55:07,486 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-08-19 07:55:07,486 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-08-19 07:55:07,487 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-08-19 07:55:07,488 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.feather
+2025-08-19 07:55:07,616 [INFO] logger_config: 🕒 Existing data range: 2020-07-10 09:00:00+00:00 to 2025-08-19 04:53:00
+2025-08-19 07:55:07,617 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-19 04:53:00, New since: 2025-08-19 04:53:00
+2025-08-19 07:55:07,618 [INFO] logger_config: 🔄 Fetching new data from 2025-08-19 04:53:00 to 2026-02-11 00:11:00
+2025-08-19 07:55:07,618 [INFO] logger_config: 🔍 Fetching data from 2025-08-19 04:53:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-08-19 07:55:21,056 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1755579180000: binance GET https://fapi.binance.com/fapi/v1/exchangeInfo
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 198, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 977, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 704, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 205, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: <urllib3.connection.HTTPSConnection object at 0x0000028886EA2710>: Failed to resolve 'fapi.binance.com' ([Errno 11001] getaddrinfo failed)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='fapi.binance.com', port=443): Max retries exceeded with url: /fapi/v1/exchangeInfo (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000028886EA2710>: Failed to resolve 'fapi.binance.com' ([Errno 11001] getaddrinfo failed)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 548, in fetch
+    response = self.session.request(
+        method,
+    ...<5 lines>...
+        verify=self.verify and self.validateServerSsl
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='fapi.binance.com', port=443): Max retries exceeded with url: /fapi/v1/exchangeInfo (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000028886EA2710>: Failed to resolve 'fapi.binance.com' ([Errno 11001] getaddrinfo failed)"))
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1510, in load_markets
+    markets = self.fetch_markets(params)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 3225, in fetch_markets
+    promisesRaw.append(self.fapiPublicGetExchangeInfo(params))
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 601, in fetch
+    raise NetworkError(details) from e
+ccxt.base.errors.NetworkError: binance GET https://fapi.binance.com/fapi/v1/exchangeInfo
+2025-08-19 07:55:21,075 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-08-19 07:55:21,186 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-08-19 07:55:21,187 [INFO] logger_config: 🚀 Processing XRP/USDT:USDT with timeframe 1m...
+2025-08-19 07:55:21,188 [INFO] logger_config: 📌 Found cached oldest timestamp for XRP/USDT:USDT [1m]: 2020-01-06 08:21:00+00:00
+2025-08-19 07:55:21,188 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_XRPUSDTUSDT_1m.feather
+2025-08-19 07:55:21,306 [INFO] logger_config: 🕒 Existing data range: 2020-01-06 08:21:00+00:00 to 2025-08-18 11:56:00
+2025-08-19 07:55:21,307 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-18 11:56:00, New since: 2025-08-18 11:56:00
+2025-08-19 07:55:21,308 [INFO] logger_config: 🔄 Fetching new data from 2025-08-18 11:56:00 to 2026-02-11 00:11:00
+2025-08-19 07:55:21,308 [INFO] logger_config: 🔍 Fetching data from 2025-08-18 11:56:00 to 2026-02-11 00:11:00 for XRP/USDT:USDT [1m]...
+2025-08-19 07:55:34,810 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1755518160000: binance GET https://fapi.binance.com/fapi/v1/exchangeInfo
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 741, in connect
+    sock_and_verified = _ssl_wrap_socket_and_match_hostname(
+        sock=sock,
+    ...<14 lines>...
+        assert_fingerprint=self.assert_fingerprint,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 920, in _ssl_wrap_socket_and_match_hostname
+    ssl_sock = ssl_wrap_socket(
+        sock=sock,
+    ...<8 lines>...
+        tls_in_tls=tls_in_tls,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 460, in ssl_wrap_socket
+    ssl_sock = _ssl_wrap_socket_impl(sock, context, tls_in_tls, server_hostname)
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 504, in _ssl_wrap_socket_impl
+    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 455, in wrap_socket
+    return self.sslsocket_class._create(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sock=sock,
+        ^^^^^^^^^^
+    ...<5 lines>...
+        session=session
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 1076, in _create
+    self.do_handshake()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 1372, in do_handshake
+    self._sslobj.do_handshake()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+ssl.SSLEOFError: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1028)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+urllib3.exceptions.SSLError: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1028)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='fapi.binance.com', port=443): Max retries exceeded with url: /fapi/v1/exchangeInfo (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1028)')))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 548, in fetch
+    response = self.session.request(
+        method,
+    ...<5 lines>...
+        verify=self.verify and self.validateServerSsl
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 698, in send
+    raise SSLError(e, request=request)
+requests.exceptions.SSLError: HTTPSConnectionPool(host='fapi.binance.com', port=443): Max retries exceeded with url: /fapi/v1/exchangeInfo (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1028)')))
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1510, in load_markets
+    markets = self.fetch_markets(params)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 3225, in fetch_markets
+    promisesRaw.append(self.fapiPublicGetExchangeInfo(params))
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 601, in fetch
+    raise NetworkError(details) from e
+ccxt.base.errors.NetworkError: binance GET https://fapi.binance.com/fapi/v1/exchangeInfo
+2025-08-19 07:55:34,830 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-08-19 07:55:34,951 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-08-19 07:55:34,952 [INFO] logger_config: 🚀 Processing 1000SHIB/USDT:USDT with timeframe 1m...
+2025-08-19 07:55:34,953 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000SHIB/USDT:USDT [1m]: 2021-05-10 17:37:00+00:00
+2025-08-19 07:55:34,953 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000SHIBUSDTUSDT_1m.feather
+2025-08-19 07:55:35,053 [INFO] logger_config: 🕒 Existing data range: 2021-05-10 17:37:00+00:00 to 2025-08-18 11:56:00
+2025-08-19 07:55:35,054 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-18 11:56:00, New since: 2025-08-18 11:56:00
+2025-08-19 07:55:35,054 [INFO] logger_config: 🔄 Fetching new data from 2025-08-18 11:56:00 to 2026-02-11 00:11:00
+2025-08-19 07:55:35,055 [INFO] logger_config: 🔍 Fetching data from 2025-08-18 11:56:00 to 2026-02-11 00:11:00 for 1000SHIB/USDT:USDT [1m]...
+2025-08-19 07:55:44,508 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1755518160000: binance GET https://fapi.binance.com/fapi/v1/exchangeInfo
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 741, in connect
+    sock_and_verified = _ssl_wrap_socket_and_match_hostname(
+        sock=sock,
+    ...<14 lines>...
+        assert_fingerprint=self.assert_fingerprint,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 920, in _ssl_wrap_socket_and_match_hostname
+    ssl_sock = ssl_wrap_socket(
+        sock=sock,
+    ...<8 lines>...
+        tls_in_tls=tls_in_tls,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 460, in ssl_wrap_socket
+    ssl_sock = _ssl_wrap_socket_impl(sock, context, tls_in_tls, server_hostname)
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 504, in _ssl_wrap_socket_impl
+    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 455, in wrap_socket
+    return self.sslsocket_class._create(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sock=sock,
+        ^^^^^^^^^^
+    ...<5 lines>...
+        session=session
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 1076, in _create
+    self.do_handshake()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 1372, in do_handshake
+    self._sslobj.do_handshake()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+ssl.SSLEOFError: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1028)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+urllib3.exceptions.SSLError: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1028)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='fapi.binance.com', port=443): Max retries exceeded with url: /fapi/v1/exchangeInfo (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1028)')))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 548, in fetch
+    response = self.session.request(
+        method,
+    ...<5 lines>...
+        verify=self.verify and self.validateServerSsl
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 698, in send
+    raise SSLError(e, request=request)
+requests.exceptions.SSLError: HTTPSConnectionPool(host='fapi.binance.com', port=443): Max retries exceeded with url: /fapi/v1/exchangeInfo (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1028)')))
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1510, in load_markets
+    markets = self.fetch_markets(params)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 3225, in fetch_markets
+    promisesRaw.append(self.fapiPublicGetExchangeInfo(params))
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 601, in fetch
+    raise NetworkError(details) from e
+ccxt.base.errors.NetworkError: binance GET https://fapi.binance.com/fapi/v1/exchangeInfo
+2025-08-19 07:55:44,529 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-08-19 07:55:44,615 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-08-19 07:55:44,616 [INFO] logger_config: 🚀 Processing BNB/USDT:USDT with timeframe 1m...
+2025-08-19 07:55:44,617 [INFO] logger_config: 📌 Found cached oldest timestamp for BNB/USDT:USDT [1m]: 2020-02-10 08:01:00+00:00
+2025-08-19 07:55:44,617 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_BNBUSDTUSDT_1m.feather
+2025-08-19 07:55:44,736 [INFO] logger_config: 🕒 Existing data range: 2020-02-10 08:01:00+00:00 to 2025-08-18 11:57:00
+2025-08-19 07:55:44,737 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-18 11:57:00, New since: 2025-08-18 11:57:00
+2025-08-19 07:55:44,737 [INFO] logger_config: 🔄 Fetching new data from 2025-08-18 11:57:00 to 2026-02-11 00:11:00
+2025-08-19 07:55:44,738 [INFO] logger_config: 🔍 Fetching data from 2025-08-18 11:57:00 to 2026-02-11 00:11:00 for BNB/USDT:USDT [1m]...
+2025-08-19 07:56:03,441 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1755518220000: binance GET https://dapi.binance.com/dapi/v1/exchangeInfo
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 198, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 977, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 704, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 205, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: <urllib3.connection.HTTPSConnection object at 0x0000028886EA3D90>: Failed to resolve 'dapi.binance.com' ([Errno 11001] getaddrinfo failed)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='dapi.binance.com', port=443): Max retries exceeded with url: /dapi/v1/exchangeInfo (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000028886EA3D90>: Failed to resolve 'dapi.binance.com' ([Errno 11001] getaddrinfo failed)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 548, in fetch
+    response = self.session.request(
+        method,
+    ...<5 lines>...
+        verify=self.verify and self.validateServerSsl
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='dapi.binance.com', port=443): Max retries exceeded with url: /dapi/v1/exchangeInfo (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000028886EA3D90>: Failed to resolve 'dapi.binance.com' ([Errno 11001] getaddrinfo failed)"))
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1510, in load_markets
+    markets = self.fetch_markets(params)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 3227, in fetch_markets
+    promisesRaw.append(self.dapiPublicGetExchangeInfo(params))
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 601, in fetch
+    raise NetworkError(details) from e
+ccxt.base.errors.NetworkError: binance GET https://dapi.binance.com/dapi/v1/exchangeInfo
+2025-08-19 07:56:03,460 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-08-19 07:56:03,581 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-08-19 07:56:03,582 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-08-19 07:56:03,583 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-08-19 07:56:03,583 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.feather
+2025-08-19 07:56:03,695 [INFO] logger_config: 🕒 Existing data range: 2020-07-10 09:00:00+00:00 to 2025-08-19 04:53:00
+2025-08-19 07:56:03,696 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-19 04:53:00, New since: 2025-08-19 04:53:00
+2025-08-19 07:56:03,696 [INFO] logger_config: 🔄 Fetching new data from 2025-08-19 04:53:00 to 2026-02-11 00:11:00
+2025-08-19 07:56:03,697 [INFO] logger_config: 🔍 Fetching data from 2025-08-19 04:53:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-08-19 07:56:11,989 [INFO] logger_config: ✅ Downloaded 4 new rows. (From 2025-08-19 04:53:00 to 2025-08-19 04:56:00)
+2025-08-19 07:56:12,091 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=2686794, df_new=3
+2025-08-19 07:56:12,183 [INFO] logger_config: 📊 Final dataset size after merge: 2686797 rows
+2025-08-19 07:56:12,382 [INFO] logger_config: ✅ Feather saved: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.feather
+2025-08-19 07:56:12,382 [INFO] logger_config: ✨ All data download tasks completed.
+2025-08-19 07:56:47,430 [INFO] logger_config: Starting data download...
+2025-08-19 07:56:47,482 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-08-19 07:56:47,494 [INFO] logger_config: Converted local startt 2025-01-01 00:00:00 (UTC) to UTC start: 2025-01-01 00:00:00
+2025-08-19 07:56:47,495 [INFO] logger_config: 🚀 Processing SUI/USDT:USDT with timeframe 1m...
+2025-08-19 07:56:47,496 [INFO] logger_config: 📌 Found cached oldest timestamp for SUI/USDT:USDT [1m]: 2023-05-03 16:00:00+00:00
+2025-08-19 07:56:47,496 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_SUIUSDTUSDT_1m.feather
+2025-08-19 07:56:47,564 [INFO] logger_config: 🕒 Existing data range: 2023-05-03 16:00:00+00:00 to 2025-08-18 11:56:00
+2025-08-19 07:56:47,566 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-18 11:56:00, New since: 2025-08-18 11:56:00
+2025-08-19 07:56:47,566 [INFO] logger_config: 🔄 Fetching new data from 2025-08-18 11:56:00 to 2026-02-11 00:11:00
+2025-08-19 07:56:47,567 [INFO] logger_config: 🔍 Fetching data from 2025-08-18 11:56:00 to 2026-02-11 00:11:00 for SUI/USDT:USDT [1m]...
+2025-08-19 07:57:02,125 [ERROR] logger_config: ⚠️ Error fetching data at timestamp 1755518160000: binance GET https://fapi.binance.com/fapi/v1/exchangeInfo
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 198, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Islam\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 977, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 704, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connection.py", line 205, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: <urllib3.connection.HTTPSConnection object at 0x000001A35DDE3ED0>: Failed to resolve 'fapi.binance.com' ([Errno 11001] getaddrinfo failed)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\urllib3\util\retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='fapi.binance.com', port=443): Max retries exceeded with url: /fapi/v1/exchangeInfo (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001A35DDE3ED0>: Failed to resolve 'fapi.binance.com' ([Errno 11001] getaddrinfo failed)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 548, in fetch
+    response = self.session.request(
+        method,
+    ...<5 lines>...
+        verify=self.verify and self.validateServerSsl
+    )
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\src\trading\.venv\Lib\site-packages\requests\adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='fapi.binance.com', port=443): Max retries exceeded with url: /fapi/v1/exchangeInfo (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001A35DDE3ED0>: Failed to resolve 'fapi.binance.com' ([Errno 11001] getaddrinfo failed)"))
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\src\trading\download\download.py", line 180, in fetch_new_binance_ohlcv
+    ohlcv = safe_fetch_ohlcv(symbol=symbol, timeframe=timeframe, since_ms=since_ms, limit=limit)
+  File "c:\src\trading\download\download.py", line 42, in safe_fetch_ohlcv
+    return exchange.fetch_ohlcv(symbol, timeframe, since=since_ms, limit=limit)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 4626, in fetch_ohlcv
+    self.load_markets()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 1510, in load_markets
+    markets = self.fetch_markets(params)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 3225, in fetch_markets
+    promisesRaw.append(self.fapiPublicGetExchangeInfo(params))
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\types.py", line 35, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\binance.py", line 11485, in request
+    response = self.fetch2(path, api, method, params, headers, body, config)
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4362, in fetch2
+    raise e
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 4353, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\src\trading\.venv\Lib\site-packages\ccxt\base\exchange.py", line 601, in fetch
+    raise NetworkError(details) from e
+ccxt.base.errors.NetworkError: binance GET https://fapi.binance.com/fapi/v1/exchangeInfo
+2025-08-19 07:57:02,151 [WARNING] logger_config: ⚠️ No new data downloaded.
+2025-08-19 07:57:02,194 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-08-19 07:57:02,195 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 1m...
+2025-08-19 07:57:02,196 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [1m]: 2023-05-05 16:30:00+00:00
+2025-08-19 07:57:02,197 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.feather
+2025-08-19 07:57:02,252 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-08-18 11:56:00
+2025-08-19 07:57:02,253 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-18 11:56:00, New since: 2025-08-18 11:56:00
+2025-08-19 07:57:02,254 [INFO] logger_config: 🔄 Fetching new data from 2025-08-18 11:56:00 to 2026-02-11 00:11:00
+2025-08-19 07:57:02,254 [INFO] logger_config: 🔍 Fetching data from 2025-08-18 11:56:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [1m]...
+2025-08-19 07:57:13,301 [INFO] logger_config: ✅ Downloaded 1022 new rows. (From 2025-08-18 11:56:00 to 2025-08-19 04:57:00)
+2025-08-19 07:57:13,344 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=1203567, df_new=1021
+2025-08-19 07:57:13,384 [INFO] logger_config: 📊 Final dataset size after merge: 1204588 rows
+2025-08-19 07:57:13,485 [INFO] logger_config: ✅ Feather saved: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.feather
+2025-08-19 07:57:13,485 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-08-19 07:57:13,486 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-08-19 07:57:13,486 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.feather
+2025-08-19 07:57:13,606 [INFO] logger_config: 🕒 Existing data range: 2020-07-10 09:00:00+00:00 to 2025-08-19 04:56:00
+2025-08-19 07:57:13,607 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-19 04:56:00, New since: 2025-08-19 04:56:00
+2025-08-19 07:57:13,607 [INFO] logger_config: 🔄 Fetching new data from 2025-08-19 04:56:00 to 2026-02-11 00:11:00
+2025-08-19 07:57:13,608 [INFO] logger_config: 🔍 Fetching data from 2025-08-19 04:56:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-08-19 07:57:14,311 [INFO] logger_config: ✅ Downloaded 2 new rows. (From 2025-08-19 04:56:00 to 2025-08-19 04:57:00)
+2025-08-19 07:57:14,417 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=2686797, df_new=1
+2025-08-19 07:57:14,511 [INFO] logger_config: 📊 Final dataset size after merge: 2686798 rows
+2025-08-19 07:57:14,704 [INFO] logger_config: ✅ Feather saved: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.feather
+2025-08-19 07:57:14,705 [INFO] logger_config: 🚀 Processing XRP/USDT:USDT with timeframe 1m...
+2025-08-19 07:57:14,705 [INFO] logger_config: 📌 Found cached oldest timestamp for XRP/USDT:USDT [1m]: 2020-01-06 08:21:00+00:00
+2025-08-19 07:57:14,706 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_XRPUSDTUSDT_1m.feather
+2025-08-19 07:57:14,817 [INFO] logger_config: 🕒 Existing data range: 2020-01-06 08:21:00+00:00 to 2025-08-18 11:56:00
+2025-08-19 07:57:14,818 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-18 11:56:00, New since: 2025-08-18 11:56:00
+2025-08-19 07:57:14,819 [INFO] logger_config: 🔄 Fetching new data from 2025-08-18 11:56:00 to 2026-02-11 00:11:00
+2025-08-19 07:57:14,819 [INFO] logger_config: 🔍 Fetching data from 2025-08-18 11:56:00 to 2026-02-11 00:11:00 for XRP/USDT:USDT [1m]...
+2025-08-19 07:57:15,903 [INFO] logger_config: ✅ Downloaded 1022 new rows. (From 2025-08-18 11:56:00 to 2025-08-19 04:57:00)
+2025-08-19 07:57:16,029 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=2953656, df_new=1021
+2025-08-19 07:57:16,134 [INFO] logger_config: 📊 Final dataset size after merge: 2954677 rows
+2025-08-19 07:57:16,327 [INFO] logger_config: ✅ Feather saved: c:\src\trading\download\data\binance_XRPUSDTUSDT_1m.feather
+2025-08-19 07:57:16,328 [INFO] logger_config: 🚀 Processing 1000SHIB/USDT:USDT with timeframe 1m...
+2025-08-19 07:57:16,328 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000SHIB/USDT:USDT [1m]: 2021-05-10 17:37:00+00:00
+2025-08-19 07:57:16,329 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000SHIBUSDTUSDT_1m.feather
+2025-08-19 07:57:16,423 [INFO] logger_config: 🕒 Existing data range: 2021-05-10 17:37:00+00:00 to 2025-08-18 11:56:00
+2025-08-19 07:57:16,424 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-18 11:56:00, New since: 2025-08-18 11:56:00
+2025-08-19 07:57:16,424 [INFO] logger_config: 🔄 Fetching new data from 2025-08-18 11:56:00 to 2026-02-11 00:11:00
+2025-08-19 07:57:16,425 [INFO] logger_config: 🔍 Fetching data from 2025-08-18 11:56:00 to 2026-02-11 00:11:00 for 1000SHIB/USDT:USDT [1m]...
+2025-08-19 07:57:17,521 [INFO] logger_config: ✅ Downloaded 1022 new rows. (From 2025-08-18 11:56:00 to 2025-08-19 04:57:00)
+2025-08-19 07:57:17,657 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=2247500, df_new=1021
+2025-08-19 07:57:17,770 [INFO] logger_config: 📊 Final dataset size after merge: 2248521 rows
+2025-08-19 07:57:17,953 [INFO] logger_config: ✅ Feather saved: c:\src\trading\download\data\binance_1000SHIBUSDTUSDT_1m.feather
+2025-08-19 07:57:17,954 [INFO] logger_config: 🚀 Processing BNB/USDT:USDT with timeframe 1m...
+2025-08-19 07:57:17,955 [INFO] logger_config: 📌 Found cached oldest timestamp for BNB/USDT:USDT [1m]: 2020-02-10 08:01:00+00:00
+2025-08-19 07:57:17,955 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_BNBUSDTUSDT_1m.feather
+2025-08-19 07:57:18,072 [INFO] logger_config: 🕒 Existing data range: 2020-02-10 08:01:00+00:00 to 2025-08-18 11:57:00
+2025-08-19 07:57:18,073 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-18 11:57:00, New since: 2025-08-18 11:57:00
+2025-08-19 07:57:18,074 [INFO] logger_config: 🔄 Fetching new data from 2025-08-18 11:57:00 to 2026-02-11 00:11:00
+2025-08-19 07:57:18,074 [INFO] logger_config: 🔍 Fetching data from 2025-08-18 11:57:00 to 2026-02-11 00:11:00 for BNB/USDT:USDT [1m]...
+2025-08-19 07:57:19,163 [INFO] logger_config: ✅ Downloaded 1021 new rows. (From 2025-08-18 11:57:00 to 2025-08-19 04:57:00)
+2025-08-19 07:57:19,285 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=2903277, df_new=1020
+2025-08-19 07:57:19,391 [INFO] logger_config: 📊 Final dataset size after merge: 2904297 rows
+2025-08-19 07:57:19,593 [INFO] logger_config: ✅ Feather saved: c:\src\trading\download\data\binance_BNBUSDTUSDT_1m.feather
+2025-08-19 07:57:19,593 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-08-19 07:57:19,594 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-08-19 07:57:19,595 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.feather
+2025-08-19 07:57:19,706 [INFO] logger_config: 🕒 Existing data range: 2020-07-10 09:00:00+00:00 to 2025-08-19 04:57:00
+2025-08-19 07:57:19,707 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-19 04:57:00, New since: 2025-08-19 04:57:00
+2025-08-19 07:57:19,708 [INFO] logger_config: 🔄 Fetching new data from 2025-08-19 04:57:00 to 2026-02-11 00:11:00
+2025-08-19 07:57:19,708 [INFO] logger_config: 🔍 Fetching data from 2025-08-19 04:57:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-08-19 07:57:20,411 [INFO] logger_config: ✅ Downloaded 1 new rows. (From 2025-08-19 04:57:00 to 2025-08-19 04:57:00)
+2025-08-19 07:57:20,519 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-08-19 07:57:20,520 [INFO] logger_config: ✨ All data download tasks completed.

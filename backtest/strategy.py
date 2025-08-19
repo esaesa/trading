@@ -123,26 +123,29 @@ class DCAStrategy(Strategy):
 
         return default
 
-    
     def _ctx(self) -> Ctx:
         now = self.data.index[-1]
         price = float(self.data.Close[-1])
 
         indicators = {}
         for n in ("rsi", "ema", "atr_pct", "laguerre_rsi", "bbw", "cv"):
-            v = self._ind_value(n, now, default=np.nan)
+            v = self._ind_value(n, now, default=np.nan)   # <-- pass 'now' again
             if v is not None and not (isinstance(v, float) and np.isnan(v)):
                 indicators[n] = v
 
-        dyn_thr = None
+        # Dynamic RSI threshold aligned to 'now' (no future leak)
+        dynamic_thr = None
         if getattr(self, "rsi_dynamic_threshold", False) and hasattr(self, "rsi_dynamic_threshold_series"):
             try:
-                dyn_thr = float(self.rsi_dynamic_threshold_series.loc[now])
+                ser = self.rsi_dynamic_threshold_series
+                pos = ser.index.searchsorted(now, side="right") - 1
+                if pos >= 0:
+                    dynamic_thr = float(ser.iloc[pos])
             except Exception:
-                dyn_thr = float(self.rsi_dynamic_threshold_series.iloc[-1])
+                dynamic_thr = None
 
         current_atr = None
-        if self.enable_atr_calculation and hasattr(self, 'atr_pct_series') and not self.atr_pct_series.empty:
+        if self.enable_atr_calculation and hasattr(self, 'atr_pct_series') and len(self.atr_pct_series):
             current_atr = self.get_current_atr(now)
 
         entry_price = getattr(self, "base_order_price", None)
@@ -154,51 +157,44 @@ class DCAStrategy(Strategy):
             "safety_order_mode": self.safety_order_mode,
             "take_profit": self.take_profit_percentage,
             "next_level": dca_level + 1,
-            "commission_rate" : self.commission_rate
+            "commission_rate": self.commission_rate,
         }
 
         equity_per_cycle = float(self._broker._cash)
-        last_entry_time = self.last_safety_order_time if self.last_safety_order_time else self.base_order_time
 
         ctx = Ctx(
             entry_price=entry_price,
             equity_per_cycle=equity_per_cycle,
             config=cfg,
-            last_entry_time=last_entry_time,
+            last_entry_time=(self.last_safety_order_time or self.base_order_time),
             now=now,
             price=price,
             indicators=indicators,
-            # Position tracking
             dca_level=getattr(self, 'dca_level', 0),
             base_order_price=getattr(self, 'base_order_price', None),
             base_order_value=getattr(self, 'base_order_value', None),
             base_order_quantity=getattr(self, 'base_order_quantity', None),
             last_filled_price=getattr(self, 'last_filled_price', None),
-            # Time tracking
             last_so_dt=getattr(self, 'last_safety_order_time', None),
             base_order_time=getattr(self, 'base_order_time', None),
-            # Dynamic values
-            dynamic_rsi_thr=(self.rsi_dynamic_threshold_series.loc[now] 
-                           if hasattr(self, 'rsi_dynamic_threshold_series') 
-                           else self.rsi_threshold),
-            # Broker data
+            dynamic_rsi_thr=(dynamic_thr if dynamic_thr is not None else self.rsi_threshold),
             available_cash=self._broker.margin_available * self._broker._leverage,
             position_size=self.position.size if self.position else 0,
             position_pl_pct=self.position.pl_pct if self.position else 0,
-            current_atr=current_atr,   
+            current_atr=current_atr,
         )
 
-        # Pre-compute next SO trigger so rules can pre-flight funds/notional
+        # Pre-compute next SO trigger (guarded)
         try:
             next_level = cfg.get("next_level", ctx.dca_level + 1)
             if self.position and hasattr(self, "price_engine") and next_level <= self.max_dca_levels:
                 ctx.next_so_price = self.price_engine.so_price(ctx, next_level)
         except Exception:
-            # be lenient if not computable
             ctx.next_so_price = None
-        
+
         return ctx
-    
+
+ 
     @property
     def commission_rate(self) -> float:
         """
@@ -227,7 +223,8 @@ class DCAStrategy(Strategy):
         return v
     
     def init(self):
-        self.console = Console(record=True)
+        debug_any = (self.debug_backtest or self.debug_loop or self.debug_trade or self.debug_process)
+        self.console = Console(record=debug_any, no_color=True)
 
         if not isinstance(self.data.index, pd.DatetimeIndex):
             self.data.index = pd.to_datetime(self.data.index)
@@ -266,17 +263,13 @@ class DCAStrategy(Strategy):
             "Wiring failed: missing one of entry_sizer, affordability_guard, commission_calc, indicator_provider, entry_preflight"
 
 
-    def process_entry(self, price: float, current_time):
-        ctx = self._ctx()
+    def process_entry(self, ctx: Ctx, price: float, current_time):
         if not self.position and self.entry_decider.ok(ctx):
-            rsi_now = self._ind_value("rsi", current_time, default=np.nan)
+            # Use RSI already in ctx.indicators (no second lookup)
+            rsi_now = ctx.indicators.get("rsi", np.nan)
             if self.enable_rsi_calculation and (rsi_now is None or np.isnan(rsi_now)):
                 return False
-            # use injected entry_sizer (EMA-aware via EntryMultiplier)
             qty, investment = self.entry_sizer.qty_and_investment(ctx, price, self.commission_calc)
-
-
-            # keep fractional guard for safety if someone removes EntryFundsAndNotional rule
             if qty < 1:
                 raise ValueError("Backtesting.py does not support fractional units. Adjust your entry fraction.")
             order = self.buy(size=qty, tag="BO")
@@ -288,19 +281,16 @@ class DCAStrategy(Strategy):
             self.last_filled_price = price
             self.base_order_quantity = qty
             self.base_order_value = qty * self.base_order_price
-
             consume_reset(self)
-
             if self.debug_trade:
                 table = render_cycle_plan_table(self, qty)
                 logger.info(table)
                 log_trade_info(self, "Entry", order, price, qty * price)
-
             return True
         return False
 
-    def process_dca(self, price: float, current_time: datetime) -> None:
-        ctx = self._ctx()
+
+    def process_dca(self, ctx: Ctx, price: float, current_time: datetime) -> None:
         if not self.safety_decider.ok(ctx):
             return
         level = self.dca_level + 1
@@ -309,22 +299,17 @@ class DCAStrategy(Strategy):
             if self.debug_trade:
                 logger.debug(f"Price {price:.10f} > SO-{level} trigger {so_price:.10f}")
             return
-        else:
-            pass
         so_size = self.size_engine.so_size(ctx, so_price, level)
         size_to_buy = self.affordability_guard.clamp_qty(
             desired_qty=so_size,
             price=so_price,
             available_cash=self._broker.margin_available * self._broker._leverage,
-            commission=self.commission_calc,   # <-- pass the calculator, not a float
+            commission=self.commission_calc,
             min_notional=self.minimum_notional,
         )
         order = None
         if size_to_buy > 0:
             order = self.buy(size=size_to_buy, tag=f"S{level}")
-        else:
-            pass
-
         self.last_safety_order_time = current_time
         self.dca_level += 1
         consume_reset(self)
@@ -333,10 +318,10 @@ class DCAStrategy(Strategy):
         if self.debug_trade and order is not None:
             log_trade_info(self, "DCA", order, so_price, size_to_buy * so_price)
 
-    def process_exit(self, price, current_time):
+
+    def process_exit(self, ctx: Ctx, price, current_time):
         if not self.position:
             return False
-        ctx = self._ctx()
         if self.exit_decider.ok(ctx):
             if self.debug_process:
                 table = render_exit_summary_table(self, price, current_time)
@@ -345,8 +330,7 @@ class DCAStrategy(Strategy):
             self.position.close()
             self.reset_process()
             return True
-        else:
-            return False
+        return False
 
     def reset_process(self):
         self.base_order_price = None
@@ -365,25 +349,30 @@ class DCAStrategy(Strategy):
         current_time = self.data.index[-1]
         if current_time < self.start_trading_time:
             return
+
         update_overlays(self, current_time)
+
         price = self.data.Close[-1]
-        current_low = self.data.Low[-1]
-        current_high = self.data.High[-1]
-        price, current_low, current_high = apply_slippage(price, current_low, current_high, self.slippage_probability)
-        rsi_val = self._ind_value("rsi", current_time, default=np.nan)
+        low   = self.data.Low[-1]
+        high  = self.data.High[-1]
+        if self.slippage_probability:
+            price, low, high = apply_slippage(price, low, high, self.slippage_probability)
+
+        # Build once
+        ctx = self._ctx()
+
+        # Use ctx RSI directly (no extra indicator reads)
+        rsi_val = ctx.indicators.get("rsi", np.nan)
         update_reset(self, rsi_val)
         log_loop_info(self, price, rsi_val, current_time)
 
         if self.position:
-            if self.process_exit(current_high, current_time):
+            if self.process_exit(ctx, high, current_time):
                 return
-            else:
-                if not self.enable_rsi_calculation:
-                    rsi_val = np.nan
-                self.process_dca(current_low, current_time)
+            self.process_dca(ctx, low, current_time)
         else:
-            ctx = self._ctx()
             if not self.entry_decider.ok(ctx):
                 return
-            self.process_entry(price, current_time)
+            self.process_entry(ctx, price, current_time)
             return True
+

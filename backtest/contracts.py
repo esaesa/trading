@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Mapping, Any, Optional
 
-@dataclass
+@dataclass(slots=True)
 class Ctx:
     now: datetime
     price: float
