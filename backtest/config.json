@@ -1,7 +1,7 @@
 {
     "backtest_params": {
         "symbols": [
-            "BTCUSDTUSDT"
+            "DOGEUSDTUSDT"
         ],
         "timeframes": [
             "1m"
@@ -10,7 +10,7 @@
         "enable_optimization": false,
         "debug": true,
         "debug_loop": false,
-        "start_date": "2024-12-01 00:00:00",
+        "start_date": "2025-06-01 00:00:00",
         "end_date":   "2025-12-28 00:59:59",
     
         "cash": 100000000,
@@ -35,7 +35,7 @@
 
         "max_dca_levels": 11,
         "take_profit_percentage": 0.8,
-        "entry_fraction": 0.01,
+        "entry_fraction": 0.03,
         "so_size_multiplier": 2.1,
         "first_safety_order_multiplier": 3.5,
         "initial_deviation_percent": 1.8,
@@ -70,7 +70,7 @@
         "debug": {
             "trade": false,
             "loop": false,
-            "process": false
+            "process": true
           },
           "show_indicators": {
             "dynamic_rsi": true,

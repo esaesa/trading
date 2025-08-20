@@ -255,6 +255,15 @@ class DCAStrategy(Strategy):
         init_overlays(self)
         # Wire rules/engines/providers (provider will read the series computed above)
         wire_strategy(self, strategy_params)  
+        self.completed_processes = []
+        # NEW: minimal runtime buffer
+        self._cycle = None
+        # in DCAStrategy.init() after other state inits
+        self._cycle_cash_entry = 0.0
+        self._cycle_invested = 0.0
+        self._cycle_peak_invested = 0.0
+        self.cycle_cash_records = []  
+
         assert (hasattr(self, "entry_sizer")
                 and hasattr(self, "affordability_guard")
                 and hasattr(self, "commission_calc")
@@ -262,16 +271,79 @@ class DCAStrategy(Strategy):
                 and hasattr(self, "entry_preflight")), \
             "Wiring failed: missing one of entry_sizer, affordability_guard, commission_calc, indicator_provider, entry_preflight"
 
+    def _start_cycle(self, current_time, entry_price):
+        self._cycle = {
+            "entry_time": current_time,
+            "entry_price": float(entry_price),
+            "so_fills": [],               # list of {"level": int, "time": dt}
+        }
 
+    def _log_so_fill(self, level, tstamp):
+        if self._cycle is not None:
+            self._cycle["so_fills"].append({"level": int(level), "time": tstamp})
+
+
+    def _finalize_cycle(self, exit_time, exit_price, roi_pct, exit_reason=None):
+        if not self._cycle:
+            return
+        entry_time  = self._cycle["entry_time"]
+        entry_price = self._cycle["entry_price"]
+        so_fills    = sorted(self._cycle["so_fills"], key=lambda x: x["time"])
+
+        # DCA stats
+        levels = [f["level"] for f in so_fills]
+        max_level = max(levels) if levels else 0
+        dca_levels_executed = len(levels)
+
+        # Times
+        cycle_duration_sec = (exit_time - entry_time).total_seconds()
+        if levels:
+            # waits between SOs
+            waits = [(so_fills[i]["time"] - so_fills[i-1]["time"]).total_seconds()
+                     for i in range(1, len(so_fills))]
+            max_so_wait_sec = max(waits) if waits else 0.0
+            bo_to_first_so_sec = (so_fills[0]["time"] - entry_time).total_seconds()
+            last_so_time = so_fills[-1]["time"]
+            time_in_last_level_sec = (exit_time - last_so_time).total_seconds()
+            avg_so_to_exit_sec = sum((exit_time - f["time"]).total_seconds() for f in so_fills) / len(so_fills)
+        else:
+            max_so_wait_sec = 0.0
+            bo_to_first_so_sec = None
+            time_in_last_level_sec = (exit_time - entry_time).total_seconds()
+            avg_so_to_exit_sec = None
+
+        cycle_price_change_pct = ((exit_price / entry_price) - 1.0) * 100.0 if entry_price else 0.0
+
+        self.completed_processes.append({
+            "entry_time": entry_time,
+            "exit_time": exit_time,
+            "entry_price": entry_price,
+            "exit_price": float(exit_price),
+            "roi_percentage": float(roi_pct),
+            "cycle_duration_sec": cycle_duration_sec,
+            "cycle_price_change_pct": cycle_price_change_pct,
+
+            "dca_levels_executed": dca_levels_executed,
+            "max_level_reached": max_level,
+            "levels_reached": levels,
+
+            "bo_to_first_so_sec": bo_to_first_so_sec,
+            "max_so_wait_sec": max_so_wait_sec,
+            "time_in_last_level_sec": time_in_last_level_sec,
+            "avg_so_to_exit_sec": avg_so_to_exit_sec,
+
+            "exit_reason": exit_reason or "",
+        })
+        self._cycle = None
     def process_entry(self, ctx: Ctx, price: float, current_time):
         if not self.position and self.entry_decider.ok(ctx):
-            # Use RSI already in ctx.indicators (no second lookup)
             rsi_now = ctx.indicators.get("rsi", np.nan)
             if self.enable_rsi_calculation and (rsi_now is None or np.isnan(rsi_now)):
                 return False
             qty, investment = self.entry_sizer.qty_and_investment(ctx, price, self.commission_calc)
             if qty < 1:
                 raise ValueError("Backtesting.py does not support fractional units. Adjust your entry fraction.")
+
             order = self.buy(size=qty, tag="BO")
             self.base_order_time = current_time
             self.last_safety_order_time = None
@@ -281,6 +353,13 @@ class DCAStrategy(Strategy):
             self.last_filled_price = price
             self.base_order_quantity = qty
             self.base_order_value = qty * self.base_order_price
+            self._cycle_cash_entry = float(self._broker._cash)
+            self._cycle_invested = qty * price * (1.0 + self.commission_rate)   # include commission
+            self._cycle_peak_invested = self._cycle_invested
+
+            # NEW: start cycle buffer
+            self._start_cycle(current_time, price)
+
             consume_reset(self)
             if self.debug_trade:
                 table = render_cycle_plan_table(self, qty)
@@ -310,6 +389,11 @@ class DCAStrategy(Strategy):
         order = None
         if size_to_buy > 0:
             order = self.buy(size=size_to_buy, tag=f"S{level}")
+            delta = size_to_buy * so_price * (1.0 + self.commission_rate)
+            self._cycle_invested += delta
+            self._cycle_peak_invested = max(self._cycle_peak_invested, self._cycle_invested)
+            self._log_so_fill(level, current_time)
+
         self.last_safety_order_time = current_time
         self.dca_level += 1
         consume_reset(self)
@@ -322,15 +406,39 @@ class DCAStrategy(Strategy):
     def process_exit(self, ctx: Ctx, price, current_time):
         if not self.position:
             return False
-        if self.exit_decider.ok(ctx):
-            if self.debug_process:
-                table = render_exit_summary_table(self, price, current_time)
-                logger.info(table)
-                logger.debug(f"Trade: Exit Triggered at {current_time} with Price: {price:.10f}")
-            self.position.close()
-            self.reset_process()
-            return True
-        return False
+        # Try to get which exit rule passed
+        exit_reason = ""
+        ok_with_reason = getattr(self.exit_decider, "ok_with_reason", None)
+        if callable(ok_with_reason):
+            ok, reason = ok_with_reason(ctx)
+            if not ok:
+                return False
+            exit_reason = reason or ""
+        else:
+            if not self.exit_decider.ok(ctx):
+                return False
+
+        # capture ROI before closing
+        roi_pct = float(self.position.pl_pct)
+        if self.debug_process:
+            table = render_exit_summary_table(self, price, current_time)
+            logger.info(table)
+            logger.debug(f"Trade: Exit Triggered at {current_time} price {price:.10f} ({exit_reason})")
+
+        # NEW: finalize current cycle before state reset
+        self._finalize_cycle(exit_time=current_time, exit_price=price, roi_pct=roi_pct, exit_reason=exit_reason)
+
+        self.position.close()
+        cash0 = self._cycle_cash_entry or 0.0
+        peak = self._cycle_peak_invested or 0.0
+        util_pct = (peak / cash0 * 100.0) if cash0 > 0 else 0.0
+        self.cycle_cash_records.append({
+            "cash_at_entry": cash0,
+            "peak_invested": peak,
+            "util_pct": util_pct,
+        })
+        self.reset_process()
+        return True
 
     def reset_process(self):
         self.base_order_price = None
@@ -341,6 +449,9 @@ class DCAStrategy(Strategy):
         self.rsi_reset = True
         self.base_order_time = None
         self.last_safety_order_time = None
+        self._cycle_cash_entry = 0.0
+        self._cycle_invested = 0.0
+        self._cycle_peak_invested = 0.0
 
     def get_entry_price(self) -> float:
         return self.position_view.avg_entry_price()

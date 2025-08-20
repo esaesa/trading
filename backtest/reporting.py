@@ -1,6 +1,6 @@
 # reporting.py
 from __future__ import annotations
-from typing import Any
+from typing import Any, Dict, List, Optional
 from rich.table import Table
 from datetime import datetime
 from logger_config import logger
@@ -178,3 +178,110 @@ def render_exit_summary_table(strategy: Any, price: float, current_time: datetim
         )
 
     return table
+# reporting.py (add this helper at bottom or a new section)
+
+from collections import Counter
+import statistics as stats
+
+def _hours(x: Optional[float]) -> Optional[float]:
+    if x is None:
+        return None
+    try:
+        return round(float(x) / 3600.0, 2)  # seconds → hours
+    except Exception:
+        return None
+
+def aggregate_cycles(cycles: List[Dict[str, Any]],
+                     cash_records: Optional[List[Dict[str, float]]] = None) -> Dict[str, Any]:
+    """
+    Aggregate per-cycle metrics (readable hours) and cash utilization.
+    Expects each cycle dict to *optionally* include:
+      - 'roi_percentage' or 'roi_pct'
+      - 'dca_levels_executed'
+      - 'max_level_reached'
+      - 'cycle_duration_sec'
+      - 'time_in_last_level_sec'
+      - 'bo_to_first_so_sec'
+      - 'max_so_wait_sec'
+    Any missing fields are skipped gracefully.
+    """
+    n = len(cycles)
+    if n == 0:
+        return {"cycles": 0}
+
+    # ---- numeric extractions (robust to missing keys) ----
+    roi_list = []
+    dca_exec = []
+    max_level = []
+    dur = []
+    last_lvl = []
+    bo_to_first = []
+    max_so_wait = []
+
+    for c in cycles:
+        if c.get("roi_percentage") is not None:
+            roi_list.append(float(c["roi_percentage"]))
+        elif c.get("roi_pct") is not None:
+            roi_list.append(float(c["roi_pct"]))
+
+        dca_exec.append(int(c.get("dca_levels_executed", c.get("levels_executed", 0))))
+        max_level.append(int(c.get("max_level_reached", c.get("max_level", c.get("dca_levels_executed", 0)))))
+
+        v = c.get("cycle_duration_sec")
+        if v is not None: dur.append(float(v))
+        v = c.get("time_in_last_level_sec")
+        if v is not None: last_lvl.append(float(v))
+        v = c.get("bo_to_first_so_sec")
+        if v is not None: bo_to_first.append(float(v))
+        v = c.get("max_so_wait_sec")
+        if v is not None: max_so_wait.append(float(v))
+
+    # ---- safe stats ----
+    def avg(xs): return round(statistics.mean(xs), 6) if xs else 0.0
+    def med(xs): return round(statistics.median(xs), 6) if xs else 0.0
+
+    levels_only = [lvl for lvl in dca_exec if lvl is not None]
+    freq = dict(sorted(Counter([lvl for lvl in max_level if lvl is not None and lvl > 0]).items()))
+    wins = [roi for roi in roi_list if roi is not None and roi >= 0]
+    win_rate = round(100.0 * len(wins) / len(roi_list), 4) if roi_list else 0.0
+
+    # ---- durations → hours ----
+    out = {
+        "cycles": n,
+        "win_rate": win_rate,
+        "avg_roi_pct": avg(roi_list),
+        "median_roi_pct": med(roi_list),
+        "max_level_reached_max": max(max_level) if max_level else 0,
+        "max_level_reached_avg": avg(max_level) if max_level else 0.0,
+        "dca_levels_executed_avg": avg(dca_exec) if dca_exec else 0.0,
+        "avg_cycle_duration_hours": _hours(avg(dur)) if dur else 0.0,
+        "max_cycle_duration_hours": _hours(max(dur)) if dur else 0.0,
+        "avg_time_in_last_level_hours": _hours(avg(last_lvl)) if last_lvl else 0.0,
+        "avg_bo_to_first_so_hours": _hours(avg(bo_to_first)) if bo_to_first else 0.0,
+        "avg_max_so_wait_hours": _hours(avg(max_so_wait)) if max_so_wait else 0.0,
+        "per_level_frequency": freq,
+    }
+
+    # ---- cash utilization from strategy tracker ----
+    cash_records = cash_records or []
+    util_pcts = [float(r.get("util_pct", 0.0)) for r in cash_records if r.get("util_pct") is not None]
+    if util_pcts:
+        util_pcts.sort()
+        p90 = util_pcts[int(0.9 * (len(util_pcts) - 1))] if len(util_pcts) > 1 else util_pcts[0]
+        out.update({
+            "peak_cash_utilization_pct": round(max(util_pcts), 2),
+            "avg_cash_utilization_pct": round(avg(util_pcts), 2),
+            "p90_cash_utilization_pct": round(p90, 2),
+            "cycles_over_80pct": sum(1 for u in util_pcts if u >= 80.0),
+            "cycles_over_90pct": sum(1 for u in util_pcts if u >= 90.0),
+        })
+    else:
+        out.update({
+            "peak_cash_utilization_pct": 0.0,
+            "avg_cash_utilization_pct": 0.0,
+            "p90_cash_utilization_pct": 0.0,
+            "cycles_over_80pct": 0,
+            "cycles_over_90pct": 0,
+        })
+
+    return out

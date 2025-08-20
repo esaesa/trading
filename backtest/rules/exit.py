@@ -141,10 +141,12 @@ from ports import ExitDecider
 from rule_chain import build_rule_chain
 
 class ExitRuleDecider(ExitDecider):
-    """
-    Builds its own RuleChain from config (strings or nested ANY/ALL dicts).
-    """
     def __init__(self, strategy, names, default_mode: str = "any") -> None:
-        self._chain = build_rule_chain(strategy, names, EXIT_RULES, mode=default_mode)  # type: ignore[arg-type]
+        self._chain = build_rule_chain(strategy, names, EXIT_RULES, mode=default_mode)
+
     def ok(self, ctx):
         return self._chain.ok(ctx)
+
+    # NEW: used to capture which rule actually triggered
+    def ok_with_reason(self, ctx):
+        return self._chain.ok_reason(ctx)

@@ -3,7 +3,7 @@ from tkinter import filedialog, messagebox
 import subprocess
 import json
 import os
-
+import sys 
 CONFIG_PATH = "config.json"
 
 class BacktestGUI:
@@ -35,7 +35,9 @@ class BacktestGUI:
     def run_backtest(self):
         self.log_message("Running backtest...")
         try:
-            subprocess.run(["python", "runner.py"], check=True)
+             
+            subprocess.run([sys.executable, os.path.join("backtest", "runner.py")], check=True)
+
             self.log_message("Backtest completed successfully.")
         except subprocess.CalledProcessError as e:
             self.log_message(f"Error running backtest: {e}")

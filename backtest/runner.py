@@ -6,6 +6,7 @@ from rich.console import Console
 from datetime import datetime
 import os
 import json
+from reporting import aggregate_cycles
 
 # Current concrete deps; we’ll still import them, but allow injection.
 from common_utils import beep
@@ -237,13 +238,11 @@ def handle_debug_and_persist(
     # Non-optimization
     if debug:
         completed = getattr(stats._strategy, "completed_processes", [])
-        agg = aggregate_cycle_metrics(completed)
-        print("=== Cumulative DCA Cycle Performance Metrics ===")
+        cash_recs = getattr(stats._strategy, "cycle_cash_records", [])
+        agg = aggregate_cycles(completed, cash_records=cash_recs)
+        console.print("[bold cyan]=== Strategy Cycle Metrics ===[/bold cyan]")
         for k, v in agg.items():
-            if isinstance(v, dict) and "value" in v and "date" in v:
-                print(f"{k}: {v['value']} (Date: {v['date']})")
-            else:
-                print(f"{k}: {v}")
+            console.print(f"{k}: {v}")
 
         results = {"performance": stringify_stats(stats), "aggregated_metrics": agg}
         saved = save_backtest_results(results, symbol, timeframe, params, optimization_enabled=False)

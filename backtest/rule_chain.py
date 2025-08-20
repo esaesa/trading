@@ -32,6 +32,34 @@ class RuleChain:
             return True
         else:
             raise ValueError(f"Invalid mode: {self.mode}")
+    def ok_reason(self, ctx):
+        reasons = []
+        if self.mode == "any":
+            for rule in self.rules:
+                res = rule(ctx)
+                if isinstance(res, tuple):
+                    ok, reason = res
+                else:
+                    ok, reason = bool(res), ""
+                reasons.append(reason)
+                if ok:
+                    return True, reason or "Passed"
+            # none passed
+            return False, "; ".join([r for r in reasons if r])
+        elif self.mode == "all":
+            last_reason = ""
+            for rule in self.rules:
+                res = rule(ctx)
+                if isinstance(res, tuple):
+                    ok, reason = res
+                else:
+                    ok, reason = bool(res), ""
+                if not ok:
+                    return False, reason or "One condition failed"
+                last_reason = reason
+            return True, last_reason or "All passed"
+        else:
+            raise ValueError(f"Invalid mode: {self.mode}")    
 
 # --------------------------
 # Nested-spec builder

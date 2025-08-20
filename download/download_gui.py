@@ -1,4 +1,4 @@
-#download-gui.py
+# download_gui.py
 from datetime import datetime
 import logging
 import tkinter as tk
@@ -7,29 +7,44 @@ from tkcalendar import DateEntry  # Install tkcalendar using pip if not already 
 import threading
 import os
 import json
+from pathlib import Path
+
+APP_DIR = Path(__file__).resolve().parent
+CONFIG_PATH = APP_DIR / 'config.json'
 
 # No more TextLoggerHandler or configure_gui_logger
 # (Remove or comment them out)
 
-def load_config(config_file):
-    if os.path.exists(config_file):
-        with open(config_file, 'r') as f:
-            return json.load(f)
-    return {
-        "download": {
-            "symbols": [],
-            "timeframes": [],
-            "start_date": "",
-            "end_date": ""
-        }
-    }
+def load_config(config_path=CONFIG_PATH):
+    if Path(config_path).exists():
+        with open(config_path, 'r') as f:
+            cfg = json.load(f)
+    else:
+        cfg = {}
 
-def save_config(config, config_file):
-    with open(config_file, 'w') as f:
-        json.dump(config, f, indent=4)
+    dl = cfg.setdefault('download', {})
+    # --- Migration / defaults ---
+    # symbols may be missing or stored as a CSV string or at root
+    syms = dl.get('symbols', cfg.get('symbols', []))
+    if isinstance(syms, str):
+        syms = [s.strip() for s in syms.split(',') if s.strip()]
+    if not isinstance(syms, list):
+        syms = []
+    dl['symbols'] = syms
+
+    dl.setdefault('timeframes', [])
+    dl.setdefault('start_date', "")
+    dl.setdefault('end_date', "")
+
+    return cfg
+
+def save_config(cfg, config_path=CONFIG_PATH):
+    with open(config_path, 'w') as f:
+        json.dump(cfg, f, indent=4)
+
 
 def save_current_config():
-    config = load_config('config.json')
+    config = load_config()
     download_config = config.setdefault('download', {})
 
     # Save symbols
@@ -47,14 +62,15 @@ def save_current_config():
     start_minute = start_minute_spinbox.get().zfill(2)
     download_config['start_date'] = f"{start_date} {start_hour}:{start_minute}:00"
 
-    # Save end date/time
-    end_date_str = end_date_entry.get_date()
-    if end_date_str:
+    # ----------------- CHANGED: end date saving respects "No end date" checkbox -----------------
+    if no_end_var.get():
+        download_config['end_date'] = ""
+    else:
+        end_date = end_date_entry.get_date()
         end_hour = end_time_spinbox.get().zfill(2)
         end_minute = end_minute_spinbox.get().zfill(2)
-        download_config['end_date'] = f"{end_date_str} {end_hour}:{end_minute}:00"
-    else:
-        download_config['end_date'] = ""
+        download_config['end_date'] = f"{end_date} {end_hour}:{end_minute}:00"
+    # --------------------------------------------------------------------------------------------
 
     save_config(config, 'config.json')
     messagebox.showinfo("Config Saved", "Configuration has been saved successfully.")
@@ -63,14 +79,17 @@ def start_download():
     save_current_config()
     threading.Thread(target=run_download).start()
 
+import subprocess, sys
+
 def run_download():
     try:
-        # This will now print to the terminal by default
         logging.info("Starting data download...")
-        os.system("python download.py")  # or use subprocess
+        subprocess.run([sys.executable, os.path.join("download", "download.py")], check=True)
         logging.info("Data download completed.")
     except Exception as e:
         logging.error(f"Error during download: {e}")
+
+
 
 def add_to_listbox(listbox, entry_widget):
     item = entry_widget.get().strip()
@@ -84,6 +103,15 @@ def remove_from_listbox(listbox):
         listbox.delete(index)
     except IndexError:
         messagebox.showwarning("No Selection", "Please select an item to remove.")
+
+# ----------------- ADDED: helper to enable/disable end-date controls -----------------
+def toggle_end_date_controls():
+    disabled = no_end_var.get()
+    state = 'disabled' if disabled else 'normal'
+    end_date_entry.configure(state=state)
+    end_time_spinbox.configure(state=state)
+    end_minute_spinbox.configure(state=state)
+# -------------------------------------------------------------------------------------
 
 # Create the GUI as before, but no logging Text box needed
 root = tk.Tk()
@@ -106,7 +134,7 @@ canvas.bind('<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox("
 scrollable_frame = ttk.Frame(canvas)
 canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
 
-config = load_config('config.json')
+config = load_config()
 download_config = config.get('download', {})
 
 # Symbol Section
@@ -193,6 +221,7 @@ end_date_label.grid(row=1, column=0, padx=5, pady=5, sticky="w")
 
 end_date_entry = DateEntry(date_frame, width=12, background='darkblue', foreground='white', borderwidth=2)
 end_date_str = download_config.get('end_date', '')
+
 if end_date_str:
     try:
         end_date_obj = datetime.strptime(end_date_str, '%Y-%m-%d %H:%M:%S').date()
@@ -207,7 +236,10 @@ else:
 if end_date_obj:
     end_date_entry.set_date(end_date_obj)
 else:
-    end_date_entry.set_date("")
+    # ----------------- CHANGED: never set_date("") -----------------
+    end_date_entry.set_date(datetime.utcnow().date())
+    # ---------------------------------------------------------------
+
 end_date_entry.grid(row=1, column=1, padx=5, pady=5)
 
 end_time_label = ttk.Label(date_frame, text="End Time:")
@@ -228,6 +260,19 @@ end_minute_spinbox.insert(
     download_config.get('end_date', '').split()[-1].split(":")[1] if ":" in download_config.get('end_date', '') else "59"
 )
 end_minute_spinbox.grid(row=1, column=4, padx=5, pady=5)
+
+# ----------------- ADDED: checkbox to control optional end date -----------------
+no_end_var = tk.BooleanVar(value=not bool(end_date_str.strip()))
+no_end_check = ttk.Checkbutton(
+    date_frame,
+    text="No end date (download up to latest)",
+    variable=no_end_var,
+    command=toggle_end_date_controls
+)
+no_end_check.grid(row=2, column=0, columnspan=5, padx=5, pady=5, sticky="w")
+# Initialize disabled/enabled state based on checkbox
+toggle_end_date_controls()
+# -------------------------------------------------------------------------------
 
 # Remove the logger_frame and any references to it
 # No custom logger_text needed
