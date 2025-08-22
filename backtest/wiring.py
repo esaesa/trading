@@ -27,12 +27,12 @@ def _apply_default_rules(owner, params: dict) -> dict:
     cfg = dict(params or {})
 
     # Entry defaults
-    default_entry = (["RSIOverboughtGate"] if getattr(owner, "avoid_rsi_overbought", False) else [])
+    default_entry = (["RSIOverboughtGate"] if owner.config.avoid_rsi_overbought else [])
     default_entry.append("EntryFundsAndNotional")
 
     # Safety defaults
     default_safety = ["RSIUnderDynamicThreshold", "MaxLevelsNotReached"]
-    if getattr(owner, "require_rsi_reset", False) and not getattr(owner, "rsi_dynamic_threshold", False):
+    if owner.config.require_rsi_reset and not owner.config.rsi_dynamic_threshold:
         default_safety.append("StaticRSIReset")
 
     # Exit defaults
@@ -47,14 +47,14 @@ def _apply_default_rules(owner, params: dict) -> dict:
 
 
 def _build_price_engine(strategy: Any) -> PriceEngine:
-    mode = (strategy.safety_order_price_mode or "dynamic").lower()
+    mode = (strategy.config.safety_order_price_mode or "dynamic").lower()
     if mode == "static":
         return StaticPriceEngine(strategy)
     return DynamicATRPriceEngine(strategy)
 
 
 def _build_size_engine(strategy: Any) -> SizeEngine:
-    mode = (strategy.safety_order_mode or "value").lower()
+    mode = (strategy.config.safety_order_mode or "value").lower()
     if mode == "volume":
         return VolumeModeSizeEngine(strategy)
     return ValueModeSizeEngine(strategy)
@@ -78,13 +78,13 @@ def wire_strategy(strategy: Any, strategy_params: dict) -> None:
     strategy.price_engine   = _build_price_engine(strategy)
     strategy.size_engine    = _build_size_engine(strategy)
     # Entry sizing policy
-    if getattr(strategy, "enable_ema_calculation", False):
+    if strategy.config.enable_ema_calculation:
         entry_mult = EmaEntryMultiplier(mult_above=2, default=1)
     else:
         entry_mult = FixedEntryMultiplier(1)
 
     strategy.entry_sizer = FractionalCashEntrySizer(
-        entry_fraction=strategy.entry_fraction,
+    entry_fraction=strategy.config.entry_fraction,
         multiplier=entry_mult,
     )
     
@@ -104,5 +104,3 @@ def wire_strategy(strategy: Any, strategy_params: dict) -> None:
     strategy.indicator_provider = StrategyIndicatorProvider(strategy)
     
     strategy.entry_preflight = EntryPreflight(strategy.entry_sizer, strategy.commission_calc)
-
-

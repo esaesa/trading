@@ -73,43 +73,45 @@ class IndicatorManager:
         resampled = df.resample(interval).agg(agg_dict).dropna(how='all')
         resampled.ffill(inplace=True)
         return resampled
+    
+    # Tiny helper to return a safe NaN series aligned to self.data.index
+    def _nan_series_like_data(self) -> pd.Series:
+        return pd.Series(np.nan, index=self.data.index, dtype=float)
 
     # ----------------------------------------------------------------
-    # RSI
+    # RSI (guarded)
     # ----------------------------------------------------------------
     def compute_rsi(self, window: int, resample_interval: str = None) -> pd.Series:
-        # Use all necessary OHLC columns
-        df = self.data[['Open', 'High', 'Low', 'Close']]  # Changed from just ['Close']
+        df = self.data[['Open', 'High', 'Low', 'Close']]
         df_res = self._resample_ohlc(df, resample_interval)
 
-        # Calculate RSI on resampled data
+        # Not enough bars → return NaNs aligned to original index
+        if len(df_res) < max(2, int(window or 1)):
+            return self._nan_series_like_data()
+
         rsi_calc = ta.momentum.RSIIndicator(
-            close=df_res['Close'], 
+            close=df_res['Close'],
             window=window
         ).rsi()
 
-        # Remove forward-filling to avoid stale values
         if resample_interval:
             rsi_calc = rsi_calc.reindex(self.data.index).ffill()
-        
+
+        self.rsi_series = rsi_calc
         return rsi_calc
+
     # ----------------------------------------------------------------
-    # EMA
+    # EMA (guarded)
     # ----------------------------------------------------------------
     def compute_ema(self, window: int, resample_interval: str = None) -> pd.Series:
-        """
-        Compute EMA over the data's Close prices with a specified window.
-        Optionally resample first (e.g., to '1h').
-        
-        :param window: Rolling period for EMA
-        :param resample_interval: e.g. '1h', '1D', or None
-        :return: A pandas Series, aligned to self.data's index
-        """
         df = self.data[['Close']]
         df_res = self._resample_ohlc(df, resample_interval)
 
+        if len(df_res) < max(2, int(window or 1)):
+            return self._nan_series_like_data()
+
         ema_calc = ta.trend.EMAIndicator(
-            close=df_res['Close'], 
+            close=df_res['Close'],
             window=window
         ).ema_indicator()
 
@@ -120,28 +122,27 @@ class IndicatorManager:
         return ema_calc
 
     # ----------------------------------------------------------------
-    # ATR
+    # ATR (guarded)
     # ----------------------------------------------------------------
     def compute_atr(self, window: int, resample_interval: str = None) -> pd.Series:
-        """
-        Compute the raw ATR (Average True Range) via ta library,
-        optionally resampled to a different timeframe.
-        
-        :param window: Rolling period for ATR
-        :param resample_interval: e.g. '1h', '1D', or None
-        :return: A pandas Series of ATR, aligned to self.data's index
-        """
-        # Need at least High, Low, Close
-        columns_needed = [col for col in ['Open', 'High', 'Low', 'Close'] if col in self.data.columns]
-        df = self.data[columns_needed]
+        cols = [c for c in ['Open', 'High', 'Low', 'Close'] if c in self.data.columns]
+        df = self.data[cols]
         df_res = self._resample_ohlc(df, resample_interval)
 
-        atr_calc = ta.volatility.AverageTrueRange(
-            high=df_res['High'],
-            low=df_res['Low'],
-            close=df_res['Close'],
-            window=window
-        ).average_true_range()
+        # Need High/Low/Close present and enough rows
+        needed = {'High', 'Low', 'Close'}
+        if not needed.issubset(df_res.columns) or len(df_res) < max(2, int(window or 1)):
+            return self._nan_series_like_data()
+
+        try:
+            atr_calc = AverageTrueRange(
+                high=df_res['High'],
+                low=df_res['Low'],
+                close=df_res['Close'],
+                window=window
+            ).average_true_range()
+        except Exception:
+            return self._nan_series_like_data()
 
         if resample_interval:
             atr_calc = atr_calc.reindex(self.data.index).ffill()
@@ -150,45 +151,34 @@ class IndicatorManager:
         return atr_calc
 
     def compute_atr_percentage(self, window: int, resample_interval: str = None) -> pd.Series:
-        """
-        Compute ATR as a percentage of the corresponding bar's Close: (ATR / Close) * 100.
-        Leverages compute_atr(...).
-        
-        :param window: Rolling period for ATR
-        :param resample_interval: e.g. '1h', '1D', or None
-        :return: ATR% as a pandas Series, aligned to self.data's index
-        """
         atr_raw = self.compute_atr(window=window, resample_interval=resample_interval)
-        close = self.data['Close']  # already at the original freq
+        if atr_raw.isna().all():
+            self.atr_pct_series = self._nan_series_like_data()
+            return self.atr_pct_series
 
-        atr_pct = (atr_raw / close) * 100
+        close = self.data['Close'].astype(float)
+        with np.errstate(divide='ignore', invalid='ignore'):
+            atr_pct = (atr_raw / close) * 100.0
         self.atr_pct_series = atr_pct
         return atr_pct
 
-
     # ----------------------------------------------------------------
-    # CV (Coefficient of Variation)
+    # CV (guarded)
     # ----------------------------------------------------------------
     def compute_coefficient_of_variation(
-        self, 
-        window: int, 
-        resample_interval: str = None, 
+        self,
+        window: int,
+        resample_interval: str = None,
         price_col: str = 'Close'
     ) -> pd.Series:
-        """
-        Computes rolling Coefficient of Variation (CV) = stdev / mean 
-        over 'window' bars of 'price_col'.
-        
-        :param window: Rolling window size, e.g. 14 or 20
-        :param resample_interval: e.g. '1h', '1D', or None
-        :param price_col: Which column to measure. Typically 'Close'.
-        :return: A pandas Series of CV, aligned to self.data.index
-        """
         df = self.data[[price_col]]
         df_res = self._resample_ohlc(df, resample_interval)
 
-        roll_std = df_res[price_col].rolling(window=window).std()
-        roll_mean = df_res[price_col].rolling(window=window).mean()
+        if len(df_res) < max(2, int(window or 1)):
+            return self._nan_series_like_data()
+
+        roll_std = df_res[price_col].rolling(window=window, min_periods=window).std()
+        roll_mean = df_res[price_col].rolling(window=window, min_periods=window).mean()
         cv_calc = roll_std / roll_mean
 
         if resample_interval:
@@ -196,10 +186,35 @@ class IndicatorManager:
 
         self.cv_series = cv_calc
         return cv_calc
-    
+
+    # ----------------------------------------------------------------
+    # BBW (guarded)
+    # ----------------------------------------------------------------
+    def compute_bbw(self, window: int = 20, num_std: int = 2, resample_interval: str = None) -> pd.Series:
+        df = self.data[['Close']]
+        df_res = self._resample_ohlc(df, resample_interval)
+
+        if len(df_res) < max(2, int(window or 1)):
+            return self._nan_series_like_data()
+
+        try:
+            bb = BollingerBands(close=df_res['Close'], window=window, window_dev=num_std)
+            upper_band = bb.bollinger_hband()
+            lower_band = bb.bollinger_lband()
+            middle_band = bb.bollinger_mavg()
+            bbw = (upper_band - lower_band) / middle_band * 100.0
+        except Exception:
+            return self._nan_series_like_data()
+
+        if resample_interval:
+            bbw = bbw.reindex(self.data.index).ffill()
+
+        self.bbw_series = bbw
+        return bbw
 
 
-        # ----------------------------------------------------------------
+
+    # ----------------------------------------------------------------
     # Laguerre RSI
     # ----------------------------------------------------------------
     def compute_laguerre_rsi(self, gamma: float = 0.5, resample_interval: str = None) -> pd.Series:

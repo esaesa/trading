@@ -17,10 +17,10 @@ class StaticPriceEngine(PriceEngine):
         self.s = strategy  # uses params from strategy
 
     def so_price(self, ctx: Ctx, level: int) -> float:
-        if level < 1 or level > self.s.max_dca_levels:
+        if level < 1 or level > self.s.config.max_dca_levels:
             return 0.0
-        d = self.s.initial_deviation_percent
-        m = self.s.price_multiplier
+        d = self.s.config.initial_deviation_percent
+        m = self.s.config.price_multiplier
         factors = [1 - (d / 100.0) * (m ** i) for i in range(level)]
         if any(f <= 0 for f in factors):
             return EPS
@@ -36,13 +36,13 @@ class DynamicATRPriceEngine(PriceEngine):
 
     def _effective_multiplier(self, current_atr_value: float | None) -> float:
         if (
-            self.s.enable_atr_calculation and
+            self.s.config.enable_atr_calculation and
             current_atr_value is not None and
             not np.isnan(current_atr_value) and
-            current_atr_value < self.s.atr_deviation_threshold
+            current_atr_value < self.s.config.atr_deviation_threshold
         ):
-            return self.s.price_multiplier * (1 - self.s.atr_deviation_reduction_factor)
-        return self.s.price_multiplier
+            return self.s.config.price_multiplier * (1 - self.s.config.atr_deviation_reduction_factor)
+        return self.s.config.price_multiplier
 
     def so_price(self, ctx: Ctx, level: int) -> float:
         last = ctx.last_filled_price or ctx.base_order_price
@@ -54,10 +54,10 @@ class DynamicATRPriceEngine(PriceEngine):
         atr_now = getattr(ctx, "current_atr", None)
 
         m_eff = self._effective_multiplier(atr_now)
-        deviation = self.s.initial_deviation_percent * (m_eff ** level)  # %
+        deviation = self.s.config.initial_deviation_percent * (m_eff ** level)  # %
 
         if deviation >= 100:
-            if getattr(self.s, "debug_loop", False):
+            if self.s.config.debug_loop:
                 logger.warning(f"Deviation for level {level} >= 100%. Returning minimum value.")
             return EPS
 
@@ -81,4 +81,3 @@ class DynamicATRPriceEngine(PriceEngine):
                 except Exception:
                     return None
         return None
-

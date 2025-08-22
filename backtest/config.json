@@ -10,10 +10,10 @@
         "enable_optimization": false,
         "debug": true,
         "debug_loop": false,
-        "start_date": "2025-08-01 00:00:00",
-        "end_date":   "2025-12-28 00:59:59",
+        "start_date": "2025-01-01 13:36:00",
+        "end_date":   "2025-02-04T22:42:00",
     
-        "cash": 100000000,
+        "cash": 1000,
         "commission": 0.0005,
         "show_optimization_graphs": false,
         "slippage_probability": 0.0,
@@ -23,7 +23,7 @@
         "entry_conditions": {"all":["EntryFundsAndNotional"]},
         "safety_conditions": {
             "all": [
-                "MaxLevelsNotReached","SufficientFundsAndNotional",  "CooldownBetweenSOs",
+                "MaxLevelsNotReached","SufficientFundsAndNotional",  "CooldownBetweenSOs", "StaticRSIReset",
             {"any":["RSIUnderDynamicThreshold"]}
             ]
         },
@@ -45,7 +45,7 @@
         "rsi_window": 17,
         "enable_rsi_calculation": true,
         "rsi_dynamic_threshold": true,
-        "require_rsi_reset": false,
+        "require_rsi_reset": true,
         "avoid_rsi_overbought": true,
         "rsi_overbought_level": 70,
         "rsi_oversold_level": 30,

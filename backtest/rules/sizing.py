@@ -13,8 +13,8 @@ class ValueModeSizeEngine(SizeEngine):
 
     def so_size(self, ctx: Ctx, price: float, level: int) -> float:
         v0 = ctx.base_order_value
-        f1 = self.s.first_safety_order_multiplier
-        sm = self.s.so_size_multiplier
+        f1 = self.s.config.first_safety_order_multiplier
+        sm = self.s.config.so_size_multiplier
         if level == 1:
             return (v0 * f1) / price
         return (v0 * f1 * (sm ** (level - 1))) / price
@@ -30,8 +30,8 @@ class VolumeModeSizeEngine(SizeEngine):
 
     def so_size(self, ctx: Ctx, price: float, level: int) -> float:
         q0 = ctx.base_order_quantity
-        f1 = self.s.first_safety_order_multiplier
-        sm = self.s.so_size_multiplier
+        f1 = self.s.config.first_safety_order_multiplier
+        sm = self.s.config.so_size_multiplier
         if level == 1:
             return q0 * f1
         return q0 * f1 * (sm ** (level - 1))

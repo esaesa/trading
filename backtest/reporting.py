@@ -194,30 +194,11 @@ def _hours(x: Optional[float]) -> Optional[float]:
 
 def aggregate_cycles(cycles: List[Dict[str, Any]],
                      cash_records: Optional[List[Dict[str, float]]] = None) -> Dict[str, Any]:
-    """
-    Aggregate per-cycle metrics (readable hours) and cash utilization.
-    Expects each cycle dict to *optionally* include:
-      - 'roi_percentage' or 'roi_pct'
-      - 'dca_levels_executed'
-      - 'max_level_reached'
-      - 'cycle_duration_sec'
-      - 'time_in_last_level_sec'
-      - 'bo_to_first_so_sec'
-      - 'max_so_wait_sec'
-    Any missing fields are skipped gracefully.
-    """
     n = len(cycles)
     if n == 0:
         return {"cycles": 0}
 
-    # ---- numeric extractions (robust to missing keys) ----
-    roi_list = []
-    dca_exec = []
-    max_level = []
-    dur = []
-    last_lvl = []
-    bo_to_first = []
-    max_so_wait = []
+    roi_list, dca_exec, max_level, dur, last_lvl, bo_to_first, max_so_wait = ([] for _ in range(7))
 
     for c in cycles:
         if c.get("roi_percentage") is not None:
@@ -228,42 +209,60 @@ def aggregate_cycles(cycles: List[Dict[str, Any]],
         dca_exec.append(int(c.get("dca_levels_executed", c.get("levels_executed", 0))))
         max_level.append(int(c.get("max_level_reached", c.get("max_level", c.get("dca_levels_executed", 0)))))
 
-        v = c.get("cycle_duration_sec")
-        if v is not None: dur.append(float(v))
-        v = c.get("time_in_last_level_sec")
-        if v is not None: last_lvl.append(float(v))
-        v = c.get("bo_to_first_so_sec")
-        if v is not None: bo_to_first.append(float(v))
-        v = c.get("max_so_wait_sec")
-        if v is not None: max_so_wait.append(float(v))
+        if c.get("cycle_duration_sec") is not None: dur.append(float(c["cycle_duration_sec"]))
+        if c.get("time_in_last_level_sec") is not None: last_lvl.append(float(c["time_in_last_level_sec"]))
+        if c.get("bo_to_first_so_sec") is not None: bo_to_first.append(float(c["bo_to_first_so_sec"]))
+        if c.get("max_so_wait_sec") is not None: max_so_wait.append(float(c["max_so_wait_sec"]))
 
-    # ---- safe stats ----
     def avg(xs): return round(statistics.mean(xs), 6) if xs else 0.0
     def med(xs): return round(statistics.median(xs), 6) if xs else 0.0
+    def _hours(x): return round(x / 3600.0, 2) if x else 0.0
 
-    levels_only = [lvl for lvl in dca_exec if lvl is not None]
-    freq = dict(sorted(Counter([lvl for lvl in max_level if lvl is not None and lvl > 0]).items()))
-    wins = [roi for roi in roi_list if roi is not None and roi >= 0]
+    wins = [roi for roi in roi_list if roi >= 0]
     win_rate = round(100.0 * len(wins) / len(roi_list), 4) if roi_list else 0.0
 
-    # ---- durations → hours ----
+    # --- Distributions ---
+    from collections import Counter
+
+    max_level_distribution = dict(sorted(Counter(max_level).items()))
+    dca_levels_executed_distribution = dict(sorted(Counter(dca_exec).items()))
+
+    # across all cycles (levels reached list may exist)
+    hits = []
+    for c in cycles:
+        lvls = c.get("levels_reached") or []
+        lvls = [int(x) for x in lvls if isinstance(x, (int, float)) and int(x) >= 1]
+        hits.extend(lvls)
+    so_level_hit_frequency = dict(sorted(Counter(hits).items()))
+
+    # --- max level with date ---
+    max_level_val = max(max_level) if max_level else 0
+    max_level_date = None
+    if max_level_val > 0:
+        for c in cycles:
+            if int(c.get("max_level_reached", 0)) == max_level_val:
+                max_level_date = c.get("exit_time") or c.get("entry_time")
+                break
+
     out = {
         "cycles": n,
         "win_rate": win_rate,
         "avg_roi_pct": avg(roi_list),
         "median_roi_pct": med(roi_list),
-        "max_level_reached_max": max(max_level) if max_level else 0,
-        "max_level_reached_avg": avg(max_level) if max_level else 0.0,
-        "dca_levels_executed_avg": avg(dca_exec) if dca_exec else 0.0,
-        "avg_cycle_duration_hours": _hours(avg(dur)) if dur else 0.0,
+        "max_level_reached_max": {"value": max_level_val, "date": str(max_level_date) if max_level_date else None},
+        "max_level_reached_avg": avg(max_level),
+        "dca_levels_executed_avg": avg(dca_exec),
+        "avg_cycle_duration_hours": _hours(avg(dur)),
         "max_cycle_duration_hours": _hours(max(dur)) if dur else 0.0,
-        "avg_time_in_last_level_hours": _hours(avg(last_lvl)) if last_lvl else 0.0,
-        "avg_bo_to_first_so_hours": _hours(avg(bo_to_first)) if bo_to_first else 0.0,
-        "avg_max_so_wait_hours": _hours(avg(max_so_wait)) if max_so_wait else 0.0,
-        "per_level_frequency": freq,
+        "avg_time_in_last_level_hours": _hours(avg(last_lvl)),
+        "avg_bo_to_first_so_hours": _hours(avg(bo_to_first)),
+        "avg_max_so_wait_hours": _hours(avg(max_so_wait)),
+        "max_level_distribution": max_level_distribution,
+        "dca_levels_executed_distribution": dca_levels_executed_distribution,
+        "so_level_hit_frequency": so_level_hit_frequency,
     }
 
-    # ---- cash utilization from strategy tracker ----
+    # ---- cash utilization (unchanged from your version) ----
     cash_records = cash_records or []
     util_pcts = [float(r.get("util_pct", 0.0)) for r in cash_records if r.get("util_pct") is not None]
     if util_pcts:

@@ -24,7 +24,7 @@ class IndicatorsBootstrap:
         # Keep original logic: use explicit param if present, else 1000 * rsi_window (fallback 14)
         if self.params.get("rsi_dynamic_window") is not None:
             return int(self.params["rsi_dynamic_window"])
-        return int((getattr(strategy, "rsi_window", None) or 14) * 1000)
+        return int((strategy.config.rsi_window or 14) * 1000)
 
     def run(self, strategy) -> None:
         # attach manager (idempotent)
@@ -33,25 +33,25 @@ class IndicatorsBootstrap:
             strategy.indicators = IndicatorManager(df)
 
         # compute decisions
-        show = getattr(strategy, "show_indicators", {}) or {}
-        calc_rsi = show.get("rsi", False) or getattr(strategy, "enable_rsi_calculation", False)
-        calc_atr = show.get("atr", False) or getattr(strategy, "enable_atr_calculation", False)
-        calc_ema = show.get("ema", False) or getattr(strategy, "enable_ema_calculation", False)
-        calc_lag = show.get("laguerre", False) or getattr(strategy, "enable_laguere_calculation", False)
+        show = strategy.config.show_indicators or {}
+        calc_rsi = show.get("rsi", False) or strategy.config.enable_rsi_calculation
+        calc_atr = show.get("atr", False) or strategy.config.enable_atr_calculation
+        calc_ema = show.get("ema", False) or strategy.config.enable_ema_calculation
+        calc_lag = show.get("laguerre", False) or strategy.config.enable_laguere_calculation
         calc_bbw = show.get("bbw", False)
         calc_cv  = show.get("cv", False)
-        calc_dyn = show.get("dynamic_rsi", False) or getattr(strategy, "rsi_dynamic_threshold", False)
+        calc_dyn = show.get("dynamic_rsi", False) or strategy.config.rsi_dynamic_threshold
 
         # If dynamic RSI, RSI reset, or overbought gate is used → must compute RSI
-        if calc_dyn or getattr(strategy, "require_rsi_reset", False) or getattr(strategy, "avoid_rsi_overbought", False):
+        if calc_dyn or strategy.config.require_rsi_reset or strategy.config.avoid_rsi_overbought:
             calc_rsi = True
 
         # ---- RSI ----
         rsi_series = None
         if calc_rsi:
             rsi_series = strategy.indicators.compute_rsi(
-                window=getattr(strategy, "rsi_window", 14),
-                resample_interval=getattr(strategy, "rsi_resample_interval", None),
+                window=strategy.config.rsi_window,
+                resample_interval=strategy.config.rsi_resample_interval,
             )
             strategy.rsi_values = rsi_series
             if show.get("rsi", False):
@@ -62,7 +62,7 @@ class IndicatorsBootstrap:
             strategy.rsi_dynamic_window = self._resolve_dynamic_rsi_window(strategy)
             strategy.rsi_dynamic_threshold_series = (
                 rsi_series.rolling(window=strategy.rsi_dynamic_window)
-                          .quantile(getattr(strategy, "rsi_percentile", 0.05))
+                          .quantile(strategy.config.rsi_percentile)
             )
             if show.get("dynamic_rsi", True):
                 strategy.I(lambda _: strategy.rsi_dynamic_threshold_series,
@@ -72,8 +72,8 @@ class IndicatorsBootstrap:
         # ---- EMA ----
         if calc_ema:
             ema_series = strategy.indicators.compute_ema(
-                window=getattr(strategy, "ema_window", 200),
-                resample_interval=getattr(strategy, "ema_resample_interval", "1h"),
+                window=strategy.config.ema_window,
+                resample_interval=strategy.config.ema_resample_interval,
             )
             strategy.ema_dynamic = ema_series
             if show.get("ema", False):
@@ -82,8 +82,8 @@ class IndicatorsBootstrap:
         # ---- ATR% ----
         if calc_atr:
             atr_pct = strategy.indicators.compute_atr_percentage(
-                window=getattr(strategy, "atr_window", 14),
-                resample_interval=getattr(strategy, "atr_resample_interval", "1D"),
+                window=strategy.config.atr_window,
+                resample_interval=strategy.config.atr_resample_interval,
             )
             strategy.atr_pct_series = atr_pct
             if show.get("atr", False):

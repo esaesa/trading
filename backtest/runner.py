@@ -165,7 +165,7 @@ def build_backtest(
         cash=bt_params["cash"],
         commission=bt_params["commission"],
         trade_on_close=False,
-        finalize_trades=False,
+        finalize_trades=True,
         margin=1.0,
     )
 

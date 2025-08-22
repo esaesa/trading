@@ -2,7 +2,6 @@
 from indicators_bootstrap import IndicatorsBootstrap
 from reset_policy import need_reset, update_reset, consume_reset
 from simulation import apply_slippage
-from reporting import render_cycle_plan_table, render_exit_summary_table
 from wiring import wire_strategy
 from instrumentation import log_loop_info, log_trade_info
 from rich.console import Console
@@ -16,70 +15,73 @@ from contracts import Ctx
 from overlays import init_overlays, update_overlays
 from types import SimpleNamespace
 
+# New imports for refactored components
+from strategy_config import StrategyConfig
+from trade_processor import TradeProcessor
+from state_manager import StateManager
+from strategy_logger import StrategyLogger
+
 
 class DCAStrategy(Strategy):
-    # Strategy Parameters
-    so_cooldown_minutes = strategy_params.get("so_cooldown_minutes", 0)
-    entry_fraction = strategy_params['entry_fraction']
-    so_size_multiplier = strategy_params['so_size_multiplier']
-    first_safety_order_multiplier = strategy_params['first_safety_order_multiplier']
-    safety_order_mode = strategy_params.get("safety_order_mode")
-    max_dca_levels = strategy_params['max_dca_levels']
-    take_profit_percentage = strategy_params['take_profit_percentage']
-    initial_deviation_percent = strategy_params['initial_deviation_percent']
-    price_multiplier = strategy_params['price_multiplier']
-    minimum_notional = strategy_params.get('minimum_notional', 0.0)
-    rsi_threshold = strategy_params.get("rsi_threshold")
-    rsi_window = strategy_params.get("rsi_window")
-    require_rsi_reset = strategy_params.get("require_rsi_reset")
-    rsi_reset_percentage = strategy_params.get("rsi_reset_percentage")
-    rsi_dynamic_threshold = strategy_params.get("rsi_dynamic_threshold")
-    rsi_static_threshold_under = strategy_params.get("rsi_static_threshold_under")
-
-    rsi_percentile = strategy_params.get("rsi_percentile", 0.05)
-    rsi_overbought_level = strategy_params.get("rsi_overbought_level")
-    rsi_oversold_level = strategy_params.get("rsi_oversold_level")
-    safety_order_price_mode = strategy_params.get("safety_order_price_mode")
-    start_trading_time = datetime.strptime(
-        strategy_params.get("start_trading_time", "2025-02-01 00:00:00"),
-        "%Y-%m-%d %H:%M:%S"
+    # Initialize configuration
+    config = StrategyConfig(
+        so_cooldown_minutes=strategy_params.get("so_cooldown_minutes", 0),
+        entry_fraction=strategy_params['entry_fraction'],
+        so_size_multiplier=strategy_params['so_size_multiplier'],
+        first_safety_order_multiplier=strategy_params['first_safety_order_multiplier'],
+        safety_order_mode=strategy_params.get("safety_order_mode"),
+        max_dca_levels=strategy_params['max_dca_levels'],
+        take_profit_percentage=strategy_params['take_profit_percentage'],
+        initial_deviation_percent=strategy_params['initial_deviation_percent'],
+        price_multiplier=strategy_params['price_multiplier'],
+        minimum_notional=strategy_params.get('minimum_notional', 0.0),
+        rsi_threshold=strategy_params.get("rsi_threshold"),
+        rsi_window=strategy_params.get("rsi_window"),
+        require_rsi_reset=strategy_params.get("require_rsi_reset"),
+        rsi_reset_percentage=strategy_params.get("rsi_reset_percentage"),
+        rsi_dynamic_threshold=strategy_params.get("rsi_dynamic_threshold"),
+        rsi_static_threshold_under=strategy_params.get("rsi_static_threshold_under"),
+        rsi_percentile=strategy_params.get("rsi_percentile", 0.05),
+        rsi_overbought_level=strategy_params.get("rsi_overbought_level"),
+        rsi_oversold_level=strategy_params.get("rsi_oversold_level"),
+        safety_order_price_mode=strategy_params.get("safety_order_price_mode"),
+        start_trading_time=datetime.strptime(
+            strategy_params.get("start_trading_time", "2025-02-01 00:00:00"),
+            "%Y-%m-%d %H:%M:%S"
+        ),
+        take_profit_decay_grace_period_hours=strategy_params.get("take_profit_decay_grace_period_hours", 48),
+        take_profit_decay_duration_hours=strategy_params.get("take_profit_decay_duration_hours", 24),
+        enable_atr_calculation=strategy_params.get("enable_atr_calculation", False),
+        atr_window=strategy_params.get("atr_window", 14),
+        atr_resample_interval=strategy_params.get("atr_resample_interval", "h"),
+        atr_deviation_threshold=strategy_params.get("atr_deviation_threshold", 5.0),
+        atr_deviation_reduction_factor=strategy_params.get("atr_deviation_reduction_factor", 0.25),
+        enable_ema_calculation=strategy_params.get("enable_ema_calculation", False),
+        ema_window=strategy_params.get('ema_window', 200),
+        ema_resample_interval=strategy_params.get('ema_resample_interval', "h"),
+        enable_rsi_calculation=strategy_params.get("enable_rsi_calculation", False),
+        rsi_resample_interval=strategy_params.get('rsi_resample_interval'),
+        show_rsi=strategy_params.get("show_rsi", False),
+        avoid_rsi_overbought=strategy_params.get("avoid_rsi_overbought"),
+        enable_cv_calculation=strategy_params.get("enable_cv_calculation", False),
+        enable_laguere_calculation=strategy_params.get("enable_laguere_calculation", False),
+        show_indicators=strategy_params.get('show_indicators', {}),
+        debug_backtest=backtest_params.get("debug", False),
+        debug_loop=strategy_params["debug"]["loop"] and not backtest_params['enable_optimization'],
+        debug_trade=strategy_params["debug"].get("trade", False) and not backtest_params['enable_optimization'],
+        debug_process=strategy_params["debug"].get("process", False) and not backtest_params['enable_optimization'],
+        slippage_probability=backtest_params.get("slippage_probability")
     )
-
-    # Duration over which TP reduces to zero (in hours)
-    take_profit_decay_grace_period_hours = strategy_params.get("take_profit_decay_grace_period_hours", 48)
-    take_profit_decay_duration_hours = strategy_params.get("take_profit_decay_duration_hours", 24)
-
-    # ATR Parameters
-    enable_atr_calculation = strategy_params.get("enable_atr_calculation", False)
-    atr_window = strategy_params.get("atr_window", 14)
-    atr_resample_interval = strategy_params.get("atr_resample_interval", "h")
-    atr_deviation_threshold = strategy_params.get("atr_deviation_threshold", 5.0)
-    atr_deviation_reduction_factor = strategy_params.get("atr_deviation_reduction_factor", 0.25)
-
-    # EMA Parameters
-    enable_ema_calculation = strategy_params.get("enable_ema_calculation", False)
-    ema_window = strategy_params.get('ema_window', 200)
-    ema_resample_interval = strategy_params.get('ema_resample_interval', "h")
-
-    # RSI / indicators
-    enable_rsi_calculation = strategy_params.get("enable_rsi_calculation", False)
-    rsi_resample_interval = strategy_params.get('rsi_resample_interval')
-    show_rsi = strategy_params.get("show_rsi", False)
-    avoid_rsi_overbought = strategy_params.get("avoid_rsi_overbought")
-    enable_cv_calculation = strategy_params.get("enable_cv_calculation", False)
-    enable_laguere_calculation = strategy_params.get("enable_laguere_calculation", False)
-    show_indicators = strategy_params.get('show_indicators', {})
-
-    # Backtest Parameters
-    debug_backtest = backtest_params.get("debug", False)
-    debug_loop = strategy_params["debug"]["loop"] and not backtest_params['enable_optimization']
-    debug_trade = strategy_params["debug"].get("trade", False) and not backtest_params['enable_optimization']
-    debug_process = strategy_params["debug"].get("process", False) and not backtest_params['enable_optimization']
-    slippage_probability = backtest_params.get("slippage_probability")
 
     def __init__(self, broker, data, params):
         super().__init__(broker, data, params)
         self.enable_optimization = backtest_params.get("enable_optimization", False)
+
+        # Initialize refactored components
+        self.config = self.__class__.config
+        self.trade_processor = TradeProcessor(self)
+        self.state_manager = StateManager(self)
+        self.strategy_logger = StrategyLogger(self)
 
     def _ind_value(self, name: str, now, default=np.nan):
         """
@@ -135,7 +137,7 @@ class DCAStrategy(Strategy):
 
         # Dynamic RSI threshold aligned to 'now' (no future leak)
         dynamic_thr = None
-        if getattr(self, "rsi_dynamic_threshold", False) and hasattr(self, "rsi_dynamic_threshold_series"):
+        if self.config.rsi_dynamic_threshold and hasattr(self, "rsi_dynamic_threshold_series"):
             try:
                 ser = self.rsi_dynamic_threshold_series
                 pos = ser.index.searchsorted(now, side="right") - 1
@@ -145,7 +147,7 @@ class DCAStrategy(Strategy):
                 dynamic_thr = None
 
         current_atr = None
-        if self.enable_atr_calculation and hasattr(self, 'atr_pct_series') and len(self.atr_pct_series):
+        if self.config.enable_atr_calculation and hasattr(self, 'atr_pct_series') and len(self.atr_pct_series):
             current_atr = self.get_current_atr(now)
 
         entry_price = getattr(self, "base_order_price", None)
@@ -154,8 +156,8 @@ class DCAStrategy(Strategy):
         cfg = {
             "last_so_dt": getattr(self, "last_safety_order_time", None),
             "base_order_time": getattr(self, "base_order_time", None),
-            "safety_order_mode": self.safety_order_mode,
-            "take_profit": self.take_profit_percentage,
+            "safety_order_mode": self.config.safety_order_mode,
+            "take_profit": self.config.take_profit_percentage,
             "next_level": dca_level + 1,
             "commission_rate": self.commission_rate,
         }
@@ -177,8 +179,8 @@ class DCAStrategy(Strategy):
             last_filled_price=getattr(self, 'last_filled_price', None),
             last_so_dt=getattr(self, 'last_safety_order_time', None),
             base_order_time=getattr(self, 'base_order_time', None),
-            dynamic_rsi_thr=(dynamic_thr if dynamic_thr is not None else self.rsi_threshold),
-            available_cash=self._broker.margin_available * self._broker._leverage,
+            dynamic_rsi_thr=(dynamic_thr if dynamic_thr is not None else self.config.rsi_threshold),
+            available_cash=self._broker.margin_available * self._broker._leverage *.99,
             position_size=self.position.size if self.position else 0,
             position_pl_pct=self.position.pl_pct if self.position else 0,
             current_atr=current_atr,
@@ -187,7 +189,7 @@ class DCAStrategy(Strategy):
         # Pre-compute next SO trigger (guarded)
         try:
             next_level = cfg.get("next_level", ctx.dca_level + 1)
-            if self.position and hasattr(self, "price_engine") and next_level <= self.max_dca_levels:
+            if self.position and hasattr(self, "price_engine") and next_level <= self.config.max_dca_levels:
                 ctx.next_so_price = self.price_engine.so_price(ctx, next_level)
         except Exception:
             ctx.next_so_price = None
@@ -223,7 +225,7 @@ class DCAStrategy(Strategy):
         return v
     
     def init(self):
-        debug_any = (self.debug_backtest or self.debug_loop or self.debug_trade or self.debug_process)
+        debug_any = (self.config.debug_backtest or self.config.debug_loop or self.config.debug_trade or self.config.debug_process)
         self.console = Console(record=debug_any, no_color=True)
 
         if not isinstance(self.data.index, pd.DatetimeIndex):
@@ -271,194 +273,14 @@ class DCAStrategy(Strategy):
                 and hasattr(self, "entry_preflight")), \
             "Wiring failed: missing one of entry_sizer, affordability_guard, commission_calc, indicator_provider, entry_preflight"
 
-    def _start_cycle(self, current_time, entry_price):
-        self._cycle = {
-            "entry_time": current_time,
-            "entry_price": float(entry_price),
-            "so_fills": [],               # list of {"level": int, "time": dt}
-        }
 
-    def _log_so_fill(self, level, tstamp):
-        if self._cycle is not None:
-            self._cycle["so_fills"].append({"level": int(level), "time": tstamp})
-
-
-    def _finalize_cycle(self, exit_time, exit_price, roi_pct, exit_reason=None):
-        if not self._cycle:
-            return
-        entry_time  = self._cycle["entry_time"]
-        entry_price = self._cycle["entry_price"]
-        so_fills    = sorted(self._cycle["so_fills"], key=lambda x: x["time"])
-
-        # DCA stats
-        levels = [f["level"] for f in so_fills]
-        max_level = max(levels) if levels else 0
-        dca_levels_executed = len(levels)
-
-        # Times
-        cycle_duration_sec = (exit_time - entry_time).total_seconds()
-        if levels:
-            # waits between SOs
-            waits = [(so_fills[i]["time"] - so_fills[i-1]["time"]).total_seconds()
-                     for i in range(1, len(so_fills))]
-            max_so_wait_sec = max(waits) if waits else 0.0
-            bo_to_first_so_sec = (so_fills[0]["time"] - entry_time).total_seconds()
-            last_so_time = so_fills[-1]["time"]
-            time_in_last_level_sec = (exit_time - last_so_time).total_seconds()
-            avg_so_to_exit_sec = sum((exit_time - f["time"]).total_seconds() for f in so_fills) / len(so_fills)
-        else:
-            max_so_wait_sec = 0.0
-            bo_to_first_so_sec = None
-            time_in_last_level_sec = (exit_time - entry_time).total_seconds()
-            avg_so_to_exit_sec = None
-
-        cycle_price_change_pct = ((exit_price / entry_price) - 1.0) * 100.0 if entry_price else 0.0
-
-        self.completed_processes.append({
-            "entry_time": entry_time,
-            "exit_time": exit_time,
-            "entry_price": entry_price,
-            "exit_price": float(exit_price),
-            "roi_percentage": float(roi_pct),
-            "cycle_duration_sec": cycle_duration_sec,
-            "cycle_price_change_pct": cycle_price_change_pct,
-
-            "dca_levels_executed": dca_levels_executed,
-            "max_level_reached": max_level,
-            "levels_reached": levels,
-
-            "bo_to_first_so_sec": bo_to_first_so_sec,
-            "max_so_wait_sec": max_so_wait_sec,
-            "time_in_last_level_sec": time_in_last_level_sec,
-            "avg_so_to_exit_sec": avg_so_to_exit_sec,
-
-            "exit_reason": exit_reason or "",
-        })
-        self._cycle = None
-    def process_entry(self, ctx: Ctx, price: float, current_time):
-        if not self.position and self.entry_decider.ok(ctx):
-            rsi_now = ctx.indicators.get("rsi", np.nan)
-            if self.enable_rsi_calculation and (rsi_now is None or np.isnan(rsi_now)):
-                return False
-            qty, investment = self.entry_sizer.qty_and_investment(ctx, price, self.commission_calc)
-            if qty < 1:
-                raise ValueError("Backtesting.py does not support fractional units. Adjust your entry fraction.")
-
-            order = self.buy(size=qty, tag="BO")
-            self.base_order_time = current_time
-            self.last_safety_order_time = None
-            self.dca_level = 0
-            self.base_order_price = price
-            self.initial_investment = investment
-            self.last_filled_price = price
-            self.base_order_quantity = qty
-            self.base_order_value = qty * self.base_order_price
-            self._cycle_cash_entry = float(self._broker._cash)
-            self._cycle_invested = qty * price * (1.0 + self.commission_rate)   # include commission
-            self._cycle_peak_invested = self._cycle_invested
-
-            # NEW: start cycle buffer
-            self._start_cycle(current_time, price)
-
-            consume_reset(self)
-            if self.debug_trade:
-                table = render_cycle_plan_table(self, qty)
-                logger.info(table)
-                log_trade_info(self, "Entry", order, price, qty * price)
-            return True
-        return False
-
-
-    def process_dca(self, ctx: Ctx, price: float, current_time: datetime) -> None:
-        if not self.safety_decider.ok(ctx):
-            return
-        level = self.dca_level + 1
-        so_price = self.price_engine.so_price(ctx, level)
-        if price > so_price:
-            if self.debug_trade:
-                logger.debug(f"Price {price:.10f} > SO-{level} trigger {so_price:.10f}")
-            return
-        so_size = self.size_engine.so_size(ctx, so_price, level)
-        size_to_buy = self.affordability_guard.clamp_qty(
-            desired_qty=so_size,
-            price=so_price,
-            available_cash=self._broker.margin_available * self._broker._leverage,
-            commission=self.commission_calc,
-            min_notional=self.minimum_notional,
-        )
-        order = None
-        if size_to_buy > 0:
-            order = self.buy(size=size_to_buy, tag=f"S{level}")
-            delta = size_to_buy * so_price * (1.0 + self.commission_rate)
-            self._cycle_invested += delta
-            self._cycle_peak_invested = max(self._cycle_peak_invested, self._cycle_invested)
-            self._log_so_fill(level, current_time)
-
-        self.last_safety_order_time = current_time
-        self.dca_level += 1
-        consume_reset(self)
-        if self.safety_order_price_mode.lower() == "dynamic":
-            self.last_filled_price = price
-        if self.debug_trade and order is not None:
-            log_trade_info(self, "DCA", order, so_price, size_to_buy * so_price)
-
-
-    def process_exit(self, ctx: Ctx, price, current_time):
-        if not self.position:
-            return False
-        # Try to get which exit rule passed
-        exit_reason = ""
-        ok_with_reason = getattr(self.exit_decider, "ok_with_reason", None)
-        if callable(ok_with_reason):
-            ok, reason = ok_with_reason(ctx)
-            if not ok:
-                return False
-            exit_reason = reason or ""
-        else:
-            if not self.exit_decider.ok(ctx):
-                return False
-
-        # capture ROI before closing
-        roi_pct = float(self.position.pl_pct)
-        if self.debug_process:
-            table = render_exit_summary_table(self, price, current_time)
-            logger.info(table)
-            logger.debug(f"Trade: Exit Triggered at {current_time} price {price:.10f} ({exit_reason})")
-
-        # NEW: finalize current cycle before state reset
-        self._finalize_cycle(exit_time=current_time, exit_price=price, roi_pct=roi_pct, exit_reason=exit_reason)
-
-        self.position.close()
-        cash0 = self._cycle_cash_entry or 0.0
-        peak = self._cycle_peak_invested or 0.0
-        util_pct = (peak / cash0 * 100.0) if cash0 > 0 else 0.0
-        self.cycle_cash_records.append({
-            "cash_at_entry": cash0,
-            "peak_invested": peak,
-            "util_pct": util_pct,
-        })
-        self.reset_process()
-        return True
-
-    def reset_process(self):
-        self.base_order_price = None
-        self.base_order_quantity = None
-        self.base_order_value = None
-        self.dca_level = 0
-        self.last_filled_price = None
-        self.rsi_reset = True
-        self.base_order_time = None
-        self.last_safety_order_time = None
-        self._cycle_cash_entry = 0.0
-        self._cycle_invested = 0.0
-        self._cycle_peak_invested = 0.0
 
     def get_entry_price(self) -> float:
         return self.position_view.avg_entry_price()
 
     def next(self):
         current_time = self.data.index[-1]
-        if current_time < self.start_trading_time:
+        if current_time < self.config.start_trading_time:
             return
 
         update_overlays(self, current_time)
@@ -466,8 +288,8 @@ class DCAStrategy(Strategy):
         price = self.data.Close[-1]
         low   = self.data.Low[-1]
         high  = self.data.High[-1]
-        if self.slippage_probability:
-            price, low, high = apply_slippage(price, low, high, self.slippage_probability)
+        if self.config.slippage_probability:
+            price, low, high = apply_slippage(price, low, high, self.config.slippage_probability)
 
         # Build once
         ctx = self._ctx()
@@ -475,15 +297,14 @@ class DCAStrategy(Strategy):
         # Use ctx RSI directly (no extra indicator reads)
         rsi_val = ctx.indicators.get("rsi", np.nan)
         update_reset(self, rsi_val)
-        log_loop_info(self, price, rsi_val, current_time)
+        self.strategy_logger.log_loop_info(price, rsi_val, current_time)
 
         if self.position:
-            if self.process_exit(ctx, high, current_time):
+            if self.trade_processor.process_exit(ctx, high, current_time):
                 return
-            self.process_dca(ctx, low, current_time)
+            self.trade_processor.process_dca(ctx, low, current_time)
         else:
             if not self.entry_decider.ok(ctx):
                 return
-            self.process_entry(ctx, price, current_time)
+            self.trade_processor.process_entry(ctx, price, current_time)
             return True
-

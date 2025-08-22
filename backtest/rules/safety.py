@@ -81,8 +81,6 @@ def static_rsi_reset(self, ctx: Ctx) -> Tuple[bool, str]:
       - If RSI >= reset_thr → mark reset True.
       - Return current self.rsi_reset as the gating result.
     """
-    if not getattr(self, "require_rsi_reset", False) or getattr(self, "rsi_dynamic_threshold", False):
-        return True, "Reset gating disabled"
 
     rsi_val = ctx.indicators.get("rsi", np.nan)
     if np.isnan(rsi_val):
@@ -105,10 +103,11 @@ def max_levels_not_reached(self, ctx: Ctx) -> Tuple[bool, str]:
     Allow SO only if current DCA level < max_dca_levels.
     Mirrors the old imperative check in strategy.process_dca.
     """
-    ok = ctx.dca_level < getattr(self, "max_dca_levels", 0)
+    max_levels = self.config.max_dca_levels
+    ok = ctx.dca_level < max_levels
     return ok, (
-        f"Level {ctx.dca_level} < max {self.max_dca_levels}"
-        if ok else f"Reached max levels ({self.max_dca_levels})"
+        f"Level {ctx.dca_level} < max {max_levels}"
+        if ok else f"Reached max levels ({max_levels})"
     )
 def sufficient_funds_and_notional(self, ctx: Ctx):
     """
