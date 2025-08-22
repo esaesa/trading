@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Optional
 from rich.table import Table
 from datetime import datetime
 from logger_config import logger
+import statistics
 
 def render_cycle_plan_table(strategy: Any, base_order_quantity: float) -> Table:
     """

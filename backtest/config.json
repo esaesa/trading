@@ -10,7 +10,7 @@
         "enable_optimization": false,
         "debug": true,
         "debug_loop": false,
-        "start_date": "2025-06-01 00:00:00",
+        "start_date": "2025-08-01 00:00:00",
         "end_date":   "2025-12-28 00:59:59",
     
         "cash": 100000000,
