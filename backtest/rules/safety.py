@@ -36,7 +36,7 @@ def rsi_under_dynamic_threshold(self, ctx: Ctx) -> Tuple[bool, str]:
 
 def rsi_under_static_threshold(self, ctx: Ctx) -> Tuple[bool, str]:
     rsi_val = ctx.indicators.get("rsi", np.nan)
-    threshold = float(getattr(self, "rsi_static_threshold_under", 21) or 21.0)
+    threshold = self.config.rsi_static_threshold_under
     if np.isnan(rsi_val):
         return True, "RSI NaN → allow"
     ok = rsi_val < threshold

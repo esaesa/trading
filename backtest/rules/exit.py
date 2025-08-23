@@ -1,4 +1,5 @@
 # rules/exit.py
+from typing import Union
 from typing import Dict, Any, Tuple, Callable
 import numpy as np
 from contracts import Ctx
@@ -51,7 +52,7 @@ def take_profit_reached(self: Any, ctx: Ctx) -> Tuple[bool, str]:
         return False, "No position"
     
     profit_pct = self.position.pl_pct
-    take_profit_pct = self.take_profit_percentage  # From strategy config
+    take_profit_pct = self.config.take_profit_percentage  # From strategy config
     
     should_exit = profit_pct >= take_profit_pct
     reason = f"Take profit: current profit {profit_pct:.2f}% >= target {take_profit_pct:.2f}%"
@@ -68,9 +69,9 @@ def tp_decay_reached(self: Any, ctx: Ctx) -> Tuple[bool, str]:
     adjusted_tp = calculate_decaying_tp(
         ctx.last_entry_time,
         ctx.now,
-        self.take_profit_percentage,
-        self.take_profit_decay_grace_period_hours,
-        self.take_profit_decay_duration_hours
+        self.config.take_profit_percentage,
+        self.config.take_profit_decay_grace_period_hours,
+        self.config.take_profit_decay_duration_hours
     )
     
     should_exit = profit_pct >= adjusted_tp
@@ -106,30 +107,79 @@ EXIT_RULES = {
     
 }
 
-def calculate_decaying_tp(entry_time, current_time, initial_tp, grace_period_hours, decay_duration_hours, min_tp=0.2):
-    """Shared function for calculating decaying take profit"""
-    if entry_time is None:
+def calculate_decaying_tp(
+    entry_time: datetime,
+    current_time: datetime,
+    initial_tp: float,
+    grace_period_hours: Union[int, float],
+    decay_duration_hours: Union[int, float],
+    min_tp: float = 0.2
+) -> float:
+    """
+    Calculates a decaying take-profit (TP) target based on time since entry.
+
+    The TP remains at `initial_tp` during a `grace_period_hours`. After the grace period,
+    the TP linearly decays from `initial_tp` down to `min_tp` over `decay_duration_hours`.
+
+    Args:
+        entry_time: The datetime when the position was entered.
+        current_time: The current datetime for calculation.
+        initial_tp: The initial take-profit percentage.
+        grace_period_hours: The duration in hours during which TP does not decay.
+        decay_duration_hours: The duration in hours over which TP decays after the grace period.
+        min_tp: The minimum take-profit percentage the TP can decay to.
+
+    Returns:
+        The adjusted decaying take-profit percentage.
+
+    Raises:
+        ValueError: If grace_period_hours or decay_duration_hours are negative,
+                    or if initial_tp is less than min_tp.
+    """
+    # 1. Error Handling and Edge Cases
+    if not isinstance(entry_time, datetime) or not isinstance(current_time, datetime):
+        # Log a warning or raise a more specific error if context allows
+        raise ValueError("entry_time and current_time must be datetime objects.")
+    if grace_period_hours < 0:
+        raise ValueError("grace_period_hours cannot be negative.")
+    if decay_duration_hours <= 0:
+        # Decay duration must be positive for decay to occur
+        # If decay duration is 0 or negative, TP immediately goes to min_tp (if initial_tp > min_tp)
+        return min_tp if initial_tp > min_tp else initial_tp
+    if initial_tp < min_tp:
+        raise ValueError("initial_tp cannot be less than min_tp.")
+
+    # If entry_time is in the future or current_time is before entry_time,
+    # it implies an invalid state or a new position, so return initial_tp.
+    if current_time < entry_time:
         return initial_tp
-    
-    time_since_entry = current_time - entry_time
-    grace_period_td = timedelta(hours=grace_period_hours)
-    
-    # If grace period has not passed, return original TP
+
+    # Calculate time differences
+    time_since_entry: timedelta = current_time - entry_time
+    grace_period_td: timedelta = timedelta(hours=grace_period_hours)
+    decay_span_td: timedelta = timedelta(hours=decay_duration_hours)
+
+    # 2. Readability and Maintainability
+    # If the grace period has not passed, return the original TP
     if time_since_entry <= grace_period_td:
         return initial_tp
-    
-    # Calculate time into decay phase
-    time_into_decay = time_since_entry - grace_period_td
-    decay_span_td = timedelta(hours=decay_duration_hours)
-    
-    # If decay phase is complete
-    if time_into_decay >= decay_span_td:
+
+    # Calculate time elapsed since the grace period ended
+    time_after_grace_period: timedelta = time_since_entry - grace_period_td
+
+    # If the decay phase is complete, return the minimum TP
+    if time_after_grace_period >= decay_span_td:
         return min_tp
-    
-    # Linear reduction
-    reduction_factor = time_into_decay / decay_span_td
-    adjusted_tp = initial_tp - (initial_tp - min_tp) * reduction_factor
-    
+
+    # 3. Performance Optimization & Best Practices
+    # Calculate the fraction of the decay duration that has passed
+    # This is equivalent to (time_after_grace_period.total_seconds() / decay_span_td.total_seconds())
+    reduction_factor: float = time_after_grace_period / decay_span_td
+
+    # Calculate the adjusted TP using linear interpolation
+    adjusted_tp: float = initial_tp * (1 - reduction_factor) + min_tp * reduction_factor
+
+    # Ensure the adjusted TP is within the valid range [min_tp, initial_tp]
     return max(min_tp, min(initial_tp, adjusted_tp))
 
 

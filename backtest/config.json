@@ -1,7 +1,7 @@
 {
     "backtest_params": {
         "symbols": [
-            "DOGEUSDTUSDT"
+            "1000PEPEUSDTUSDT"
         ],
         "timeframes": [
             "1m"
@@ -10,8 +10,8 @@
         "enable_optimization": false,
         "debug": true,
         "debug_loop": false,
-        "start_date": "2025-01-01 13:36:00",
-        "end_date":   "2025-02-04T22:42:00",
+        "start_date": "2024-01-07 08:31:00",
+        "end_date":   "2026-01-15T22:42:00",
     
         "cash": 1000,
         "commission": 0.0005,
@@ -23,25 +23,24 @@
         "entry_conditions": {"all":["EntryFundsAndNotional"]},
         "safety_conditions": {
             "all": [
-                "MaxLevelsNotReached","SufficientFundsAndNotional",  "CooldownBetweenSOs", "StaticRSIReset",
-            {"any":["RSIUnderDynamicThreshold"]}
+                "MaxLevelsNotReached","SufficientFundsAndNotional", "RSIUnderStaticThreshold"
             ]
         },
-        "exit_conditions": ["ATRTakeProfitReached"],
+        "exit_conditions": ["TPDecayReached"],
         "safety_conditions_all": ["RSIUnderStaticThreshold","RSIUnderDynamicThreshold"],
         "entry_conditions_all": {"all":["EntryFundsAndNotional", "RSIOverbought"]},
         "exit_conditions_all" : ["TPDecayReached","StopLossReached", "TakeProfitReached","ATRTakeProfitReached"],
         "so_cooldown_minutes": 0,
 
-        "max_dca_levels": 11,
-        "take_profit_percentage": 0.8,
+        "max_dca_levels": 100,
+        "take_profit_percentage": 1.2,
         "entry_fraction": 0.03,
-        "so_size_multiplier": 2.1,
-        "first_safety_order_multiplier": 3.5,
-        "initial_deviation_percent": 1.8,
-        "price_multiplier": 1.9,
-        "rsi_static_threshold_under": 32,
-        "rsi_threshold":50,
+        "so_size_multiplier": 1.3,
+        "first_safety_order_multiplier": 1,
+        "initial_deviation_percent": 4.5,
+        "price_multiplier": 1,
+        "rsi_static_threshold_under": 100,
+        "rsi_threshold":35,
         "rsi_window": 17,
         "enable_rsi_calculation": true,
         "rsi_dynamic_threshold": true,
@@ -50,12 +49,12 @@
         "rsi_overbought_level": 70,
         "rsi_oversold_level": 30,
         "rsi_reset_percentage": 50,
-        "safety_order_price_mode": "dynamic",
+        "safety_order_price_mode": "static",
         "safety_order_mode":"value",
         "price_growth_type": "exponential",
         "size_growth_type": "exponential",
-        "take_profit_decay_grace_period_hours": 72,
-        "take_profit_decay_duration_hours": 120,
+        "take_profit_decay_grace_period_hours": 24,
+        "take_profit_decay_duration_hours": 24,
         "minimum_notional": 0.0,
         "enable_atr_calculation": false,
         "atr_window": 14,
@@ -70,7 +69,7 @@
         "debug": {
             "trade": false,
             "loop": false,
-            "process": true
+            "process": false
           },
           "show_indicators": {
             "dynamic_rsi": true,

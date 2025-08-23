@@ -99,7 +99,7 @@ def _build_from_dict(owner: Any, spec: Dict[str, Any], registry: Dict[str, Calla
     # Each child item can be a string name, a list/tuple, or another dict
     child_rules: List[CheckFn] = []
     for child in items:
-        if isinstance(child, str):
+        if isinstance(child, str) :
             try:
                 fn = registry[child]
             except KeyError:

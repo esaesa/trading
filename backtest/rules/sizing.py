@@ -3,6 +3,7 @@ from __future__ import annotations
 from ports import SizeEngine
 from contracts import Ctx
 
+
 class ValueModeSizeEngine(SizeEngine):
     """
     Size_1   = (V_BO * first_mult) / P_1
@@ -35,3 +36,4 @@ class VolumeModeSizeEngine(SizeEngine):
         if level == 1:
             return q0 * f1
         return q0 * f1 * (sm ** (level - 1))
+

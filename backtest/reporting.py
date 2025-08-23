@@ -37,14 +37,14 @@ def render_cycle_plan_table(strategy: Any, base_order_quantity: float) -> Table:
     )
 
     # Engines + ctx
-    price_mode = (strategy.safety_order_price_mode or "dynamic").lower()
-    so_mode    = (strategy.safety_order_mode or "value").lower()
+    price_mode = (strategy.config.safety_order_price_mode or "dynamic").lower()
+    so_mode    = (strategy.config.safety_order_mode or "value").lower()
     ctx        = strategy._ctx()  # live snapshot
 
     if price_mode == "static":
         # Compute full static plan using engines
         prev_so_price = None
-        for i in range(1, strategy.max_dca_levels + 1):
+        for i in range(1, strategy.config.max_dca_levels + 1):
             so_price = strategy.price_engine.so_price(ctx, i)
             so_size  = strategy.size_engine.so_size(ctx, so_price, i)
             so_value = so_price * so_size
@@ -86,7 +86,7 @@ def render_cycle_plan_table(strategy: Any, base_order_quantity: float) -> Table:
                     f"{cumulative_size:.2f}",
                 )
         else:
-            for i in range(1, strategy.max_dca_levels + 1):
+            for i in range(1, strategy.config.max_dca_levels + 1):
                 table.add_row(
                     f"DCA-{i} [DYN]",
                     "N/A - dynamic",

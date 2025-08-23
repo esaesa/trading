@@ -10,6 +10,9 @@ from logger_config import logger
 if TYPE_CHECKING:
     from strategy import DCAStrategy
 
+# Constants
+MARGIN_BUFFER_FACTOR = 0.99
+
 class TradeProcessor:
     def __init__(self, strategy: 'DCAStrategy'):
         self.strategy = strategy
@@ -39,6 +42,7 @@ class TradeProcessor:
             self.strategy.state_manager.start_cycle(current_time, price)
 
             if self.strategy.config.debug_trade:
+                logger.debug(f"\nEntry: Price {price:.10f}, Qty {qty}, RSI {rsi_now:.2f} @ {current_time}.")
                 table = render_cycle_plan_table(self.strategy, qty)
                 logger.info(table)
                 log_trade_info(self.strategy, "Entry", order, price, qty * price)
@@ -53,13 +57,16 @@ class TradeProcessor:
         so_price = self.strategy.price_engine.so_price(ctx, level)
         if price > so_price:
             if self.strategy.config.debug_trade:
-                logger.debug(f"Price {price:.10f} > SO-{level} trigger {so_price:.10f}")
+                logger.debug(f"Price {price:.10f} > SO-{level} trigger {so_price:.10f}. Skipping DCA. @ {current_time}.")
             return
+        
+        if self.strategy.config.debug_trade:
+            logger.debug(f"Price {price:.10f} <= SO-{level} trigger {so_price:.10f}. Proceeding with DCA. @ {current_time}.")
         so_size = self.strategy.size_engine.so_size(ctx, so_price, level)
         size_to_buy = self.strategy.affordability_guard.clamp_qty(
             desired_qty=so_size,
             price=so_price,
-            available_cash=self.strategy._broker.margin_available * self.strategy._broker._leverage * 0.99,
+            available_cash=self.strategy._broker.margin_available * self.strategy._broker._leverage * MARGIN_BUFFER_FACTOR,
             commission=self.strategy.commission_calc,
             min_notional=self.strategy.config.minimum_notional,
         )
