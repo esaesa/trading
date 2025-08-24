@@ -70,32 +70,49 @@ def cooldown_between_sos(self, ctx: Ctx) -> Tuple[bool, str]:
         logger.debug(f"Skip DCA-{level}: cooldown {(now - last)} < {mins}m")
     return False, "Cooldown not elapsed"
 
-def static_rsi_reset(self, ctx: Ctx) -> Tuple[bool, str]:
+def rsi_wave_reset(self, ctx: Ctx) -> Tuple[bool, str]:
     """
-    Gate SOs until RSI has 'reset' in static-threshold mode.
+    Enforce RSI wave cycle for safety orders in static threshold mode.
+    Only allows one safety order per RSI wave cycle.
     Active only if:
       - self.require_rsi_reset is True
       - self.rsi_dynamic_threshold is False
     Behavior:
-      - If RSI is NaN → allow and mark reset True (original lenient behavior).
-      - If RSI >= reset_thr → mark reset True.
-      - Return current self.rsi_reset as the gating result.
+      - If RSI >= reset threshold → mark wave as available (rsi_wave_available = True)
+      - If RSI < trading threshold AND wave is available → allow trade and mark wave as used
+      - After trade, wave remains used until RSI goes above reset threshold again
     """
 
     rsi_val = ctx.indicators.get("rsi", np.nan)
     if np.isnan(rsi_val):
-        self.rsi_reset = True
         return True, "RSI NaN → allow"
 
-    base_thr = float(getattr(self, "rsi_threshold", 50) or 50.0)
-    pct     = float(getattr(self, "rsi_reset_percentage", 50) or 50.0)
-    reset_thr = base_thr * (1.0 + pct / 100.0)
+    # Calculate thresholds
+    base_thr = float(getattr(self, "rsi_threshold", 31) or 31.0)
+    reset_pct = float(getattr(self, "rsi_reset_percentage", 60) or 60)
+    reset_thr = base_thr * (1.0 + reset_pct / 100.0)
 
+    # Initialize wave state if not exists
+    if not hasattr(self, "rsi_wave_available"):
+        self.rsi_wave_available = True
+
+    # If RSI goes above reset threshold, make wave available
+    reset_thr = 56
     if rsi_val >= reset_thr:
-        self.rsi_reset = True
+        self.rsi_wave_available = True
+        return False, f"RSI {rsi_val:.2f} ≥ reset threshold {reset_thr:.2f} → wave available"
 
-    ok = bool(getattr(self, "rsi_reset", True))
-    return (ok, "RSI reset met" if ok else "Waiting for RSI reset")
+    # If RSI is below trading threshold and wave is available, allow trade
+    trading_thr = base_thr
+    if rsi_val < trading_thr and self.rsi_wave_available:
+        self.rsi_wave_available = False  # Mark wave as used
+        return True, f"RSI {rsi_val:.2f} < trading threshold {trading_thr:.2f} → wave used"
+
+    # Otherwise, don't allow trade
+    if rsi_val < trading_thr:
+        return False, f"RSI {rsi_val:.2f} < trading threshold {trading_thr:.2f} but wave not available"
+    else:
+        return False, f"RSI {rsi_val:.2f} ≥ trading threshold {trading_thr:.2f}"
 
 
 def max_levels_not_reached(self, ctx: Ctx) -> Tuple[bool, str]:
@@ -142,10 +159,10 @@ def sufficient_funds_and_notional(self, ctx: Ctx):
 SAFETY_RULES = {
     "RSIUnderDynamicThreshold": rsi_under_dynamic_threshold,
     "CooldownBetweenSOs": cooldown_between_sos,
-    "StaticRSIReset": static_rsi_reset,
+    "RSIWaveReset": rsi_wave_reset,
     "MaxLevelsNotReached": max_levels_not_reached,
     "SufficientFundsAndNotional": sufficient_funds_and_notional,
-    "RSIUnderStaticThreshold":rsi_under_static_threshold
+    "RSIUnderStaticThreshold": rsi_under_static_threshold
 }
 
 # Keep the decider as-is

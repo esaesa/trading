@@ -259,7 +259,7 @@ def run_backtest(
     *,
     strategy_cls: type = DCAStrategy,
     loader: Callable[[str, str, str], pd.DataFrame] = load_data,
-    visualizer: Callable = visualize_results,      # kept for future swaps
+    visualizer: Callable = visualize_results,
     beeper: Callable[[], None] = beep,
     bt_params: Dict[str, Any] = backtest_params,
     strat_params: Dict[str, Any] = strategy_params,
@@ -272,8 +272,17 @@ def run_backtest(
         console.print(f"[bold red]Data file not found: {data_path(symbol, timeframe)}. Skipping...[/bold red]")
         return
 
-    bt = build_backtest(data, strategy_cls, bt_params)
+    # ===== [ADDED] Guard: skip if no data to prevent Backtest(...) ValueError =====
+    if data is None or data.empty:
+        console.print(
+            f"[bold yellow]✗ Skipping {symbol} {timeframe}: no data after filtering.[/bold yellow] "
+            f"start_date={bt_params.get('start_date')!r}, end_date={bt_params.get('end_date')!r}"
+        )
+        return
+    # ============================================================================
 
+    bt = build_backtest(data, strategy_cls, bt_params)
+    
     debug = bt_params.get("debug", False) and not bt_params.get("enable_optimization", False)
     stats, optimize_result, heatmap, is_opt = run_or_optimize(
         bt, bt_params.get("enable_optimization", False), opt_params, maximize, beeper
@@ -291,6 +300,7 @@ def run_backtest(
         is_optimization=is_opt,
         debug=debug,
     )
+
 
 
 def run_all_backtests(
