@@ -1,6 +1,5 @@
 # strategy.py
 from indicators_bootstrap import IndicatorsBootstrap
-from reset_policy import need_reset, update_reset, consume_reset
 from simulation import apply_slippage
 from wiring import wire_strategy
 from instrumentation import log_loop_info, log_trade_info
@@ -244,7 +243,6 @@ class DCAStrategy(Strategy):
         self.base_order_quantity = None
         self.base_order_price = None
         self.initial_investment = 0
-        self.rsi_reset = True
         self.last_filled_price = None
         self.base_order_value = None
         self.rsi_values = None
@@ -296,7 +294,6 @@ class DCAStrategy(Strategy):
 
         # Use ctx RSI directly (no extra indicator reads)
         rsi_val = ctx.indicators.get("rsi", np.nan)
-        update_reset(self, rsi_val)
         self.strategy_logger.log_loop_info(price, rsi_val, current_time)
 
         if self.position:

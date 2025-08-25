@@ -10,8 +10,8 @@
         "enable_optimization": false,
         "debug": true,
         "debug_loop": false,
-        "start_date": "2024-01-01 19:31:00",
-        "end_date":   "2026-01-15T22:42:00",
+        "start_date": "2024-01-31 19:47",
+        "end_date":   "2025-05-04 11:40:00",
     
         "cash": 1000,
         "commission": 0.0005,
@@ -33,7 +33,7 @@
         "so_cooldown_minutes": 0,
 
         "max_dca_levels": 6,
-        "take_profit_percentage": 1.2,
+        "take_profit_percentage": 0.8,
         "entry_fraction": 0.05,
         "so_size_multiplier": 1.4,
         "first_safety_order_multiplier": 1.4,
@@ -72,11 +72,11 @@
             "process": false
           },
           "show_indicators": {
-            "dynamic_rsi": true,
-            "rsi": true,
+            "dynamic_rsi": false,
+            "rsi": false,
             "bbw": false,
-            "atr": true,
-            "ema": true,
+            "atr": false,
+            "ema": false,
             "laguerre": false,
             "cv": false,
             "average_entry_price"  : true,

@@ -62,10 +62,10 @@ class TradeProcessor:
         
         if self.strategy.config.debug_trade:
             logger.debug(f"Price {price:.10f} <= SO-{level} trigger {so_price:.10f}. Proceeding with DCA. @ {current_time}.")
-        so_size = self.strategy.size_engine.so_size(ctx, so_price, level)
+        so_size = self.strategy.size_engine.so_size(ctx, price, level)
         size_to_buy = self.strategy.affordability_guard.clamp_qty(
             desired_qty=so_size,
-            price=so_price,
+            price=price,
             available_cash=self.strategy._broker.margin_available * self.strategy._broker._leverage * MARGIN_BUFFER_FACTOR,
             commission=self.strategy.commission_calc,
             min_notional=self.strategy.config.minimum_notional,
@@ -73,7 +73,7 @@ class TradeProcessor:
         order = None
         if size_to_buy > 0:
             order = self.strategy.buy(size=size_to_buy, tag=f"S{level}")
-            delta = size_to_buy * so_price * (1.0 + self.strategy.commission_rate)
+            delta = size_to_buy * price * (1.0 + self.strategy.commission_rate)
             self.strategy._cycle_invested += delta
             self.strategy._cycle_peak_invested = max(self.strategy._cycle_peak_invested, self.strategy._cycle_invested)
             self.strategy.state_manager.log_so_fill(level, current_time)
@@ -83,7 +83,7 @@ class TradeProcessor:
         if self.strategy.config.safety_order_price_mode.lower() == "dynamic":
             self.strategy.last_filled_price = price
         if self.strategy.config.debug_trade and order is not None:
-            log_trade_info(self.strategy, "DCA", order, so_price, size_to_buy * so_price)
+            log_trade_info(self.strategy, "DCA", order, price, size_to_buy * price)
 
     def process_exit(self, ctx: Ctx, price: float, current_time: datetime) -> bool:
         """Handle exit logic"""
