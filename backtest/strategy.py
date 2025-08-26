@@ -19,6 +19,7 @@ from strategy_config import StrategyConfig
 from trade_processor import TradeProcessor
 from state_manager import StateManager
 from strategy_logger import StrategyLogger
+from indicator_service import IndicatorService
 
 
 class DCAStrategy(Strategy):
@@ -50,20 +51,15 @@ class DCAStrategy(Strategy):
         ),
         take_profit_decay_grace_period_hours=strategy_params.get("take_profit_decay_grace_period_hours", 48),
         take_profit_decay_duration_hours=strategy_params.get("take_profit_decay_duration_hours", 24),
-        enable_atr_calculation=strategy_params.get("enable_atr_calculation", False),
         atr_window=strategy_params.get("atr_window", 14),
         atr_resample_interval=strategy_params.get("atr_resample_interval", "h"),
         atr_deviation_threshold=strategy_params.get("atr_deviation_threshold", 5.0),
         atr_deviation_reduction_factor=strategy_params.get("atr_deviation_reduction_factor", 0.25),
-        enable_ema_calculation=strategy_params.get("enable_ema_calculation", False),
         ema_window=strategy_params.get('ema_window', 200),
         ema_resample_interval=strategy_params.get('ema_resample_interval', "h"),
-        enable_rsi_calculation=strategy_params.get("enable_rsi_calculation", False),
         rsi_resample_interval=strategy_params.get('rsi_resample_interval'),
         show_rsi=strategy_params.get("show_rsi", False),
         avoid_rsi_overbought=strategy_params.get("avoid_rsi_overbought"),
-        enable_cv_calculation=strategy_params.get("enable_cv_calculation", False),
-        enable_laguere_calculation=strategy_params.get("enable_laguere_calculation", False),
         show_indicators=strategy_params.get('show_indicators', {}),
         debug_backtest=backtest_params.get("debug", False),
         debug_loop=strategy_params["debug"]["loop"] and not backtest_params['enable_optimization'],
@@ -77,77 +73,18 @@ class DCAStrategy(Strategy):
         self.enable_optimization = backtest_params.get("enable_optimization", False)
 
         # Initialize refactored components
-        self.config = self.__class__.config
+        self.config = self.__class__.config.init_from_params(strategy_params)
         self.trade_processor = TradeProcessor(self)
         self.state_manager = StateManager(self)
         self.strategy_logger = StrategyLogger(self)
+        self.indicator_service = IndicatorService(self)
 
-    def _ind_value(self, name: str, now, default=np.nan):
-        """
-        Read indicator 'name' at time 'now' via indicator_provider if available,
-        otherwise fall back to legacy series on the Strategy.
-        Supported names: rsi, ema, atr_pct, laguerre_rsi, bbw, cv
-        """
-        # 1) Try provider (preferred)
-        provider = getattr(self, "indicator_provider", None)
-        if provider is not None:
-            # Expect methods named exactly like the indicator
-            fn = getattr(provider, name, None)
-            if callable(fn):
-                try:
-                    v = fn(now)
-                    if v is not None:
-                        return float(v)
-                except Exception:
-                    pass  # fall back
-
-        # 2) Fallback to legacy series on the Strategy
-        series_attr = {
-            "rsi": "rsi_values",
-            "ema": "ema_dynamic",
-            "atr_pct": "atr_pct_series",
-            "laguerre_rsi": "laguerre_series",
-            "bbw": "bbw_series",
-            "cv": "cv_series",
-        }.get(name)
-
-        if series_attr and hasattr(self, series_attr):
-            ser = getattr(self, series_attr)
-            if ser is not None and len(ser):
-                try:
-                    return float(ser.loc[now])
-                except Exception:
-                    try:
-                        return float(ser.iloc[-1])
-                    except Exception:
-                        pass
-
-        return default
 
     def _ctx(self) -> Ctx:
         now = self.data.index[-1]
         price = float(self.data.Close[-1])
 
-        indicators = {}
-        for n in ("rsi", "ema", "atr_pct", "laguerre_rsi", "bbw", "cv"):
-            v = self._ind_value(n, now, default=np.nan)   # <-- pass 'now' again
-            if v is not None and not (isinstance(v, float) and np.isnan(v)):
-                indicators[n] = v
-
-        # Dynamic RSI threshold aligned to 'now' (no future leak)
-        dynamic_thr = None
-        if self.config.rsi_dynamic_threshold and hasattr(self, "rsi_dynamic_threshold_series"):
-            try:
-                ser = self.rsi_dynamic_threshold_series
-                pos = ser.index.searchsorted(now, side="right") - 1
-                if pos >= 0:
-                    dynamic_thr = float(ser.iloc[pos])
-            except Exception:
-                dynamic_thr = None
-
-        current_atr = None
-        if self.config.enable_atr_calculation and hasattr(self, 'atr_pct_series') and len(self.atr_pct_series):
-            current_atr = self.get_current_atr(now)
+        # Dynamic RSI threshold and ATR are now fetched on-demand by rules via indicator_service
 
         entry_price = getattr(self, "base_order_price", None)
         dca_level = getattr(self, "dca_level", 0) if self.position else 0
@@ -170,7 +107,6 @@ class DCAStrategy(Strategy):
             last_entry_time=(self.last_safety_order_time or self.base_order_time),
             now=now,
             price=price,
-            indicators=indicators,
             dca_level=getattr(self, 'dca_level', 0),
             base_order_price=getattr(self, 'base_order_price', None),
             base_order_value=getattr(self, 'base_order_value', None),
@@ -178,11 +114,9 @@ class DCAStrategy(Strategy):
             last_filled_price=getattr(self, 'last_filled_price', None),
             last_so_dt=getattr(self, 'last_safety_order_time', None),
             base_order_time=getattr(self, 'base_order_time', None),
-            dynamic_rsi_thr=(dynamic_thr if dynamic_thr is not None else self.config.rsi_threshold),
             available_cash=self._broker.margin_available * self._broker._leverage *.99,
             position_size=self.position.size if self.position else 0,
             position_pl_pct=self.position.pl_pct if self.position else 0,
-            current_atr=current_atr,
         )
 
         # Pre-compute next SO trigger (guarded)
@@ -218,10 +152,6 @@ class DCAStrategy(Strategy):
                 return value / param_scale
         return value
 
-    def get_current_atr(self, current_time):
-        """Fetch the current ATR% via provider first, then legacy series."""
-        v = self._ind_value("atr_pct", current_time, default=np.nan)
-        return v
     
     def init(self):
         debug_any = (self.config.debug_backtest or self.config.debug_loop or self.config.debug_trade or self.config.debug_process)
@@ -245,16 +175,16 @@ class DCAStrategy(Strategy):
         self.initial_investment = 0
         self.last_filled_price = None
         self.base_order_value = None
-        self.rsi_values = None
 
         # Time tracking
         self.base_order_time = None
         self.last_safety_order_time = None
-        # Compute indicators (this sets self.rsi_values, ema_dynamic, atr_pct_series, etc.)
-        IndicatorsBootstrap(strategy_params).run(self)
+
         init_overlays(self)
-        # Wire rules/engines/providers (provider will read the series computed above)
-        wire_strategy(self, strategy_params)  
+        # Wire rules/engines/providers first (creates deciders needed for indicator detection)
+        wire_strategy(self, strategy_params)
+        # Initialize indicators via bootstrap (now deciders exist for dynamic detection)
+        IndicatorsBootstrap(strategy_params).run(self)
         self.completed_processes = []
         # NEW: minimal runtime buffer
         self._cycle = None
@@ -292,9 +222,7 @@ class DCAStrategy(Strategy):
         # Build once
         ctx = self._ctx()
 
-        # Use ctx RSI directly (no extra indicator reads)
-        rsi_val = ctx.indicators.get("rsi", np.nan)
-        self.strategy_logger.log_loop_info(price, rsi_val, current_time)
+        self.strategy_logger.log_loop_info(ctx)
 
         if self.position:
             if self.trade_processor.process_exit(ctx, high, current_time):

@@ -3,10 +3,9 @@ from __future__ import annotations
 import numpy as np
 
 def need_reset(strategy) -> bool:
-    """Static-RSI reset is relevant only when: RSI is enabled, dynamic threshold is OFF, and the user asked for reset."""
+    """Static-RSI reset is relevant only when: RSI is available, dynamic threshold is OFF, and the user asked for reset."""
     return (
-        getattr(strategy, "enable_rsi_calculation", False)
-        and not getattr(strategy, "rsi_dynamic_threshold", False)
+        not getattr(strategy, "rsi_dynamic_threshold", False)
         and getattr(strategy, "require_rsi_reset", False)
     )
 

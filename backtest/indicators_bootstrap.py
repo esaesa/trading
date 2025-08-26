@@ -20,92 +20,150 @@ class IndicatorsBootstrap:
     def __init__(self, params: dict):
         self.params = params or {}
 
-    def _resolve_dynamic_rsi_window(self, strategy) -> int:
-        # Keep original logic: use explicit param if present, else 1000 * rsi_window (fallback 14)
-        if self.params.get("rsi_dynamic_window") is not None:
-            return int(self.params["rsi_dynamic_window"])
-        return int((strategy.config.rsi_window or 14) * 1000)
-
     def run(self, strategy) -> None:
         # attach manager (idempotent)
         if not hasattr(strategy, "indicators"):
             df = strategy.data.df
             strategy.indicators = IndicatorManager(df)
 
-        # compute decisions
-        show = strategy.config.show_indicators or {}
-        calc_rsi = show.get("rsi", False) or strategy.config.enable_rsi_calculation
-        calc_atr = show.get("atr", False) or strategy.config.enable_atr_calculation
-        calc_ema = show.get("ema", False) or strategy.config.enable_ema_calculation
-        calc_lag = show.get("laguerre", False) or strategy.config.enable_laguere_calculation
-        calc_bbw = show.get("bbw", False)
-        calc_cv  = show.get("cv", False)
-        calc_dyn = show.get("dynamic_rsi", False) or strategy.config.rsi_dynamic_threshold
+        # compute decisions - automatic detection based on rule dependencies + centralized display
+        show_indicators = strategy.config.show_indicators or {}
+        indicators_config = self.params.get("indicators", {})
 
-        # If dynamic RSI, RSI reset, or overbought gate is used → must compute RSI
-        if calc_dyn or strategy.config.require_rsi_reset or strategy.config.avoid_rsi_overbought:
-            calc_rsi = True
+        # Create flexible display logic - OR combination with other conditions
+        def should_display(indicator_name, default=False):
+            """Display if explicitly requested OR if indicator is being calculated for rules"""
+            show_requested = show_indicators.get(indicator_name, False)
+            is_calculated = indicator_name in required_indicators
+            return show_requested or is_calculated or default
+
+        # Collect required indicators from all active rules (SOLID: rules declare dependencies)
+        required_indicators = set()
+
+        # Check entry rules
+        if hasattr(strategy, 'entry_decider') and strategy.entry_decider:
+            required_indicators.update(strategy.entry_decider.get_required_indicators())
+
+        # Check safety rules
+        if hasattr(strategy, 'safety_decider') and strategy.safety_decider:
+            required_indicators.update(strategy.safety_decider.get_required_indicators())
+
+        # Check exit rules
+        if hasattr(strategy, 'exit_decider') and strategy.exit_decider:
+            required_indicators.update(strategy.exit_decider.get_required_indicators())
+
+        # Check pricing engine
+        if hasattr(strategy, 'price_engine') and strategy.price_engine:
+            required_indicators.update(strategy.price_engine.get_required_indicators())
+
+        # Check entry sizing policy
+        if hasattr(strategy, 'entry_sizer') and strategy.entry_sizer:
+            required_indicators.update(strategy.entry_sizer.get_required_indicators())
+
+        # Set calculation flags based on rule dependencies OR explicit show request
+        calc_rsi = ("rsi" in required_indicators) or show_indicators.get("rsi", False)
+        calc_atr = ("atr_pct" in required_indicators) or show_indicators.get("atr", False)
+        calc_ema = ("ema" in required_indicators) or show_indicators.get("ema", False)
+        calc_lag = ("laguerre_rsi" in required_indicators) or show_indicators.get("laguerre", False)
+        calc_cv = ("cv" in required_indicators) or show_indicators.get("cv", False)
+        calc_bbw = ("bbw" in required_indicators) or show_indicators.get("bbw", False)
+        calc_dynamic_rsi = ("dynamic_rsi_threshold" in required_indicators) or show_indicators.get("dynamic_rsi", False)
 
         # ---- RSI ----
-        rsi_series = None
         if calc_rsi:
+            rsi_config = indicators_config.get("rsi", {})
+            rsi_window = rsi_config.get("window", strategy.config.rsi_window or 14)
+            rsi_resample = rsi_config.get("resample_interval", strategy.config.rsi_resample_interval or "30min")
+
             rsi_series = strategy.indicators.compute_rsi(
-                window=strategy.config.rsi_window,
-                resample_interval=strategy.config.rsi_resample_interval,
+                window=rsi_window,
+                resample_interval=rsi_resample,
             )
-            strategy.rsi_values = rsi_series
-            if show.get("rsi", False):
-                strategy.I(lambda _: strategy.rsi_values, strategy.data.Close, name="RSI")
+            # Store in IndicatorService for rule access (single point of truth)
+            strategy.indicator_service._store_series("rsi", rsi_series)
+            # Store indicator object for framework plotting (centralized display control)
+            if should_display("rsi", False):
+                strategy.rsi_indicator = strategy.I(lambda _: rsi_series, strategy.data.Close, name="RSI")
 
         # ---- Dynamic RSI threshold ----
-        if calc_dyn and (rsi_series is not None):
-            strategy.rsi_dynamic_window = self._resolve_dynamic_rsi_window(strategy)
-            strategy.rsi_dynamic_threshold_series = (
-                rsi_series.rolling(window=strategy.rsi_dynamic_window)
-                          .quantile(strategy.config.rsi_percentile)
+        if calc_dynamic_rsi and (rsi_series is not None):
+            # Get both percentile and dynamic_window from indicators config
+            dynamic_rsi_config = indicators_config.get("dynamic_rsi_threshold", {})
+            percentile = dynamic_rsi_config.get("percentile", 0.05)
+            dynamic_window = dynamic_rsi_config.get("dynamic_window", 8500)
+
+            dynamic_rsi_series = (
+                rsi_series.rolling(window=dynamic_window)
+                          .quantile(percentile)
             )
-            if show.get("dynamic_rsi", True):
-                strategy.I(lambda _: strategy.rsi_dynamic_threshold_series,
+            strategy.indicator_service._store_series("dynamic_rsi_threshold", dynamic_rsi_series)
+            # Store indicator object for framework plotting
+            if should_display("dynamic_rsi", True):
+                strategy.dynamic_rsi_indicator = strategy.I(lambda _: dynamic_rsi_series,
                            strategy.data.Close,
                            name="Dynamic RSI Threshold")
 
         # ---- EMA ----
         if calc_ema:
+            ema_config = indicators_config.get("ema", {})
+            ema_window = ema_config.get("window", strategy.config.ema_window or 200)
+            ema_resample = ema_config.get("resample_interval", strategy.config.ema_resample_interval or "1h")
+
             ema_series = strategy.indicators.compute_ema(
-                window=strategy.config.ema_window,
-                resample_interval=strategy.config.ema_resample_interval,
+                window=ema_window,
+                resample_interval=ema_resample,
             )
-            strategy.ema_dynamic = ema_series
-            if show.get("ema", False):
-                strategy.I(lambda _: ema_series, strategy.data.Close, name="EMA")
+            strategy.indicator_service._store_series("ema", ema_series)
+            # Store indicator object for framework plotting (centralized display control)
+            if should_display("ema", False):
+                strategy.ema_indicator = strategy.I(lambda _: ema_series, strategy.data.Close, name="EMA")
 
         # ---- ATR% ----
         if calc_atr:
+            atr_config = indicators_config.get("atr", {})
+            atr_window = atr_config.get("window", strategy.config.atr_window or 14)
+            atr_resample = atr_config.get("resample_interval", strategy.config.atr_resample_interval or "1h")
+
             atr_pct = strategy.indicators.compute_atr_percentage(
-                window=strategy.config.atr_window,
-                resample_interval=strategy.config.atr_resample_interval,
+                window=atr_window,
+                resample_interval=atr_resample,
             )
-            strategy.atr_pct_series = atr_pct
-            if show.get("atr", False):
-                strategy.I(lambda _: atr_pct, strategy.data.Close, name="ATR%")
+            strategy.indicator_service._store_series("atr_pct", atr_pct)
+            # Store indicator object for framework plotting (centralized display control)
+            if should_display("atr", False):
+                strategy.atr_indicator = strategy.I(lambda _: atr_pct, strategy.data.Close, name="ATR%")
 
         # ---- CV ----
         if calc_cv:
-            cv_series = strategy.indicators.compute_coefficient_of_variation(window=40)
-            strategy.cv_series = cv_series
-            if show.get("cv", False):
-                strategy.I(lambda _: cv_series, strategy.data.Close, name="CV")
+            cv_config = indicators_config.get("cv", {})
+            cv_window = cv_config.get("window", 40)
+
+            cv_series = strategy.indicators.compute_coefficient_of_variation(window=cv_window)
+            strategy.indicator_service._store_series("cv", cv_series)
+            # Store indicator object for framework plotting (centralized display control)
+            if should_display("cv", False):
+                strategy.cv_indicator = strategy.I(lambda _: cv_series, strategy.data.Close, name="CV")
 
         # ---- Laguerre RSI ----
         if calc_lag:
-            lag = strategy.indicators.compute_laguerre_rsi(gamma=0.1, resample_interval="4h")
-            strategy.laguerre_series = lag
-            if show.get("laguerre", False):
-                strategy.I(lambda _: lag, strategy.data.Close, name="Laguerre RSI")
+            lag_config = indicators_config.get("laguerre_rsi", {})
+            lag_gamma = lag_config.get("gamma", 0.1)
+            lag_resample = lag_config.get("resample_interval", "4h")
+
+            lag = strategy.indicators.compute_laguerre_rsi(gamma=lag_gamma, resample_interval=lag_resample)
+            strategy.indicator_service._store_series("laguerre_rsi", lag)
+            # Store indicator object for framework plotting (centralized display control)
+            if should_display("laguerre", False):
+                strategy.laguerre_indicator = strategy.I(lambda _: lag, strategy.data.Close, name="Laguerre RSI")
 
         # ---- BBW ----
         if calc_bbw:
-            bbw = strategy.indicators.compute_bbw(window=20, num_std=2)
-            strategy.bbw_series = bbw
-            if show.get("bbw", False):
-                strategy.I(lambda _: bbw, strategy.data.Close, name="BBW")
+            bbw_config = indicators_config.get("bbw", {})
+            bbw_window = bbw_config.get("window", 20)
+            bbw_num_std = bbw_config.get("num_std", 2)
+
+            bbw = strategy.indicators.compute_bbw(window=bbw_window, num_std=bbw_num_std)
+            strategy.indicator_service._store_series("bbw", bbw)
+            # Store indicator object for framework plotting (centralized display control)
+            if should_display("bbw", False):
+                strategy.bbw_indicator = strategy.I(lambda _: bbw, strategy.data.Close, name="BBW")

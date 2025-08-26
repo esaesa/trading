@@ -7,6 +7,9 @@ class IndicatorProvider(Protocol):
     def ema(self, now=None) -> Optional[float]: ...
     def atr_pct(self, now=None) -> Optional[float]: ...
     def rsi(self, now=None) -> Optional[float]: ...
+    def laguerre_rsi(self, now=None) -> Optional[float]: ...
+    def bbw(self, now=None) -> Optional[float]: ...
+    def cv(self, now=None) -> Optional[float]: ...
 
 class StrategyIndicatorProvider:
     """Thin adapter that reads indicators off Strategy safely."""
@@ -37,4 +40,12 @@ class StrategyIndicatorProvider:
 
     def rsi(self, now=None):
         return self._at_or_prev(getattr(self.s, "rsi_values", None), now)
-        return self._last_or_at(ser, now)
+
+    def laguerre_rsi(self, now=None):
+        return self._at_or_prev(getattr(self.s, "laguerre_series", None), now)
+
+    def bbw(self, now=None):
+        return self._at_or_prev(getattr(self.s, "bbw_series", None), now)
+
+    def cv(self, now=None):
+        return self._at_or_prev(getattr(self.s, "cv_series", None), now)

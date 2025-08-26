@@ -1,7 +1,7 @@
 {
     "backtest_params": {
         "symbols": [
-            "DOGEUSDTUSDT"
+            "1000PEPEUSDTUSDT"
         ],
         "timeframes": [
             "1m"
@@ -10,8 +10,8 @@
         "enable_optimization": false,
         "debug": true,
         "debug_loop": false,
-        "start_date": "2024-01-31 19:47",
-        "end_date":   "2025-05-04 11:40:00",
+        "start_date": "2024-03-20 19:47",
+        "end_date":   "2024-04-24 11:40:00",
     
         "cash": 1000,
         "commission": 0.0005,
@@ -23,11 +23,11 @@
         "entry_conditions": {"all":["EntryFundsAndNotional"]},
         "safety_conditions": {
             "all": [
-                "MaxLevelsNotReached","SufficientFundsAndNotional", "RSIUnderStaticThreshold", "RSIWaveReset"
+                "MaxLevelsNotReached","SufficientFundsAndNotional","RSIUnderStaticThreshold"
             ]
         },
         "exit_conditions": ["TakeProfitReached"],
-        "safety_conditions_all": ["RSIUnderStaticThreshold","RSIUnderDynamicThreshold", "RSIWaveReset"],
+        "safety_conditions_all": ["RSIUnderStaticThreshold","RSIUnderDynamicThreshold"],
         "entry_conditions_all": {"all":["MaxLevelsNotReached","SufficientFundsAndNotional","EntryFundsAndNotional", "RSIOverbought"]},
         "exit_conditions_all" : ["TPDecayReached","StopLossReached", "TakeProfitReached","ATRTakeProfitReached"],
         "so_cooldown_minutes": 0,
@@ -35,52 +35,101 @@
         "max_dca_levels": 6,
         "take_profit_percentage": 0.8,
         "entry_fraction": 0.05,
-        "so_size_multiplier": 1.4,
-        "first_safety_order_multiplier": 1.4,
+        "so_size_multiplier": 1.9,
+        "first_safety_order_multiplier": 1.8,
         "initial_deviation_percent": 4.5,
         "price_multiplier": 1,
-        "rsi_static_threshold_under": 100,
-        "rsi_threshold":35,
-        "rsi_window": 17,
-        "enable_rsi_calculation": true,
-        "rsi_dynamic_threshold": false,
-        "require_rsi_reset": true,
-        "avoid_rsi_overbought": true,
-        "rsi_overbought_level": 70,
-        "rsi_oversold_level": 30,
-        "rsi_reset_percentage": 50,
-        "safety_order_price_mode": "static",
-        "safety_order_mode":"value",
-        "price_growth_type": "exponential",
-        "size_growth_type": "exponential",
-        "take_profit_decay_grace_period_hours": 24,
-        "take_profit_decay_duration_hours": 24,
+        "safety_order_price_mode": "dynamic",
+        "safety_order_mode": "volume",
         "minimum_notional": 0.0,
-        "enable_atr_calculation": false,
-        "atr_window": 14,
-        "atr_resample_interval": "1h",  
-        "enable_ema_calculation": false,
-        "ema_resample_interval": "1h", 
-        "rsi_resample_interval": "30min",
-    
-        "enable_cv_calculation": false,
-        "enable_laguere_calculation": false,
+
+        "rules": {
+            "RSIUnderStaticThreshold": {
+                "static_threshold_under": 15,
+                "need_rsi_reset": true,
+                "reset_threshold": 50
+            },
+            "RSIUnderDynamicThreshold": {
+                "threshold": 35,
+                "window": 17,
+                "dynamic_threshold": true,
+                "need_rsi_reset": true,
+                "reset_threshold": 60
+            },
+            "RSIOverbought": {
+                "overbought_level": 70
+            },
+            "TPDecayReached": {
+                "grace_period_hours": 24,
+                "decay_duration_hours": 24
+            },
+            "ATRTakeProfitReached": {
+                "deviation_threshold": 5.0,
+                "deviation_reduction_factor": 0.25
+            }
+        },
+        "indicators": {
+            "rsi": {
+                "window": 7,
+                "threshold": 35,
+                "static_threshold_under": 100,
+                "dynamic_threshold": false,
+                "require_reset": true,
+                "avoid_overbought": true,
+                "overbought_level": 70,
+                "oversold_level": 30,
+                "reset_percentage": 50,
+                "resample_interval": "30min"
+            },
+            "dynamic_rsi_threshold": {
+                "percentile": 0.04,
+                "dynamic_window": 20000
+            },
+            "atr": {
+                "window": 14,
+                "resample_interval": "1h",
+                "deviation_threshold": 5.0,
+                "deviation_reduction_factor": 0.25
+            },
+            "ema": {
+                "window": 200,
+                "resample_interval": "1h"
+            },
+            "cv": {
+                "window": 40
+            },
+            "laguerre_rsi": {
+                "gamma": 0.1,
+                "resample_interval": "4h"
+            },
+            "bbw": {
+                "window": 20,
+                "num_std": 2
+            },
+            "display": {
+                "dynamic_rsi_threshold": true,
+                "average_entry_price": true,
+                "take_profit_levels": true
+            }
+        },
         "start_trading_time" : "2023-07-21 19:31:00",
+        "show_rsi": false,
+        "rsi_percentile": 0.05,
         "debug": {
             "trade": false,
             "loop": false,
             "process": false
           },
-          "show_indicators": {
-            "dynamic_rsi": false,
-            "rsi": false,
-            "bbw": false,
-            "atr": false,
-            "ema": false,
-            "laguerre": false,
-            "cv": false,
-            "average_entry_price"  : true,
-            "take_profit": true
+        "show_indicators": {
+        "dynamic_rsi": true,
+        "rsi": true,
+        "bbw": true,
+        "atr": true,
+        "ema": true,
+        "laguerre": true,
+        "cv": true,
+        "average_entry_price"  : true,
+        "take_profit": true
     }
 
     

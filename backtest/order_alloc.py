@@ -5,25 +5,37 @@ from typing import Protocol, Tuple
 from contracts import Ctx
 from commissions import CommissionCalculator
 import math
+from indicators import Indicators
 
 # ---------- Policies / Ports ----------
 
 class EntryMultiplier(Protocol):
-    def factor(self, ctx: Ctx, price: float) -> int: ...
+    def factor(self, ctx: Ctx, price: float, indicator_service) -> int: ...
 
 @dataclass
 class EmaEntryMultiplier:
     """Return mult_above if price > EMA, else default."""
     mult_above: int = 2
     default: int = 1
-    def factor(self, ctx: Ctx, price: float) -> int:
-        ema = ctx.indicators.get("ema")
+
+    def get_required_indicators(self) -> set[str]:
+        """Return set of indicators required by this multiplier."""
+        return {Indicators.EMA.value}
+
+    def factor(self, ctx: Ctx, price: float, indicator_service=None) -> int:
+        # Optimized: Use direct indicator access instead of ctx.indicators
+        ema = indicator_service.get_indicator_value("ema", ctx.now, None)
         return self.mult_above if (ema is not None and price > float(ema)) else self.default
 
 @dataclass
 class FixedEntryMultiplier:
     value: int = 1
-    def factor(self, ctx: Ctx, price: float) -> int:
+
+    def get_required_indicators(self) -> set[str]:
+        """Return set of indicators required by this multiplier (none)."""
+        return set()
+
+    def factor(self, ctx: Ctx, price: float, indicator_service) -> int:
         return self.value
 
 class EntrySizer(Protocol):
@@ -37,9 +49,16 @@ class FractionalCashEntrySizer:
     """
     entry_fraction: float
     multiplier: EntryMultiplier
+    indicator_service = None
+
+    def get_required_indicators(self) -> set[str]:
+        """Return set of indicators required by this sizer and its multiplier."""
+        if hasattr(self.multiplier, 'get_required_indicators'):
+            return self.multiplier.get_required_indicators()
+        return set()
 
     def qty_and_investment(self, ctx: Ctx, price: float, commission: CommissionCalculator) -> Tuple[int, float]:
-        mult = self.multiplier.factor(ctx, price)
+        mult = self.multiplier.factor(ctx, price, self.indicator_service)
         budget = ctx.equity_per_cycle * (self.entry_fraction * mult)
         price_gross = commission.gross_unit_cost(price)
         qty = math.floor(budget / price_gross)

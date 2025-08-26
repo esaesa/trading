@@ -1,12 +1,16 @@
 # rules/exit.py
 from typing import Union
-from typing import Dict, Any, Tuple, Callable
+from typing import Dict, Any, Tuple, Callable, Set
 import numpy as np
 from contracts import Ctx
 from datetime import datetime, timedelta
 from logger_config import logger
 import warnings
+from indicators import Indicators
 
+
+# Indicator requirements for each rule function
+ATR_TAKE_PROFIT_REACHED_INDICATORS = {Indicators.ATR_PCT.value}
 
 def atr_take_profit_reached(self: Any, ctx: Ctx) -> Tuple[bool, str]:
     """
@@ -15,14 +19,8 @@ def atr_take_profit_reached(self: Any, ctx: Ctx) -> Tuple[bool, str]:
     if not self.position:
         return False, "No position"
 
-    atr_pct = getattr(ctx, "current_atr", None)
-    if atr_pct is None or (isinstance(atr_pct, float) and np.isnan(atr_pct)):
-        prov = getattr(self, "indicator_provider", None)
-        if prov is not None:
-            try:
-                atr_pct = prov.atr_pct(getattr(ctx, "now", None))
-            except Exception:
-                atr_pct = None
+    # Get ATR as a regular indicator via the service
+    atr_pct = self.indicator_service.get_indicator_value("atr_pct", ctx.now, None)
 
     if atr_pct is None or (isinstance(atr_pct, float) and np.isnan(atr_pct)):
         # 🔴 NEW: warning for debugging
@@ -31,10 +29,18 @@ def atr_take_profit_reached(self: Any, ctx: Ctx) -> Tuple[bool, str]:
         warnings.warn(msg)   # optional, shows in stdout
         return False, msg
 
-    # Normal ATR TP calc
+    # Get rule-specific parameters from config
     f = float(getattr(self, "atr_tp_fraction", 0.65))
     tp_min = float(getattr(self, "atr_tp_min_pct", 0.8))
     tp_max = float(getattr(self, "atr_tp_max_pct", 5.0))
+
+    # Override with rule-specific config if available
+    deviation_threshold = self.config.get_rule_param(
+        'ATRTakeProfitReached', 'deviation_threshold', self.config.atr_deviation_threshold
+    )
+    deviation_reduction_factor = self.config.get_rule_param(
+        'ATRTakeProfitReached', 'deviation_reduction_factor', self.config.atr_deviation_reduction_factor
+    )
 
     tp_target = max(tp_min, min(tp_max, float(atr_pct) * f))
     profit_pct = float(self.position.pl_pct)
@@ -45,6 +51,9 @@ def atr_take_profit_reached(self: Any, ctx: Ctx) -> Tuple[bool, str]:
         f"(ATR% {float(atr_pct):.2f} × f {f:.2f}, clamp [{tp_min:.2f}–{tp_max:.2f}])"
     )
     return ok, reason
+
+# Indicator requirements for each rule function
+TAKE_PROFIT_REACHED_INDICATORS = set()  # No indicators needed
 
 def take_profit_reached(self: Any, ctx: Ctx) -> Tuple[bool, str]:
     """Exit rule based on fixed take profit percentage"""
@@ -60,18 +69,30 @@ def take_profit_reached(self: Any, ctx: Ctx) -> Tuple[bool, str]:
     return should_exit, reason
 
 
+# Indicator requirements for each rule function
+TP_DECAY_REACHED_INDICATORS = set()  # No indicators needed
+
 def tp_decay_reached(self: Any, ctx: Ctx) -> Tuple[bool, str]:
     """Exit rule using shared logic"""
     if not ctx.entry_price or not ctx.last_entry_time:
         return False, "No position"
-    
+
     profit_pct = self.position.pl_pct
+
+    # Get rule-specific parameters from config
+    grace_period_hours = self.config.get_rule_param(
+        'TPDecayReached', 'grace_period_hours', self.config.take_profit_decay_grace_period_hours
+    )
+    decay_duration_hours = self.config.get_rule_param(
+        'TPDecayReached', 'decay_duration_hours', self.config.take_profit_decay_duration_hours
+    )
+
     adjusted_tp = calculate_decaying_tp(
         ctx.last_entry_time,
         ctx.now,
         self.config.take_profit_percentage,
-        self.config.take_profit_decay_grace_period_hours,
-        self.config.take_profit_decay_duration_hours
+        grace_period_hours,
+        decay_duration_hours
     )
     
     should_exit = profit_pct >= adjusted_tp
@@ -79,6 +100,9 @@ def tp_decay_reached(self: Any, ctx: Ctx) -> Tuple[bool, str]:
     
     return should_exit, reason
 
+
+# Indicator requirements for each rule function
+STOP_LOSS_REACHED_INDICATORS = set()  # No indicators needed
 
 def stop_loss_reached(self: Any,ctx: Ctx) -> Tuple[bool, str]:
     """Exit rule for stop loss"""
@@ -90,6 +114,9 @@ def stop_loss_reached(self: Any,ctx: Ctx) -> Tuple[bool, str]:
     
     return should_exit, reason
 
+# Indicator requirements for each rule function
+TRAILING_STOP_REACHED_INDICATORS = set()  # No indicators needed
+
 def trailing_stop_reached(self: Any,ctx: Ctx) -> Tuple[bool, str]:
     """Exit rule for trailing stop"""
     trail_pct = 1.0  # 1% trailing stop
@@ -98,13 +125,14 @@ def trailing_stop_reached(self: Any,ctx: Ctx) -> Tuple[bool, str]:
     
     return should_exit, reason
 
+
 # Dictionary containing all exit rules
 EXIT_RULES = {
     "TPDecayReached": tp_decay_reached,
     "StopLossReached": stop_loss_reached,
     "TakeProfitReached": take_profit_reached,
     "ATRTakeProfitReached": atr_take_profit_reached,
-    
+
 }
 
 def calculate_decaying_tp(
@@ -189,9 +217,45 @@ from rule_chain import build_rule_chain
 class ExitRuleDecider(ExitDecider):
     def __init__(self, strategy, names, default_mode: str = "any") -> None:
         self._chain = build_rule_chain(strategy, names, EXIT_RULES, mode=default_mode)
+        # Store the rule names for indicator detection
+        self._rule_names = self._extract_rule_names(names)
+
+    def _extract_rule_names(self, spec) -> set[str]:
+        """Extract all rule names from the spec."""
+        names = set()
+        if isinstance(spec, str):
+            names.add(spec)
+        elif isinstance(spec, (list, tuple)):
+            for item in spec:
+                names.update(self._extract_rule_names(item))
+        elif isinstance(spec, dict):
+            for key, value in spec.items():
+                if key in ("any", "all"):
+                    names.update(self._extract_rule_names(value))
+        return names
 
     def ok(self, ctx):
         return self._chain.ok(ctx)
+
+    def get_required_indicators(self) -> set[str]:
+        """Return set of indicators required by all rules in this decider."""
+        required = set()
+
+        # Map rule names to their indicator requirements
+        rule_indicators = {
+            "TPDecayReached": TP_DECAY_REACHED_INDICATORS,
+            "StopLossReached": STOP_LOSS_REACHED_INDICATORS,
+            "TakeProfitReached": TAKE_PROFIT_REACHED_INDICATORS,
+            "ATRTakeProfitReached": ATR_TAKE_PROFIT_REACHED_INDICATORS,
+            "TrailingStopReached": TRAILING_STOP_REACHED_INDICATORS,
+        }
+
+        # Use the stored rule names from the configuration
+        for rule_name in self._rule_names:
+            if rule_name in rule_indicators:
+                required.update(rule_indicators[rule_name])
+
+        return required
 
     # NEW: used to capture which rule actually triggered
     def ok_with_reason(self, ctx):

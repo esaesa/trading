@@ -29,3 +29,15 @@ Configuration files are located in their respective modules:
 - Backtest: `backtest/config.json`, `backtest/common-parameters.json`
 - Data Download: `download/config.json`
 - Live Trading: `live/config_live.json`
+
+## Testing and Execution
+
+**Correct Entry Point for Testing:**
+```bash
+& c:/src/trading/.venv/Scripts/python.exe c:/src/trading/backtest/runner.py
+```
+
+**Important Notes:**
+- Always use this specific command to run the backtesting system
+- Do not use direct Python imports or other entry points for testing
+- This ensures proper module resolution and environment setup

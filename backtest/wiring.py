@@ -77,16 +77,23 @@ def wire_strategy(strategy: Any, strategy_params: dict) -> None:
 
     strategy.price_engine   = _build_price_engine(strategy)
     strategy.size_engine    = _build_size_engine(strategy)
-    # Entry sizing policy
-    if strategy.config.enable_ema_calculation:
-        entry_mult = EmaEntryMultiplier(mult_above=2, default=1)
-    else:
+    # Entry sizing policy - automatically detect EMA availability
+    try:
+        # Try to get EMA value to see if it's available
+        ema_test = strategy.indicator_service.get_indicator_value("ema", strategy.data.index[0], None)
+        if ema_test is not None and not (isinstance(ema_test, float) and np.isnan(ema_test)):
+            entry_mult = EmaEntryMultiplier(mult_above=2, default=1)
+        else:
+            entry_mult = FixedEntryMultiplier(1)
+    except Exception:
+        # Fallback to fixed multiplier if EMA is not available
         entry_mult = FixedEntryMultiplier(1)
 
     strategy.entry_sizer = FractionalCashEntrySizer(
-    entry_fraction=strategy.config.entry_fraction,
+        entry_fraction=strategy.config.entry_fraction,
         multiplier=entry_mult,
     )
+    strategy.entry_sizer.indicator_service = strategy.indicator_service
     
     # Commission policy (single source of truth)
     strategy.commission_calc = FixedRateCommission(rate=getattr(strategy, "commission_rate", 0.0))

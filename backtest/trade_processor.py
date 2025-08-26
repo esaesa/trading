@@ -20,7 +20,7 @@ class TradeProcessor:
     def process_entry(self, ctx: Ctx, price: float, current_time: datetime) -> bool:
         """Handle entry logic"""
         if not self.strategy.position and self.strategy.entry_decider.ok(ctx):
-            rsi_now = ctx.indicators.get("rsi", np.nan)
+            rsi_now = self.strategy.indicator_service.get_indicator_value("rsi", current_time, np.nan)
             qty, investment = self.strategy.entry_sizer.qty_and_investment(ctx, price, self.strategy.commission_calc)
             if qty < 1:
                 raise ValueError("Backtesting.py does not support fractional units. Adjust your entry fraction.")

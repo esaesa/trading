@@ -12,7 +12,6 @@
 -   **Enhanced Reporting:** The current reporting is functional but could be improved with more detailed analytics and visualizations (e.g., QuantStats integration).
 -   **Strategy Extensibility:** While the DCA strategy is implemented, the framework could be made more generic to support the easy addition of other strategy types.
 -   **Data Management:** The current data loading is file-based. A more robust data management solution could be implemented to handle larger datasets and different data sources.
--   **Unit and Integration Tests:** The project currently lacks a comprehensive test suite.
 
 ## Current Status
 

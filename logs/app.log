@@ -10317,3 +10317,93 @@ ccxt.base.errors.RequestTimeout: binance GET https://fapi.binance.com/fapi/v1/ex
 2025-08-23 16:39:50,497 [INFO] logger_config: 📊 Final dataset size after merge: 2693080 rows
 2025-08-23 16:39:50,682 [INFO] logger_config: ✅ Feather saved: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.feather
 2025-08-23 16:39:50,683 [INFO] logger_config: ✨ All data download tasks completed.
+2025-08-25 20:55:40,389 [INFO] logger_config: Starting data download...
+2025-08-25 20:55:40,569 [INFO] logger_config: Converted local end 2026-02-11 00:11:00 (UTC) to UTC end: 2026-02-11 00:11:00
+2025-08-25 20:55:40,583 [INFO] logger_config: Converted local startt 2025-01-01 00:00:00 (UTC) to UTC start: 2025-01-01 00:00:00
+2025-08-25 20:55:40,583 [INFO] logger_config: 🚀 Processing BTC/USDT:USDT with timeframe 1m...
+2025-08-25 20:55:40,585 [INFO] logger_config: 📌 Found cached oldest timestamp for BTC/USDT:USDT [1m]: 2019-09-08 17:57:00+00:00
+2025-08-25 20:55:40,586 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_BTCUSDTUSDT_1m.feather
+2025-08-25 20:55:41,186 [INFO] logger_config: 🕒 Existing data range: 2020-01-01 00:00:00+00:00 to 2025-08-23 13:37:00
+2025-08-25 20:55:41,190 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-23 13:37:00, New since: 2025-08-23 13:37:00
+2025-08-25 20:55:41,191 [INFO] logger_config: 🔄 Fetching new data from 2025-08-23 13:37:00 to 2026-02-11 00:11:00
+2025-08-25 20:55:41,192 [INFO] logger_config: 🔍 Fetching data from 2025-08-23 13:37:00 to 2026-02-11 00:11:00 for BTC/USDT:USDT [1m]...
+2025-08-25 20:55:48,252 [INFO] logger_config: ✅ Downloaded 3139 new rows. (From 2025-08-23 13:37:00 to 2025-08-25 17:55:00)
+2025-08-25 20:55:48,396 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=2968658, df_new=3138
+2025-08-25 20:55:48,494 [INFO] logger_config: 📊 Final dataset size after merge: 2971796 rows
+2025-08-25 20:55:48,785 [INFO] logger_config: ✅ Feather saved: c:\src\trading\download\data\binance_BTCUSDTUSDT_1m.feather
+2025-08-25 20:55:48,786 [INFO] logger_config: 🚀 Processing SUI/USDT:USDT with timeframe 1m...
+2025-08-25 20:55:48,787 [INFO] logger_config: 📌 Found cached oldest timestamp for SUI/USDT:USDT [1m]: 2023-05-03 16:00:00+00:00
+2025-08-25 20:55:48,788 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_SUIUSDTUSDT_1m.feather
+2025-08-25 20:55:48,849 [INFO] logger_config: 🕒 Existing data range: 2025-01-01 00:00:00+00:00 to 2025-08-23 13:37:00
+2025-08-25 20:55:48,850 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-23 13:37:00, New since: 2025-08-23 13:37:00
+2025-08-25 20:55:48,851 [INFO] logger_config: 🔄 Fetching new data from 2025-08-23 13:37:00 to 2026-02-11 00:11:00
+2025-08-25 20:55:48,851 [INFO] logger_config: 🔍 Fetching data from 2025-08-23 13:37:00 to 2026-02-11 00:11:00 for SUI/USDT:USDT [1m]...
+2025-08-25 20:55:50,423 [INFO] logger_config: ✅ Downloaded 3139 new rows. (From 2025-08-23 13:37:00 to 2025-08-25 17:55:00)
+2025-08-25 20:55:50,441 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=337778, df_new=3138
+2025-08-25 20:55:50,457 [INFO] logger_config: 📊 Final dataset size after merge: 340916 rows
+2025-08-25 20:55:50,496 [INFO] logger_config: ✅ Feather saved: c:\src\trading\download\data\binance_SUIUSDTUSDT_1m.feather
+2025-08-25 20:55:50,497 [INFO] logger_config: 🚀 Processing 1000PEPE/USDT:USDT with timeframe 1m...
+2025-08-25 20:55:50,498 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000PEPE/USDT:USDT [1m]: 2023-05-05 16:30:00+00:00
+2025-08-25 20:55:50,499 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.feather
+2025-08-25 20:55:50,756 [INFO] logger_config: 🕒 Existing data range: 2023-05-05 16:30:00+00:00 to 2025-08-23 13:37:00
+2025-08-25 20:55:50,757 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-23 13:37:00, New since: 2025-08-23 13:37:00
+2025-08-25 20:55:50,758 [INFO] logger_config: 🔄 Fetching new data from 2025-08-23 13:37:00 to 2026-02-11 00:11:00
+2025-08-25 20:55:50,759 [INFO] logger_config: 🔍 Fetching data from 2025-08-23 13:37:00 to 2026-02-11 00:11:00 for 1000PEPE/USDT:USDT [1m]...
+2025-08-25 20:55:52,313 [INFO] logger_config: ✅ Downloaded 3139 new rows. (From 2025-08-23 13:37:00 to 2025-08-25 17:55:00)
+2025-08-25 20:55:52,370 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=1210868, df_new=3138
+2025-08-25 20:55:52,407 [INFO] logger_config: 📊 Final dataset size after merge: 1214006 rows
+2025-08-25 20:55:52,512 [INFO] logger_config: ✅ Feather saved: c:\src\trading\download\data\binance_1000PEPEUSDTUSDT_1m.feather
+2025-08-25 20:55:52,513 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-08-25 20:55:52,514 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-08-25 20:55:52,515 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.feather
+2025-08-25 20:55:53,120 [INFO] logger_config: 🕒 Existing data range: 2020-07-10 09:00:00+00:00 to 2025-08-23 13:39:00
+2025-08-25 20:55:53,121 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-23 13:39:00, New since: 2025-08-23 13:39:00
+2025-08-25 20:55:53,121 [INFO] logger_config: 🔄 Fetching new data from 2025-08-23 13:39:00 to 2026-02-11 00:11:00
+2025-08-25 20:55:53,122 [INFO] logger_config: 🔍 Fetching data from 2025-08-23 13:39:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-08-25 20:55:54,669 [INFO] logger_config: ✅ Downloaded 3137 new rows. (From 2025-08-23 13:39:00 to 2025-08-25 17:55:00)
+2025-08-25 20:55:54,805 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=2693080, df_new=3136
+2025-08-25 20:55:54,899 [INFO] logger_config: 📊 Final dataset size after merge: 2696216 rows
+2025-08-25 20:55:55,145 [INFO] logger_config: ✅ Feather saved: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.feather
+2025-08-25 20:55:55,146 [INFO] logger_config: 🚀 Processing XRP/USDT:USDT with timeframe 1m...
+2025-08-25 20:55:55,147 [INFO] logger_config: 📌 Found cached oldest timestamp for XRP/USDT:USDT [1m]: 2020-01-06 08:21:00+00:00
+2025-08-25 20:55:55,148 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_XRPUSDTUSDT_1m.feather
+2025-08-25 20:55:55,569 [INFO] logger_config: 🕒 Existing data range: 2020-01-06 08:21:00+00:00 to 2025-08-23 13:37:00
+2025-08-25 20:55:55,571 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-23 13:37:00, New since: 2025-08-23 13:37:00
+2025-08-25 20:55:55,572 [INFO] logger_config: 🔄 Fetching new data from 2025-08-23 13:37:00 to 2026-02-11 00:11:00
+2025-08-25 20:55:55,572 [INFO] logger_config: 🔍 Fetching data from 2025-08-23 13:37:00 to 2026-02-11 00:11:00 for XRP/USDT:USDT [1m]...
+2025-08-25 20:55:57,106 [INFO] logger_config: ✅ Downloaded 3139 new rows. (From 2025-08-23 13:37:00 to 2025-08-25 17:55:00)
+2025-08-25 20:55:57,251 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=2960957, df_new=3138
+2025-08-25 20:55:57,345 [INFO] logger_config: 📊 Final dataset size after merge: 2964095 rows
+2025-08-25 20:55:57,565 [INFO] logger_config: ✅ Feather saved: c:\src\trading\download\data\binance_XRPUSDTUSDT_1m.feather
+2025-08-25 20:55:57,566 [INFO] logger_config: 🚀 Processing 1000SHIB/USDT:USDT with timeframe 1m...
+2025-08-25 20:55:57,567 [INFO] logger_config: 📌 Found cached oldest timestamp for 1000SHIB/USDT:USDT [1m]: 2021-05-10 17:37:00+00:00
+2025-08-25 20:55:57,585 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_1000SHIBUSDTUSDT_1m.feather
+2025-08-25 20:55:58,073 [INFO] logger_config: 🕒 Existing data range: 2021-05-10 17:37:00+00:00 to 2025-08-23 13:37:00
+2025-08-25 20:55:58,075 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-23 13:37:00, New since: 2025-08-23 13:37:00
+2025-08-25 20:55:58,075 [INFO] logger_config: 🔄 Fetching new data from 2025-08-23 13:37:00 to 2026-02-11 00:11:00
+2025-08-25 20:55:58,076 [INFO] logger_config: 🔍 Fetching data from 2025-08-23 13:37:00 to 2026-02-11 00:11:00 for 1000SHIB/USDT:USDT [1m]...
+2025-08-25 20:55:59,613 [INFO] logger_config: ✅ Downloaded 3139 new rows. (From 2025-08-23 13:37:00 to 2025-08-25 17:55:00)
+2025-08-25 20:55:59,691 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=2254801, df_new=3138
+2025-08-25 20:55:59,755 [INFO] logger_config: 📊 Final dataset size after merge: 2257939 rows
+2025-08-25 20:55:59,921 [INFO] logger_config: ✅ Feather saved: c:\src\trading\download\data\binance_1000SHIBUSDTUSDT_1m.feather
+2025-08-25 20:55:59,922 [INFO] logger_config: 🚀 Processing BNB/USDT:USDT with timeframe 1m...
+2025-08-25 20:55:59,922 [INFO] logger_config: 📌 Found cached oldest timestamp for BNB/USDT:USDT [1m]: 2020-02-10 08:01:00+00:00
+2025-08-25 20:55:59,923 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_BNBUSDTUSDT_1m.feather
+2025-08-25 20:55:59,998 [INFO] logger_config: 🕒 Existing data range: 2025-01-01 00:00:00+00:00 to 2025-08-23 13:38:00
+2025-08-25 20:55:59,999 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-23 13:38:00, New since: 2025-08-23 13:38:00
+2025-08-25 20:55:59,999 [INFO] logger_config: 🔄 Fetching new data from 2025-08-23 13:38:00 to 2026-02-11 00:11:00
+2025-08-25 20:56:00,000 [INFO] logger_config: 🔍 Fetching data from 2025-08-23 13:38:00 to 2026-02-11 00:11:00 for BNB/USDT:USDT [1m]...
+2025-08-25 20:56:01,510 [INFO] logger_config: ✅ Downloaded 3138 new rows. (From 2025-08-23 13:38:00 to 2025-08-25 17:55:00)
+2025-08-25 20:56:01,525 [INFO] logger_config: 🔄 Merging data: df_old=0, df_existing=337779, df_new=3137
+2025-08-25 20:56:01,539 [INFO] logger_config: 📊 Final dataset size after merge: 340916 rows
+2025-08-25 20:56:01,569 [INFO] logger_config: ✅ Feather saved: c:\src\trading\download\data\binance_BNBUSDTUSDT_1m.feather
+2025-08-25 20:56:01,570 [INFO] logger_config: 🚀 Processing DOGE/USDT:USDT with timeframe 1m...
+2025-08-25 20:56:01,571 [INFO] logger_config: 📌 Found cached oldest timestamp for DOGE/USDT:USDT [1m]: 2020-07-10 09:00:00+00:00
+2025-08-25 20:56:01,571 [INFO] logger_config: 📂 Found existing dataset: c:\src\trading\download\data\binance_DOGEUSDTUSDT_1m.feather
+2025-08-25 20:56:01,677 [INFO] logger_config: 🕒 Existing data range: 2020-07-10 09:00:00+00:00 to 2025-08-25 17:55:00
+2025-08-25 20:56:01,679 [INFO] logger_config: 🔄 Latest existing timestamp: 2025-08-25 17:55:00, New since: 2025-08-25 17:55:00
+2025-08-25 20:56:01,679 [INFO] logger_config: 🔄 Fetching new data from 2025-08-25 17:55:00 to 2026-02-11 00:11:00
+2025-08-25 20:56:01,680 [INFO] logger_config: 🔍 Fetching data from 2025-08-25 17:55:00 to 2026-02-11 00:11:00 for DOGE/USDT:USDT [1m]...
+2025-08-25 20:56:02,235 [INFO] logger_config: ✅ Downloaded 1 new rows. (From 2025-08-25 17:55:00 to 2025-08-25 17:55:00)
+2025-08-25 20:56:02,366 [INFO] logger_config: ✅ Dataset is up-to-date. No changes made.
+2025-08-25 20:56:02,366 [INFO] logger_config: ✨ All data download tasks completed.

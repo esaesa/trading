@@ -15,13 +15,14 @@ class StrategyLogger:
         """Log trade information"""
         log_trade_info(self.strategy, action, order, price, quantity)
 
-    def log_loop_info(self, price: float, rsi_val: float, current_time: datetime) -> None:
-        """Log loop information for debugging"""
+    def log_loop_info(self, ctx) -> None:
+        """Log loop information for debugging using context object"""
         if self.strategy.config.debug_loop:
             level = self.strategy.dca_level + 1
+            rsi_val = self.strategy.indicator_service.get_indicator_value("rsi", ctx.now, float('nan'))
             logger.debug(
-                f"Loop: time={current_time}, "
-                f"price={price:.10f}, "
+                f"Loop: time={ctx.now}, "
+                f"price={ctx.price:.10f}, "
                 f"rsi={rsi_val:.2f}, "
                 f"level={level}"
             )
