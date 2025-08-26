@@ -144,7 +144,7 @@ def visualize_results(stats, bt, optimize_result=None, param_names=None, show_op
     # Determine whether to resample based on the count of samples
     equity_curve = stats['_equity_curve']
     sample_count = len(equity_curve)
-    should_resample = sample_count > 100000  # Resample if more than 100,000 samples
+    should_resample = sample_count > 800000
 
     bt.plot(
         filename=plot_file_name,

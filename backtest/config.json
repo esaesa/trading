@@ -1,7 +1,7 @@
 {
     "backtest_params": {
         "symbols": [
-            "1000PEPEUSDTUSDT"
+            "DOGEUSDTUSDT"
         ],
         "timeframes": [
             "1m"
@@ -10,8 +10,8 @@
         "enable_optimization": false,
         "debug": true,
         "debug_loop": false,
-        "start_date": "2025-03-20 19:47",
-        "end_date":   "2026-04-24 11:40:00",
+        "start_date": "2025-01-01 19:47",
+        "end_date":   "2025-05-14 11:40:00",
     
         "cash": 1000,
         "commission": 0.0005,
@@ -23,11 +23,11 @@
         "entry_conditions": {"all":["EntryFundsAndNotional"]},
         "safety_conditions": {
             "all": [
-                "MaxLevelsNotReached","SufficientFundsAndNotional","RSIReversalStaticThreshold"
+                "MaxLevelsNotReached","SufficientFundsAndNotional","RSIReversalDynamicThreshold"
             ]
         },
-        "exit_conditions": ["TakeProfitReached"],
-        "safety_conditions_all": ["RSIUnderStaticThreshold","RSIUnderDynamicThreshold","RSIReversalStaticThreshold"],
+        "exit_conditions": ["ATRTakeProfitReached"],
+        "safety_conditions_all": ["RSIUnderStaticThreshold","RSIUnderDynamicThreshold","RSIReversalStaticThreshold","RSIReversalDynamicThreshold"],
         "entry_conditions_all": {"all":["MaxLevelsNotReached","SufficientFundsAndNotional","EntryFundsAndNotional", "RSIOverbought"]},
         "exit_conditions_all" : ["TPDecayReached","StopLossReached", "TakeProfitReached","ATRTakeProfitReached"],
         "so_cooldown_minutes": 0,
@@ -37,7 +37,7 @@
         "entry_fraction": 0.05,
         "so_size_multiplier": 1.9,
         "first_safety_order_multiplier": 1.8,
-        "initial_deviation_percent": 4.5,
+        "initial_deviation_percent": 1.0,
         "price_multiplier": 1,
         "safety_order_price_mode": "dynamic",
         "safety_order_mode": "volume",
@@ -68,7 +68,10 @@
                 "deviation_reduction_factor": 0.25
             },
             "RSIReversalStaticThreshold": {
-                "threshold": 25,
+                "threshold": 20,
+                "bounce_threshold": 5
+            },
+            "RSIReversalDynamicThreshold": {
                 "bounce_threshold": 5
             }
         },
@@ -116,7 +119,7 @@
                 "take_profit_levels": true
             }
         },
-        "start_trading_time" : "2023-07-21 19:31:00",
+        "start_trading_time" : "2022-07-21 19:31:00",
         "show_rsi": false,
         "rsi_percentile": 0.05,
         "debug": {
@@ -127,11 +130,11 @@
         "show_indicators": {
         "dynamic_rsi": true,
         "rsi": true,
-        "bbw": true,
+        "bbw": false,
         "atr": true,
-        "ema": true,
-        "laguerre": true,
-        "cv": true,
+        "ema": false,
+        "laguerre": false,
+        "cv": false,
         "average_entry_price"  : true,
         "take_profit": true
     }
