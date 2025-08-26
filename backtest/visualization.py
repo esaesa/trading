@@ -141,10 +141,10 @@ def visualize_results(stats, bt, optimize_result=None, param_names=None, show_op
     # Plot the standard backtest results (generates an HTML file).
     plot_file_name = os.path.join(os.path.dirname(__file__), "backtest_results/"+"backtest_results.html")
     
-    # Determine whether to resample based on the backtest duration
+    # Determine whether to resample based on the count of samples
     equity_curve = stats['_equity_curve']
-    duration_days = (equity_curve.index[-1] - equity_curve.index[0]).days
-    should_resample = duration_days > 180  # Resample if duration is more than 2 months
+    sample_count = len(equity_curve)
+    should_resample = sample_count > 100000  # Resample if more than 100,000 samples
 
     bt.plot(
         filename=plot_file_name,

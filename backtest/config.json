@@ -10,8 +10,8 @@
         "enable_optimization": false,
         "debug": true,
         "debug_loop": false,
-        "start_date": "2024-03-20 19:47",
-        "end_date":   "2024-04-24 11:40:00",
+        "start_date": "2025-03-20 19:47",
+        "end_date":   "2026-04-24 11:40:00",
     
         "cash": 1000,
         "commission": 0.0005,
@@ -23,11 +23,11 @@
         "entry_conditions": {"all":["EntryFundsAndNotional"]},
         "safety_conditions": {
             "all": [
-                "MaxLevelsNotReached","SufficientFundsAndNotional","RSIUnderStaticThreshold"
+                "MaxLevelsNotReached","SufficientFundsAndNotional","RSIReversalStaticThreshold"
             ]
         },
         "exit_conditions": ["TakeProfitReached"],
-        "safety_conditions_all": ["RSIUnderStaticThreshold","RSIUnderDynamicThreshold"],
+        "safety_conditions_all": ["RSIUnderStaticThreshold","RSIUnderDynamicThreshold","RSIReversalStaticThreshold"],
         "entry_conditions_all": {"all":["MaxLevelsNotReached","SufficientFundsAndNotional","EntryFundsAndNotional", "RSIOverbought"]},
         "exit_conditions_all" : ["TPDecayReached","StopLossReached", "TakeProfitReached","ATRTakeProfitReached"],
         "so_cooldown_minutes": 0,
@@ -66,6 +66,10 @@
             "ATRTakeProfitReached": {
                 "deviation_threshold": 5.0,
                 "deviation_reduction_factor": 0.25
+            },
+            "RSIReversalStaticThreshold": {
+                "threshold": 25,
+                "bounce_threshold": 5
             }
         },
         "indicators": {

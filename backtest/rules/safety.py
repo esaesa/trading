@@ -80,6 +80,7 @@ def rsi_under_dynamic_threshold(self, ctx: Ctx) -> Tuple[bool, str]:
 
 # Indicator requirements for each rule function
 RSI_UNDER_STATIC_THRESHOLD_INDICATORS = {Indicators.RSI.value}
+RSI_REVERSAL_STATIC_THRESHOLD_INDICATORS = {Indicators.RSI.value}
 
 def rsi_under_static_threshold(self, ctx: Ctx) -> Tuple[bool, str]:
     rsi_val = self.indicator_service.get_indicator_value("rsi", ctx.now, np.nan)
@@ -130,6 +131,64 @@ def rsi_under_static_threshold(self, ctx: Ctx) -> Tuple[bool, str]:
         logger.debug(f"RSI={rsi_val:.2f} not below threshold={threshold:.2f}, skipping DCA-{level}")
 
     return ok, f"RSI {rsi_val:.2f} < thr {threshold:.2f}" if ok else f"RSI {rsi_val:.2f} ≥ thr {threshold:.2f}"
+
+# Indicator requirements for each rule function
+RSI_REVERSAL_STATIC_THRESHOLD_INDICATORS = {Indicators.RSI.value}
+
+def rsi_reversal_static_threshold(self, ctx: Ctx) -> Tuple[bool, str]:
+    """
+    Track RSI reversal from a static threshold.
+    Becomes active when RSI drops below threshold, tracks lowest RSI,
+    and returns true when RSI bounces by bounce_threshold from that lowest point.
+    Like a trailing stop but for RSI reversal.
+    """
+    rsi_val = self.indicator_service.get_indicator_value("rsi", ctx.now, np.nan)
+
+    # Get rule-specific parameters from config
+    threshold = self.config.get_rule_param(
+        'RSIReversalStaticThreshold', 'threshold', 20
+    )
+    bounce_threshold = self.config.get_rule_param(
+        'RSIReversalStaticThreshold', 'bounce_threshold', 5
+    )
+
+    if np.isnan(rsi_val):
+        return False, "RSI NaN → deny"
+
+    # Initialize tracking state if not exists
+    if not hasattr(self, 'rsi_reversal_lowest'):
+        self.rsi_reversal_lowest = None
+        self.rsi_reversal_active = False
+
+    # If RSI is above threshold, reset tracking and return false
+    if rsi_val >= threshold:
+        self.rsi_reversal_lowest = None
+        self.rsi_reversal_active = False
+        return False, f"RSI {rsi_val:.2f} ≥ threshold {threshold:.2f} → reset tracking"
+
+    # RSI is below threshold - start/restart tracking
+    if not self.rsi_reversal_active:
+        # Start tracking from current RSI value
+        self.rsi_reversal_lowest = rsi_val
+        self.rsi_reversal_active = True
+        return False, f"RSI {rsi_val:.2f} < threshold {threshold:.2f} → start tracking"
+    else:
+        # Update lowest RSI if current is lower
+        if rsi_val < self.rsi_reversal_lowest:
+            self.rsi_reversal_lowest = rsi_val
+            return False, f"RSI {rsi_val:.2f} < lowest {self.rsi_reversal_lowest:.2f} → update lowest"
+
+        # Check if RSI has bounced enough from lowest
+        bounce_target = self.rsi_reversal_lowest + bounce_threshold
+        if rsi_val >= bounce_target:
+            # Store values before resetting for the message
+            lowest_val = self.rsi_reversal_lowest
+            # Reset for next potential reversal
+            self.rsi_reversal_lowest = None
+            self.rsi_reversal_active = False
+            return True, f"RSI {rsi_val:.2f} ≥ lowest {lowest_val:.2f} + {bounce_threshold:.2f} → bounce detected"
+
+        return False, f"RSI {rsi_val:.2f} < lowest {self.rsi_reversal_lowest:.2f} + {bounce_threshold:.2f} → waiting for bounce"
 
 # Indicator requirements for each rule function
 COOLDOWN_BETWEEN_SOS_INDICATORS = set()  # No indicators needed
@@ -206,6 +265,7 @@ def sufficient_funds_and_notional(self, ctx: Ctx):
 
 SAFETY_RULES = {
     "RSIUnderDynamicThreshold": rsi_under_dynamic_threshold,
+    "RSIReversalStaticThreshold": rsi_reversal_static_threshold,
     "CooldownBetweenSOs": cooldown_between_sos,
     "MaxLevelsNotReached": max_levels_not_reached,
     "SufficientFundsAndNotional": sufficient_funds_and_notional,
@@ -256,6 +316,8 @@ class SafetyRuleDecider(SafetyDecider):
                 # Only require dynamic threshold if actually used
                 if self._get_rule_param(rule_name, 'dynamic_threshold', False):
                     required.add(Indicators.DYNAMIC_RSI_THRESHOLD.value)
+            elif rule_name == "RSIReversalStaticThreshold":
+                required.update(RSI_REVERSAL_STATIC_THRESHOLD_INDICATORS)
             elif rule_name == "RSIUnderStaticThreshold":
                 required.update(RSI_UNDER_STATIC_THRESHOLD_INDICATORS)
             elif rule_name == "CooldownBetweenSOs":
