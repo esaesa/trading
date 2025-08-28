@@ -125,7 +125,7 @@ class RSIReversalStaticThreshold(Rule):
         # Initialize tracking state if not exists
         if not hasattr(self.strategy, 'rsi_reversal_lowest'):
             self.strategy.rsi_reversal_lowest = None
-            self.strategy.rsi_reversal_active = False
+            self.strategy.rsi_reversal_active = True
 
         # If RSI is above threshold, reset tracking and return false
         if rsi_val >= self.threshold:
@@ -211,7 +211,9 @@ class RSIUnderStaticThreshold(Rule):
 
             # If RSI is below trading threshold and wave is available, allow trade
             if rsi_val < self.threshold and self.strategy.rsi_wave_available_static:
-                self.strategy.rsi_wave_available_static = False  # Mark wave as used
+                def consume_wave():
+                    self.strategy.rsi_wave_available_static = False
+                self.strategy.add_on_trade_success_callback(consume_wave)
                 return True, f"RSI {rsi_val:.2f} < trading threshold {self.threshold:.2f} → wave used"
 
             # Otherwise, don't allow trade

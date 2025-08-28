@@ -66,14 +66,8 @@ class ValueModeSizeRule(BaseSizeRule, SizeEngine):
     def __init__(self, strategy, rule_name='value_mode'):
         BaseSizeRule.__init__(self, strategy, rule_name)
         SizeEngine.__init__(self)
-        self.first_mult = self.config.get_rule_param(
-            rule_name, 'first_safety_order_multiplier',
-            getattr(self.strategy, 'first_safety_order_multiplier', 1.0)
-        )
-        self.so_mult = self.config.get_rule_param(
-            rule_name, 'so_size_multiplier',
-            getattr(self.strategy, 'so_size_multiplier', 1.0)
-        )
+        self.first_mult = self.config.first_safety_order_multiplier
+        self.so_mult = self.config.so_size_multiplier
 
     def calculate_size(self, ctx: Ctx, price: float, level: int) -> float:
         """Calculate size using the value-based sizing formula."""
@@ -89,8 +83,8 @@ class ValueModeSizeRule(BaseSizeRule, SizeEngine):
     @classmethod
     def validate_config(cls, config, rule_name: str) -> bool:
         """Validate ValueModeSizeRule configuration."""
-        first_mult = config.get_rule_param(rule_name, 'first_safety_order_multiplier', 1.0)
-        so_mult = config.get_rule_param(rule_name, 'so_size_multiplier', 1.0)
+        first_mult = config.first_safety_order_multiplier
+        so_mult = config.so_size_multiplier
 
         if first_mult <= 0:
             raise ValueError(f"Invalid {rule_name} configuration: first_safety_order_multiplier ({first_mult}) must be positive")
@@ -109,14 +103,8 @@ class VolumeModeSizeRule(BaseSizeRule, SizeEngine):
     def __init__(self, strategy, rule_name='volume_mode'):
         BaseSizeRule.__init__(self, strategy, rule_name)
         SizeEngine.__init__(self)
-        self.first_mult = self.config.get_rule_param(
-            rule_name, 'first_safety_order_multiplier',
-            getattr(self.strategy, 'first_safety_order_multiplier', 1.0)
-        )
-        self.so_mult = self.config.get_rule_param(
-            rule_name, 'so_size_multiplier',
-            getattr(self.strategy, 'so_size_multiplier', 1.0)
-        )
+        self.first_mult = self.config.first_safety_order_multiplier
+        self.so_mult = self.config.so_size_multiplier
 
     def calculate_size(self, ctx: Ctx, price: float, level: int) -> float:
         """Calculate size using the volume-based sizing formula."""
@@ -132,8 +120,8 @@ class VolumeModeSizeRule(BaseSizeRule, SizeEngine):
     @classmethod
     def validate_config(cls, config, rule_name: str) -> bool:
         """Validate VolumeModeSizeRule configuration."""
-        first_mult = config.get_rule_param(rule_name, 'first_safety_order_multiplier', 1.0)
-        so_mult = config.get_rule_param(rule_name, 'so_size_multiplier', 1.0)
+        first_mult = config.first_safety_order_multiplier
+        so_mult = config.so_size_multiplier
 
         if first_mult <= 0:
             raise ValueError(f"Invalid {rule_name} configuration: first_safety_order_multiplier ({first_mult}) must be positive")

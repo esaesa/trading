@@ -54,6 +54,8 @@ class TradeProcessor:
         """Handle DCA logic"""
         safety_ok, safety_reason = self.strategy.safety_decider.ok(ctx)
         if not safety_ok:
+            if self.strategy.config.debug_dca_skips:
+                logger.debug(f"SO skipped due to {safety_reason}. @ {current_time}.")
             return
         level = self.strategy.dca_level + 1
         so_price = self.strategy.price_engine.so_price(ctx, level)
@@ -84,6 +86,7 @@ class TradeProcessor:
         order = None
         if size_to_buy > 0:
             order = self.strategy.buy(size=size_to_buy, tag=f"S{level}")
+            self.strategy.commit_trade_state()
             delta = size_to_buy * price * (1.0 + self.strategy.commission_rate)
             self.strategy._cycle_invested += delta
             self.strategy._cycle_peak_invested = max(self.strategy._cycle_peak_invested, self.strategy._cycle_invested)

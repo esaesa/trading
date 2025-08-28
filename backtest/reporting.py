@@ -2,6 +2,7 @@
 from __future__ import annotations
 from typing import Any, Dict, List, Optional
 from rich.table import Table
+from rich.text import Text
 from datetime import datetime
 from logger_config import logger
 import statistics
@@ -23,16 +24,35 @@ def render_cycle_plan_table(strategy: Any, base_order_quantity: float) -> Table:
     cumulative_value = 0.0
     cumulative_size = 0.0
 
+    # Get the available cash value used in BO calculation
+    available_cash = getattr(strategy, '_cycle_cash_entry', 0.0)
+
+    # Track previous values for percentage calculations
+    prev_value = 0.0
+
     # BO row
     bo_value = price * base_order_quantity
     cumulative_value += bo_value
     cumulative_size += base_order_quantity
+    percentage = (cumulative_value / available_cash * 100.0) if available_cash > 0 else 0.0
+
+    # Warning if percentage exceeds 100%
+    if percentage > 100.0:
+        logger.warning(f"BO allocation exceeds available cash: {percentage:.2f}% (>100%) - Available: {available_cash:.2f}, Required: {cumulative_value:.2f}")
+
+    # Style the cumulative value cell in red if over 100%
+    cumulative_value_text = f"{cumulative_value:.2f} ({percentage:.2f}%)"
+    cumulative_value_cell = Text(cumulative_value_text, style="bold red") if percentage > 100.0 else cumulative_value_text
+
+    # Initialize prev_value for DCA calculations
+    prev_value = bo_value
+
     table.add_row(
         "BO",
         f"{price:.10f} (0.00% - 0.00%)",
         f"{base_order_quantity:.2f}",
-        f"{bo_value:.2f}",
-        f"{cumulative_value:.2f}",
+        f"{bo_value:.2f} (0.00% - 0.00%)",
+        cumulative_value_cell,
         f"{cumulative_size:.2f}",
     )
 
@@ -55,16 +75,31 @@ def render_cycle_plan_table(strategy: Any, base_order_quantity: float) -> Table:
             else:
                 prev_change = ((so_price - prev_so_price) / prev_so_price) * 100.0
 
+            # Calculate value percentage changes
+            value_bo_change = ((so_value - bo_value) / bo_value) * 100.0
+            value_prev_change = ((so_value - prev_value) / prev_value) * 100.0 if prev_value > 0 else value_bo_change
+
             cumulative_value += so_value
             cumulative_size  += so_size
             prev_so_price     = so_price
+            prev_value        = so_value
+
+            percentage = (cumulative_value / available_cash * 100.0) if available_cash > 0 else 0.0
+
+            # Warning if percentage exceeds 100%
+            if percentage > 100.0:
+                logger.warning(f"DCA-{i} allocation exceeds available cash: {percentage:.2f}% (>100%) - Available: {available_cash:.2f}, Required: {cumulative_value:.2f}")
+
+            # Style the cumulative value cell in red if over 100%
+            cumulative_value_text = f"{cumulative_value:.2f} ({percentage:.2f}%)"
+            cumulative_value_cell = Text(cumulative_value_text, style="bold red") if percentage > 100.0 else cumulative_value_text
 
             table.add_row(
                 f"DCA-{i}",
                 f"{so_price:.10f} ({bo_change:.2f}% - {prev_change:.2f}%)",
                 f"{so_size:.2f}",
-                f"{so_value:.2f}",
-                f"{cumulative_value:.2f}",
+                f"{so_value:.2f} ({value_bo_change:.2f}% - {value_prev_change:.2f}%)",
+                cumulative_value_cell,
                 f"{cumulative_size:.2f}",
             )
 

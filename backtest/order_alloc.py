@@ -71,7 +71,7 @@ class AffordabilityGuard(Protocol):
                 min_notional: float) -> int: ...
 
 
-class DefaultAffordabilityGuard:
+class DefaultAffordabilityGuard(AffordabilityGuard):
     """
     Clamp to available cash (after commission), ensure >=1, and respect minimum notional.
     """
