@@ -1,4 +1,4 @@
-# rule_chain.py - Simplified for class-based rules
+# rule_chain.py - Consolidate interface: remove ok, rename ok_reason to ok
 from typing import List, Literal, Tuple, Union
 from contracts import Ctx
 from rules.base_rule import Rule
@@ -6,7 +6,7 @@ from rules.base_rule import Rule
 EvaluationMode = Literal["any", "all"]  # ok if ANY passes, or ALL pass
 
 class RuleChain:
-    """Simplified RuleChain that works directly with Rule objects."""
+    """RuleChain that returns (result, reason) tuple for proper debugging."""
 
     def __init__(self, rules: List[Rule], mode: EvaluationMode = "any"):
         """
@@ -16,24 +16,7 @@ class RuleChain:
         self.rules = rules
         self.mode = mode
 
-    def ok(self, ctx: Ctx) -> bool:
-        """Evaluate rules and return True if condition is met."""
-        if self.mode == "any":
-            for rule in self.rules:
-                ok, _ = rule.evaluate(ctx)
-                if ok:
-                    return True
-            return False
-        elif self.mode == "all":
-            for rule in self.rules:
-                ok, _ = rule.evaluate(ctx)
-                if not ok:
-                    return False
-            return True
-        else:
-            raise ValueError(f"Invalid mode: {self.mode}")
-
-    def ok_reason(self, ctx: Ctx) -> Tuple[bool, str]:
+    def ok(self, ctx: Ctx) -> Tuple[bool, str]:
         """Evaluate rules and return (result, reason)."""
         reasons = []
         if self.mode == "any":

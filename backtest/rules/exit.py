@@ -335,9 +335,7 @@ class ExitRuleDecider(ExitDecider):
 
         return required
 
-    # NEW: used to capture which rule actually triggered
-    def ok_with_reason(self, ctx):
-        return self._chain.ok_reason(ctx)
+    # ok() now returns (bool, str) tuple directly
 
 # Register class-based rules with factory
 RuleFactory.register_rule("ATRTakeProfitReached", ATRTakeProfitReached)

@@ -229,7 +229,8 @@ class DCAStrategy(Strategy):
                 return
             self.trade_processor.process_dca(ctx, low, current_time)
         else:
-            if not self.entry_decider.ok(ctx):
+            entry_ok, entry_reason = self.entry_decider.ok(ctx)
+            if not entry_ok:
                 return
             self.trade_processor.process_entry(ctx, price, current_time)
             return True

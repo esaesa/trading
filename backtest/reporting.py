@@ -74,7 +74,7 @@ def render_cycle_plan_table(strategy: Any, base_order_quantity: float) -> Table:
         # - Value sizing: final sizes depend on fill prices → show N/A
         if so_mode == "volume":
             for i in range(1, strategy.max_dca_levels + 1):
-                # price argument is ignored by VolumeModeSizeEngine
+                # price argument is ignored by VolumeModeSizeRule
                 so_size = strategy.size_engine.so_size(ctx, float("nan"), i)
                 cumulative_size += so_size
                 table.add_row(

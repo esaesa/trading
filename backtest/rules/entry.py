@@ -170,7 +170,7 @@ class EntryRuleDecider(EntryDecider):
                     names.update(self._extract_rule_names(value))
         return names
 
-    def ok(self, ctx: Ctx) -> bool:
+    def ok(self, ctx: Ctx) -> Tuple[bool, str]:
         return self._chain.ok(ctx)
 
     def get_required_indicators(self) -> set[str]:

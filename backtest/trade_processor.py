@@ -19,7 +19,8 @@ class TradeProcessor:
 
     def process_entry(self, ctx: Ctx, price: float, current_time: datetime) -> bool:
         """Handle entry logic"""
-        if not self.strategy.position and self.strategy.entry_decider.ok(ctx):
+        entry_ok, entry_reason = self.strategy.entry_decider.ok(ctx)
+        if not self.strategy.position and entry_ok:
             rsi_now = self.strategy.indicator_service.get_indicator_value("rsi", current_time, np.nan)
             qty, investment = self.strategy.entry_sizer.qty_and_investment(ctx, price, self.strategy.commission_calc)
             if qty < 1:
@@ -51,7 +52,8 @@ class TradeProcessor:
 
     def process_dca(self, ctx: Ctx, price: float, current_time: datetime) -> None:
         """Handle DCA logic"""
-        if not self.strategy.safety_decider.ok(ctx):
+        safety_ok, safety_reason = self.strategy.safety_decider.ok(ctx)
+        if not safety_ok:
             return
         level = self.strategy.dca_level + 1
         so_price = self.strategy.price_engine.so_price(ctx, level)
@@ -99,11 +101,12 @@ class TradeProcessor:
         if not self.strategy.position:
             return False
 
-        ok, exit_reason = self.strategy.exit_decider.ok_with_reason(ctx)
+        ok, exit_reason = self.strategy.exit_decider.ok(ctx)
         if not ok:
             return False
 
         # Capture ROI before closing
+        ok, exit_reason = self.strategy.exit_decider.ok(ctx)
         roi_pct = float(self.strategy.position.pl_pct)
         if self.strategy.config.debug_process:
             table = render_exit_summary_table(self.strategy, price, current_time)

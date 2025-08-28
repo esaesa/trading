@@ -134,7 +134,8 @@ class RuleChainDecider:
         intents: List[OrderIntent] = []
 
         # 1) EXIT has highest priority
-        if self._exit_chain.ok(ctx):
+        ok, exit_reason = self._exit_chain.ok(ctx)
+        if ok:
             if ctx.position_size > 0:
                 qty = abs(ctx.position_size)
                 intents.append(OrderIntent(
@@ -149,7 +150,8 @@ class RuleChainDecider:
 
         # 2) ENTRY when flat (no position and no base order committed)
         flat_like = (ctx.position_size == 0) and (ctx.dca_level == 0) and (ctx.base_order_price is None)
-        if flat_like and self._entry_chain.ok(ctx):
+        entry_ok, entry_reason = self._entry_chain.ok(ctx)
+        if flat_like and entry_ok:
             p0 = ctx.price
             q0_raw = _base_qty(ctx.equity_per_cycle, self.entry_fraction, p0)
             q0 = prec.amount(symbol, prec.clip_to_min_qty(symbol, q0_raw))
@@ -165,7 +167,8 @@ class RuleChainDecider:
                 return intents  # only one intent per bar
 
         # 3) SAFETY order (respect cooldown, max levels, rule-chain)
-        if self._safety_chain.ok(ctx):
+        safety_ok, safety_reason = self._safety_chain.ok(ctx)
+        if safety_ok:
             if ctx.dca_level < self.max_dca_levels and self._cooldown_ok():
                 # size from geometric schedule based on the base-order computed q0
                 p0 = ctx.base_order_price or ctx.entry_price or ctx.price

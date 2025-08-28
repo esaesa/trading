@@ -10,7 +10,7 @@ from order_alloc import (
 from commissions import FixedRateCommission
 from ports import PriceEngine, SizeEngine
 from rules.pricing import StaticPriceEngine, DynamicATRPriceEngine
-from rules.sizing import ValueModeSizeEngine, VolumeModeSizeEngine
+from rules.sizing import ValueModeSizeRule, VolumeModeSizeRule
 from rules.exit import ExitRuleDecider
 from rules.entry import EntryRuleDecider
 from rules.safety import SafetyRuleDecider
@@ -32,8 +32,7 @@ def _apply_default_rules(owner, params: dict) -> dict:
 
     # Safety defaults
     default_safety = ["RSIUnderDynamicThreshold", "MaxLevelsNotReached"]
-    if owner.config.require_rsi_reset and not owner.config.rsi_dynamic_threshold:
-        default_safety.append("StaticRSIReset")
+    # Note: RSIUnderStaticThreshold already handles RSI reset logic internally
 
     # Exit defaults
     default_exit = ["TPDecayReached"]
