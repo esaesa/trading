@@ -47,17 +47,15 @@ def _apply_default_rules(owner, params: dict) -> dict:
 
 
 def _build_price_engine(strategy: Any) -> PriceEngine:
-    mode = (strategy.config.safety_order_price_mode or "dynamic").lower()
-    if mode == "static":
-        return StaticPriceEngine(strategy)
-    return DynamicATRPriceEngine(strategy)
+    """Build price engine with strict validation."""
+    from rules.pricing import create_price_engine
+    return create_price_engine(strategy)
 
 
 def _build_size_engine(strategy: Any) -> SizeEngine:
-    mode = (strategy.config.safety_order_mode or "value").lower()
-    if mode == "volume":
-        return VolumeModeSizeEngine(strategy)
-    return ValueModeSizeEngine(strategy)
+    """Build size engine with strict validation."""
+    from rules.sizing import create_size_engine
+    return create_size_engine(strategy)
 
 
 def wire_strategy(strategy: Any, strategy_params: dict) -> None:

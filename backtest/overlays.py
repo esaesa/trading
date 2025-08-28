@@ -26,13 +26,14 @@ def update_overlays(strategy, current_time) -> None:
             entry_price = strategy.get_entry_price()
             strategy.breakeven_prices[idx] = entry_price
 
-            adjusted_tp_percentage = calculate_decaying_tp(
-                strategy.last_safety_order_time or strategy.base_order_time,
-                current_time,
-                strategy.config.take_profit_percentage,
-                strategy.config.take_profit_decay_grace_period_hours,
-                strategy.config.take_profit_decay_duration_hours
-            )
-            strategy.take_profit_prices[idx] = entry_price * (1 + adjusted_tp_percentage / 100)
+            if strategy.config.show_indicators.get('take_profit', False):
+                adjusted_tp_percentage = calculate_decaying_tp(
+                    strategy.last_safety_order_time or strategy.base_order_time,
+                    current_time,
+                    strategy.config.take_profit_percentage,
+                    strategy.config.take_profit_decay_grace_period_hours,
+                    strategy.config.take_profit_decay_duration_hours
+                )
+                strategy.take_profit_prices[idx] = entry_price * (1 + adjusted_tp_percentage / 100)
         else:
             strategy.breakeven_prices[idx] = None

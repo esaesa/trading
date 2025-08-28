@@ -30,8 +30,6 @@ class StaticPriceEngine(PriceEngine):
         if any(f <= 0 for f in factors):
             return EPS
         return ctx.base_order_price * math.prod(factors)
-
-
 class DynamicATRPriceEngine(PriceEngine):
     def __init__(self, strategy):
         self.s = strategy
@@ -87,3 +85,40 @@ class DynamicATRPriceEngine(PriceEngine):
                 except Exception:
                     return None
         return None
+
+
+# Price engine registry for extensible selection
+_PRICE_ENGINE_REGISTRY = {
+    "static": StaticPriceEngine,
+    "dynamic": DynamicATRPriceEngine,
+}
+
+def get_available_price_modes():
+    """Return list of available price engine modes."""
+    return list(_PRICE_ENGINE_REGISTRY.keys())
+
+def create_price_engine(strategy, mode=None):
+    """Create price engine with strict validation.
+    
+    Args:
+        strategy: The strategy instance
+        mode: Optional mode override, defaults to strategy.config.safety_order_price_mode
+    
+    Returns:
+        PriceEngine instance
+        
+    Raises:
+        ValueError: If an invalid mode is specified
+    """
+    mode = (mode or strategy.config.safety_order_price_mode or "dynamic").lower()
+    
+    if mode not in _PRICE_ENGINE_REGISTRY:
+        available_modes = get_available_price_modes()
+        raise ValueError(
+            f"Invalid price engine mode '{mode}'. "
+            f"Available modes: {', '.join(available_modes)}"
+        )
+    
+    return _PRICE_ENGINE_REGISTRY[mode](strategy)
+
+

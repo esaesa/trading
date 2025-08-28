@@ -56,12 +56,12 @@ class TradeProcessor:
         level = self.strategy.dca_level + 1
         so_price = self.strategy.price_engine.so_price(ctx, level)
         if price > so_price:
-            if self.strategy.config.debug_trade:
+            # Use the new specific flag for skip logging instead of general debug_trade
+            if self.strategy.config.debug_dca_skips:
                 logger.debug(f"Price {price:.10f} > SO-{level} trigger {so_price:.10f}. Skipping DCA. @ {current_time}.")
             return
         
-        if self.strategy.config.debug_trade:
-            logger.debug(f"Price {price:.10f} <= SO-{level} trigger {so_price:.10f}. Proceeding with DCA. @ {current_time}.")
+        # Keep debug_trade for actual DCA executions (useful debugging)
         so_size = self.strategy.size_engine.so_size(ctx, price, level)
         size_to_buy = self.strategy.affordability_guard.clamp_qty(
             desired_qty=so_size,
@@ -70,6 +70,15 @@ class TradeProcessor:
             commission=self.strategy.commission_calc,
             min_notional=self.strategy.config.minimum_notional,
         )
+        
+        if self.strategy.config.debug_trade:
+            # Get current RSI value for additional context
+            rsi_now = self.strategy.indicator_service.get_indicator_value("rsi", current_time, np.nan)
+            rsi_info = f", RSI {rsi_now:.2f}" if not np.isnan(rsi_now) else ""
+            logger.debug(
+                f"Price {price:.10f} <= SO-{level} trigger {so_price:.10f}. "
+                f"Proceeding with DCA: Size {size_to_buy:.8f}{rsi_info}. @ {current_time}."
+            )
         order = None
         if size_to_buy > 0:
             order = self.strategy.buy(size=size_to_buy, tag=f"S{level}")
@@ -90,17 +99,9 @@ class TradeProcessor:
         if not self.strategy.position:
             return False
 
-        # Try to get which exit rule passed
-        exit_reason = ""
-        ok_with_reason = getattr(self.strategy.exit_decider, "ok_with_reason", None)
-        if callable(ok_with_reason):
-            ok, reason = ok_with_reason(ctx)
-            if not ok:
-                return False
-            exit_reason = reason or ""
-        else:
-            if not self.strategy.exit_decider.ok(ctx):
-                return False
+        ok, exit_reason = self.strategy.exit_decider.ok_with_reason(ctx)
+        if not ok:
+            return False
 
         # Capture ROI before closing
         roi_pct = float(self.strategy.position.pl_pct)

@@ -63,6 +63,7 @@ class StrategyConfig:
     debug_loop: bool = False
     debug_trade: bool = False
     debug_process: bool = False
+    debug_dca_skips: bool = False
     slippage_probability: float = 0.0
 
     # Rule-specific configuration storage
@@ -111,6 +112,10 @@ class StrategyConfig:
         self.atr_deviation_reduction_factor = _get_rule_param(
             params, 'ATRTakeProfitReached', 'deviation_reduction_factor', self.atr_deviation_reduction_factor
         )
+
+        # Initialize debug flags from configuration
+        debug_config = params.get('debug', {})
+        self.debug_dca_skips = debug_config.get('dca_skips', False)
 
         return self
 

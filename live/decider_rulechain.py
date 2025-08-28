@@ -3,11 +3,9 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 from datetime import datetime, timedelta
 
-# Reuse your existing parts
-from rule_chain import build_rule_chain
-from rules.entry import ENTRY_RULES
-from rules.safety import SAFETY_RULES
-from rules.exit import EXIT_RULES
+# Use new class-based architecture
+from rule_chain import RuleChain
+from rules.rule_factory import RuleFactory
 try:
     from contracts import Ctx  # your ctx dataclass (preferred)
 except Exception:
@@ -76,10 +74,16 @@ class RuleChainDecider:
         self.sp = cfg["strategy_params"]
         self.owner = _RuleOwner(cfg)
 
-        # Build chains once
-        self._entry_chain = build_rule_chain(self.owner, self.sp.get("entry_rule_names", ENTRY_RULES.keys()), ENTRY_RULES)
-        self._safety_chain = build_rule_chain(self.owner, self.sp.get("safety_rule_names", SAFETY_RULES.keys()), SAFETY_RULES)
-        self._exit_chain = build_rule_chain(self.owner, self.sp.get("exit_rule_names", EXIT_RULES.keys()), EXIT_RULES)
+        # Build chains once using new class-based architecture
+        self._entry_chain = self._build_rule_chain("entry_rule_names", ["RSIOverbought", "EntryFundsAndNotional"])
+        self._safety_chain = self._build_rule_chain("safety_rule_names", [
+            "RSIUnderDynamicThreshold", "RSIReversalStaticThreshold", "RSIReversalDynamicThreshold",
+            "RSIUnderStaticThreshold", "CooldownBetweenSOs", "MaxLevelsNotReached", "SufficientFundsAndNotional"
+        ])
+        self._exit_chain = self._build_rule_chain("exit_rule_names", [
+            "ATRTakeProfitReached", "TakeProfitReached", "TPDecayReached",
+            "StopLossReached", "TrailingStopReached"
+        ])
 
         # cached knobs
         self.order_type = cfg.get("order_type", "market").lower()  # "market" | "limit"
@@ -91,6 +95,23 @@ class RuleChainDecider:
 
         # state reference (LiveState), used only for cooldown and level tracking if needed
         self.state = state  # engine will pass its LiveState; can be None in tests
+
+    def _build_rule_chain(self, config_key: str, default_rules: List[str]) -> RuleChain:
+        """Build a rule chain using the new class-based architecture."""
+        # Get rule names from config or use defaults
+        rule_names = self.sp.get(config_key, default_rules)
+
+        # Create rule instances using RuleFactory
+        rules = []
+        for rule_name in rule_names:
+            try:
+                rule = RuleFactory.create_rule(rule_name, self.owner)
+                rules.append(rule)
+            except ValueError as e:
+                print(f"Warning: Failed to create rule '{rule_name}': {e}")
+                continue
+
+        return RuleChain(rules, mode="any")
 
     # ---- internal helpers ----
     def _cooldown_ok(self) -> bool:
