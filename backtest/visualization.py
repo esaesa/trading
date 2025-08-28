@@ -132,9 +132,12 @@ def visualize_results(stats, bt, optimize_result=None, param_names=None, show_op
         # pd.set_option('display.expand_frame_repr', False)  # Prevent wrapping
 
         print(trades_table)
+    # Add comprehensive indicator statistics report
+    from indicator_statistics_visualization import create_comprehensive_indicator_report
+    create_comprehensive_indicator_report(stats._strategy, "indicator_analysis_report.html")
     
-        if heatmap is not None:
-            plot_heatmaps(heatmap, agg='mean')
+    if heatmap is not None:
+        plot_heatmaps(heatmap, agg='mean')
     # Run QuantStats analysis
     analyze_with_quantstats(stats)
 

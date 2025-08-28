@@ -10,7 +10,7 @@
         "enable_optimization": false,
         "debug": true,
         "debug_loop": false,
-        "start_date": "2024-01-16 19:47",
+        "start_date": "2024-06-16 19:47",
         "end_date":   "2025-09-19 12:40:00",
     
         "cash": 1000,
@@ -45,9 +45,9 @@
 
         "rules": {
             "RSIUnderStaticThreshold": {
-                "static_threshold_under": 18,
+                "static_threshold_under": 27,
                 "need_rsi_reset": true,
-                "reset_threshold": 19
+                "reset_threshold": 28
             },
             "RSIUnderDynamicThreshold": {
                 "threshold": 35,

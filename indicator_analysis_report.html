@@ -1,0 +1,502 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Indicator Analysis Report</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 20px;
+                    background-color: #f5f5f5;
+                }
+                .header {
+                    text-align: center;
+                    color: #2c3e50;
+                    margin-bottom: 30px;
+                }
+                .indicator-section {
+                    background: white;
+                    margin: 20px 0;
+                    padding: 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                    overflow-x: auto;
+                }
+                .stats-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                    gap: 12px;
+                    margin: 15px 0;
+                }
+                .stat-item {
+                    background: #f8f9fa;
+                    padding: 10px;
+                    border-radius: 5px;
+                    text-align: center;
+                }
+                .stat-value {
+                    font-size: 16px;
+                    font-weight: bold;
+                    color: #007bff;
+                }
+                .stat-label {
+                    font-size: 11px;
+                    color: #6c757d;
+                    text-transform: uppercase;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin: 20px 0;
+                    min-width: 600px;
+                }
+                th, td {
+                    padding: 10px;
+                    text-align: left;
+                    border-bottom: 1px solid #ddd;
+                    font-size: 14px;
+                }
+                th {
+                    background-color: #007bff;
+                    color: white;
+                    position: sticky;
+                    left: 0;
+                }
+                .highlight {
+                    background-color: #fff3cd;
+                }
+                .correlation-table td {
+                    text-align: center;
+                }
+                .range-bar {
+                    display: inline-block;
+                    height: 18px;
+                    border-radius: 3px;
+                    margin: 2px;
+                    vertical-align: middle;
+                }
+                @media (max-width: 768px) {
+                    body {
+                        margin: 10px;
+                    }
+                    .stats-grid {
+                        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                    }
+                    table {
+                        font-size: 12px;
+                    }
+                    th, td {
+                        padding: 8px;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>Indicator Analysis Report</h1>
+                <p>Analysis of 3 indicators</p>
+            </div>
+        
+            <div class="indicator-section">
+                <h2>RSI</h2>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">100,526</div>
+                        <div class="stat-label">Data Points</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">4.8331</div>
+                        <div class="stat-label">Minimum</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">95.1919</div>
+                        <div class="stat-label">Maximum</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">50.3303</div>
+                        <div class="stat-label">Mean</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">50.7108</div>
+                        <div class="stat-label">Median</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">16.2964</div>
+                        <div class="stat-label">Std Dev</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">90.3589</div>
+                        <div class="stat-label">Range</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">38.8495</div>
+                        <div class="stat-label">Q25</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">61.8763</div>
+                        <div class="stat-label">Q75</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">23.0269</div>
+                        <div class="stat-label">IQR</div>
+                    </div>
+                </div>
+
+                <h3>Time Distribution</h3>
+                <table>
+                    <tr>
+                        <th>Range Category</th>
+                        <th>Time Spent (%)</th>
+                        <th>Average Value</th>
+                        <th>Data Points</th>
+                    </tr>
+            
+                    <tr>
+                        <td>Extremes Low</td>
+                        <td>
+                            10.0%
+                            <div class="range-bar" style="width: 10px; background: #007bff;"></div>
+                        </td>
+                        <td>28.1876</td>
+                        <td>10,080</td>
+                    </tr>
+                
+                    <tr>
+                        <td>Lows</td>
+                        <td>
+                            10.0%
+                            <div class="range-bar" style="width: 10px; background: #007bff;"></div>
+                        </td>
+                        <td>35.7288</td>
+                        <td>10,080</td>
+                    </tr>
+                
+                    <tr>
+                        <td>Neutral</td>
+                        <td>
+                            50.0%
+                            <div class="range-bar" style="width: 50px; background: #007bff;"></div>
+                        </td>
+                        <td>50.6105</td>
+                        <td>50,306</td>
+                    </tr>
+                
+                    <tr>
+                        <td>Highs</td>
+                        <td>
+                            10.0%
+                            <div class="range-bar" style="width: 10px; background: #007bff;"></div>
+                        </td>
+                        <td>64.3401</td>
+                        <td>10,080</td>
+                    </tr>
+                
+                    <tr>
+                        <td>Extremes High</td>
+                        <td>
+                            10.0%
+                            <div class="range-bar" style="width: 10px; background: #007bff;"></div>
+                        </td>
+                        <td>71.4986</td>
+                        <td>10,080</td>
+                    </tr>
+                
+                </table>
+
+                <div class="stats-grid">
+                    <div class="stat-item highlight">
+                        <div class="stat-value">32.38%</div>
+                        <div class="stat-label">Volatility</div>
+                    </div>
+                    <div class="stat-item highlight">
+                        <div class="stat-value">symmetric</div>
+                        <div class="stat-label">Distribution</div>
+                    </div>
+                    <div class="stat-item highlight">
+                        <div class="stat-value">97,965</div>
+                        <div class="stat-label">Stable Periods</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="indicator-section">
+                <h2>DYNAMIC_RSI_THRESHOLD</h2>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">80,527</div>
+                        <div class="stat-label">Data Points</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">18.2368</div>
+                        <div class="stat-label">Minimum</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">28.8068</div>
+                        <div class="stat-label">Maximum</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">22.3915</div>
+                        <div class="stat-label">Mean</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">21.9392</div>
+                        <div class="stat-label">Median</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">2.0480</div>
+                        <div class="stat-label">Std Dev</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">10.5700</div>
+                        <div class="stat-label">Range</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">20.6519</div>
+                        <div class="stat-label">Q25</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">23.9512</div>
+                        <div class="stat-label">Q75</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">3.2993</div>
+                        <div class="stat-label">IQR</div>
+                    </div>
+                </div>
+
+                <h3>Time Distribution</h3>
+                <table>
+                    <tr>
+                        <th>Range Category</th>
+                        <th>Time Spent (%)</th>
+                        <th>Average Value</th>
+                        <th>Data Points</th>
+                    </tr>
+            
+                    <tr>
+                        <td>Extremes Low</td>
+                        <td>
+                            16.6%
+                            <div class="range-bar" style="width: 16px; background: #007bff;"></div>
+                        </td>
+                        <td>20.2571</td>
+                        <td>13,347</td>
+                    </tr>
+                
+                    <tr>
+                        <td>Lows</td>
+                        <td>
+                            15.4%
+                            <div class="range-bar" style="width: 15px; background: #007bff;"></div>
+                        </td>
+                        <td>20.5060</td>
+                        <td>12,438</td>
+                    </tr>
+                
+                    <tr>
+                        <td>Neutral</td>
+                        <td>
+                            53.7%
+                            <div class="range-bar" style="width: 53px; background: #007bff;"></div>
+                        </td>
+                        <td>22.1726</td>
+                        <td>43,260</td>
+                    </tr>
+                
+                    <tr>
+                        <td>Highs</td>
+                        <td>
+                            11.0%
+                            <div class="range-bar" style="width: 11px; background: #007bff;"></div>
+                        </td>
+                        <td>24.0192</td>
+                        <td>8,857</td>
+                    </tr>
+                
+                    <tr>
+                        <td>Extremes High</td>
+                        <td>
+                            11.0%
+                            <div class="range-bar" style="width: 11px; background: #007bff;"></div>
+                        </td>
+                        <td>25.2214</td>
+                        <td>8,878</td>
+                    </tr>
+                
+                </table>
+
+                <div class="stats-grid">
+                    <div class="stat-item highlight">
+                        <div class="stat-value">9.15%</div>
+                        <div class="stat-label">Volatility</div>
+                    </div>
+                    <div class="stat-item highlight">
+                        <div class="stat-value">right-skewed</div>
+                        <div class="stat-label">Distribution</div>
+                    </div>
+                    <div class="stat-item highlight">
+                        <div class="stat-value">80,526</div>
+                        <div class="stat-label">Stable Periods</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="indicator-section">
+                <h2>ATR_PCT</h2>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">100,676</div>
+                        <div class="stat-label">Data Points</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">0.0000</div>
+                        <div class="stat-label">Minimum</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">2.9609</div>
+                        <div class="stat-label">Maximum</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">1.4097</div>
+                        <div class="stat-label">Mean</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">1.3587</div>
+                        <div class="stat-label">Median</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">0.4699</div>
+                        <div class="stat-label">Std Dev</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">2.9609</div>
+                        <div class="stat-label">Range</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">1.0892</div>
+                        <div class="stat-label">Q25</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">1.6401</div>
+                        <div class="stat-label">Q75</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">0.5509</div>
+                        <div class="stat-label">IQR</div>
+                    </div>
+                </div>
+
+                <h3>Time Distribution</h3>
+                <table>
+                    <tr>
+                        <th>Range Category</th>
+                        <th>Time Spent (%)</th>
+                        <th>Average Value</th>
+                        <th>Data Points</th>
+                    </tr>
+            
+                    <tr>
+                        <td>Extremes Low</td>
+                        <td>
+                            10.0%
+                            <div class="range-bar" style="width: 10px; background: #007bff;"></div>
+                        </td>
+                        <td>0.8744</td>
+                        <td>10,068</td>
+                    </tr>
+                
+                    <tr>
+                        <td>Lows</td>
+                        <td>
+                            10.0%
+                            <div class="range-bar" style="width: 10px; background: #007bff;"></div>
+                        </td>
+                        <td>1.0355</td>
+                        <td>10,067</td>
+                    </tr>
+                
+                    <tr>
+                        <td>Neutral</td>
+                        <td>
+                            50.0%
+                            <div class="range-bar" style="width: 50px; background: #007bff;"></div>
+                        </td>
+                        <td>1.3560</td>
+                        <td>50,338</td>
+                    </tr>
+                
+                    <tr>
+                        <td>Highs</td>
+                        <td>
+                            10.0%
+                            <div class="range-bar" style="width: 10px; background: #007bff;"></div>
+                        </td>
+                        <td>1.7506</td>
+                        <td>10,067</td>
+                    </tr>
+                
+                    <tr>
+                        <td>Extremes High</td>
+                        <td>
+                            10.0%
+                            <div class="range-bar" style="width: 10px; background: #007bff;"></div>
+                        </td>
+                        <td>2.0972</td>
+                        <td>10,068</td>
+                    </tr>
+                
+                </table>
+
+                <div class="stats-grid">
+                    <div class="stat-item highlight">
+                        <div class="stat-value">33.33%</div>
+                        <div class="stat-label">Volatility</div>
+                    </div>
+                    <div class="stat-item highlight">
+                        <div class="stat-value">right-skewed</div>
+                        <div class="stat-label">Distribution</div>
+                    </div>
+                    <div class="stat-item highlight">
+                        <div class="stat-value">99,788</div>
+                        <div class="stat-label">Stable Periods</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="indicator-section">
+                <h2>Cross-Indicator Correlations</h2>
+                <table class="correlation-table">
+                    <tr>
+                        <th>Indicator Pair</th>
+                        <th>Correlation</th>
+                        <th>Strength</th>
+                    </tr>
+            
+                        <tr>
+                            <td>dynamic_rsi_threshold ↔ atr_pct</td>
+                            <td style="color: #28a745;">0.594</td>
+                            <td>Moderate</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>rsi ↔ dynamic_rsi_threshold</td>
+                            <td style="color: #dc3545;">0.088</td>
+                            <td>Weak</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>rsi ↔ atr_pct</td>
+                            <td style="color: #dc3545;">0.049</td>
+                            <td>Weak</td>
+                        </tr>
+                    
+                </table>
+            </div>
+            
+            </div>
+        </body>
+        </html>
+        

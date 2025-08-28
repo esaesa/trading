@@ -16,6 +16,19 @@ from config import (
 )
 from data_loader import load_data
 from visualization import visualize_results
+try:
+    from indicator_statistics_visualization import create_comprehensive_indicator_report
+except ImportError:
+    try:
+        from backtest.indicator_statistics_visualization import create_comprehensive_indicator_report
+    except ImportError:
+        # Handle when running from different working directories
+        import sys
+        from pathlib import Path
+        current_dir = Path(__file__).parent
+        if str(current_dir) not in sys.path:
+            sys.path.insert(0, str(current_dir))
+        from indicator_statistics_visualization import create_comprehensive_indicator_report
 from strategy import DCAStrategy
 
 console = Console()
@@ -259,7 +272,25 @@ def handle_debug_and_persist(
         saved = save_backtest_results(results, symbol, timeframe, params, optimization_enabled=False)
         console.print(f"[bold green]Saved results to: {saved}[/bold green]")
 
+    # Generate standard visualizations and indicator statistics
     visualize_results(stats, bt)
+
+    # Generate comprehensive indicator statistics report
+    console.print("[bold cyan]Generating indicator statistics report...[/bold cyan]")
+    try:
+        report_file = f"indicator_analysis_{symbol}_{timeframe}_{datetime.now().strftime('%Y%m%d%H%M%S')}.html"
+        report_path = os.path.join(os.path.dirname(__file__), "backtest_results", report_file)
+        create_comprehensive_indicator_report(
+            stats._strategy,
+            output_file=report_path,
+            title=f"Indicator Analysis Report - {symbol} {timeframe}"
+        )
+        console.print(f"[bold green]Indicator statistics report saved: {report_file}[/bold green]")
+    except Exception as e:
+        console.print(f"[bold red]Error generating indicator statistics: {e}[/bold red]")
+
+
+# ------------------------- Orchestrator (DIP-friendly) -------------------------
 
 
 # ------------------------- Orchestrator (DIP-friendly) -------------------------
