@@ -140,5 +140,14 @@ def load_data(file_path, start_date=None, end_date=None, resample_freq=None):
         # resampling empty frames returns empty as well, which is fine
         df = df.resample(resample_freq).last().ffill()
 
+    # Print debugging information about the final data
+    if not df.empty:
+        logger.info(f"Final data range: {df.index[0]} to {df.index[-1]}")
+        logger.info(f"Final data count: {len(df)} rows")
+        if resample_freq:
+            logger.info(f"Resample frequency: {resample_freq}")
+    else:
+        logger.warning("Final data is empty after processing")
+
     # Done
     return df

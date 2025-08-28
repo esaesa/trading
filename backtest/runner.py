@@ -144,6 +144,17 @@ def prepare_data(
     fp = data_path(symbol, timeframe)
     console.print(f"\n[bold cyan]Running backtest for {symbol} on {timeframe} timeframe...[/bold cyan]")
     data = loader(fp, bt_params["start_date"], bt_params["end_date"])
+    
+    # Debug information about the loaded data
+    if not data.empty:
+        console.print(f"[green]Data loaded successfully:[/green]")
+        console.print(f"  - Start time: {data.index[0]}")
+        console.print(f"  - End time: {data.index[-1]}")
+        console.print(f"  - Sample count: {len(data)}")
+        console.print(f"  - Timeframe: {timeframe}")
+    else:
+        console.print("[yellow]Warning: No data loaded after filtering[/yellow]")
+    
     # light metadata snapshot for the file
     meta = {
         "backtest_params": bt_params,
@@ -165,7 +176,7 @@ def build_backtest(
         cash=bt_params["cash"],
         commission=bt_params["commission"],
         trade_on_close=False,
-        finalize_trades=False,
+        finalize_trades=True,
         margin=1.0,
     )
 
@@ -280,6 +291,13 @@ def run_backtest(
         )
         return
     # ============================================================================
+
+    # Debug information before building backtest
+    console.print(f"[green]Final data before backtesting:[/green]")
+    console.print(f"  - Start: {data.index[0]}")
+    console.print(f"  - End: {data.index[-1]}")
+    console.print(f"  - Samples: {len(data)}")
+    console.print(f"  - Columns: {list(data.columns)}")
 
     bt = build_backtest(data, strategy_cls, bt_params)
     

@@ -73,7 +73,7 @@ class IndicatorsBootstrap:
         if calc_rsi:
             rsi_config = indicators_config.get("rsi", {})
             rsi_window = rsi_config.get("window", strategy.config.rsi_window or 14)
-            rsi_resample = rsi_config.get("resample_interval", strategy.config.rsi_resample_interval or "30min")
+            rsi_resample = rsi_config.get("resample_interval", "30min")
 
             rsi_series = strategy.indicators.compute_rsi(
                 window=rsi_window,

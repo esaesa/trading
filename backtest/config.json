@@ -23,13 +23,13 @@
         "entry_conditions": {"all":["EntryFundsAndNotional"]},
         "safety_conditions": {
             "all": [
-                "MaxLevelsNotReached","SufficientFundsAndNotional","RSIReversalDynamicThreshold"
+                "MaxLevelsNotReached","SufficientFundsAndNotional","RSIReversalStaticThreshold"
             ]
         },
         "exit_conditions": ["ATRTakeProfitReached"],
-        "safety_conditions_all": ["RSIUnderStaticThreshold","RSIUnderDynamicThreshold","RSIReversalStaticThreshold","RSIReversalDynamicThreshold"],
-        "entry_conditions_all": {"all":["MaxLevelsNotReached","SufficientFundsAndNotional","EntryFundsAndNotional", "RSIOverbought"]},
-        "exit_conditions_all" : ["TPDecayReached","StopLossReached", "TakeProfitReached","ATRTakeProfitReached"],
+        "safety_conditions_template": ["RSIUnderStaticThreshold","RSIUnderDynamicThreshold","RSIReversalStaticThreshold","RSIReversalDynamicThreshold"],
+        "entry_conditions_template": {"all":["MaxLevelsNotReached","SufficientFundsAndNotional","EntryFundsAndNotional", "RSIOverbought"]},
+        "exit_conditions_template" : ["TPDecayReached","StopLossReached", "TakeProfitReached","ATRTakeProfitReached"],
         "so_cooldown_minutes": 0,
 
         "max_dca_levels": 6,
@@ -38,9 +38,9 @@
         "so_size_multiplier": 1.9,
         "first_safety_order_multiplier": 1.8,
         "initial_deviation_percent": 1.0,
-        "price_multiplier": 1,
+        "price_multiplier": 1.0,
         "safety_order_price_mode": "dynamic",
-        "safety_order_mode": "volume",
+        "safety_order_mode": "value",
         "minimum_notional": 0.0,
 
         "rules": {
@@ -84,7 +84,6 @@
                 "require_reset": true,
                 "avoid_overbought": true,
                 "overbought_level": 70,
-                "oversold_level": 30,
                 "reset_percentage": 50,
                 "resample_interval": "30min"
             },
@@ -119,13 +118,11 @@
                 "take_profit_levels": true
             }
         },
-        "start_trading_time" : "2022-07-21 19:31:00",
-        "show_rsi": false,
-        "rsi_percentile": 0.05,
+        "start_trading_time" : "2025-01-18 00:55:00",
         "debug": {
             "trade": false,
             "loop": false,
-            "process": false
+            "process": true
           },
         "show_indicators": {
         "dynamic_rsi": true,
@@ -135,8 +132,8 @@
         "ema": false,
         "laguerre": false,
         "cv": false,
-        "average_entry_price"  : true,
-        "take_profit": true
+        "average_entry_price"  : false,
+        "take_profit": false
     }
 
     
