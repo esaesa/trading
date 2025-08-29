@@ -16,19 +16,6 @@ from config import (
 )
 from data_loader import load_data
 from visualization import visualize_results, generate_indicator_report
-try:
-    from indicator_statistics_visualization import create_comprehensive_indicator_report
-except ImportError:
-    try:
-        from backtest.indicator_statistics_visualization import create_comprehensive_indicator_report
-    except ImportError:
-        # Handle when running from different working directories
-        import sys
-        from pathlib import Path
-        current_dir = Path(__file__).parent
-        if str(current_dir) not in sys.path:
-            sys.path.insert(0, str(current_dir))
-        from indicator_statistics_visualization import create_comprehensive_indicator_report
 from strategy import DCAStrategy
 
 console = Console()
@@ -277,13 +264,10 @@ def handle_debug_and_persist(
 
     # Generate comprehensive indicator statistics report
     if backtest_params.get("generate_indicator_report", False):
-        generate_indicator_report(stats._strategy, symbol, timeframe)
+        generate_indicator_report(stats, symbol, timeframe)
+        
 
 
-# ------------------------- Orchestrator (DIP-friendly) -------------------------
-
-
-# ------------------------- Orchestrator (DIP-friendly) -------------------------
 
 def run_backtest(
     symbol: str,

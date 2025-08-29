@@ -40,10 +40,16 @@
         "initial_deviation_percent": 5.0,
         "price_multiplier": 1.0,
         "safety_order_price_mode": {
-          "min": ["static", "dynamic"]
+            "min": [
+                "StaticPriceEngine",
+                "DynamicATRPriceEngine"
+            ]
         },
         "safety_order_mode": {
-          "max": ["value", "volume"]
+            "max": [
+                "ValueModeSizeRule",
+                "VolumeModeSizeRule"
+            ]
         },
         "minimum_notional": 0.0,
 

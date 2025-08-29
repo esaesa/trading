@@ -1,3 +1,140 @@
+# backtest/indicator_statistics_visualization.py
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from typing import Any
+from fpdf import FPDF
+from indicator_statistics import IndicatorStatistics # Use relative import
+
+
+def plot_future_returns(stats: IndicatorStatistics, price_series: pd.Series, periods=(5, 10, 20, 50)):
+    """
+    Plots the average future returns based on indicator quintiles.
+    """
+    analysis_data = stats.get_future_returns_analysis(price_series, periods=periods)
+    if not analysis_data:
+        return None
+
+    # --- THIS IS THE FIX ---
+    # Use the more robust `from_dict` constructor and specify that the
+    # keys of our dictionary ('Q1', 'Q2', etc.) should become the rows (index).
+    # This also removes the need for the transpose (.T) call.
+    df = pd.DataFrame.from_dict(analysis_data, orient='index')
+    # -----------------------
+
+    fig, ax = plt.subplots(figsize=(12, 7))
+    df.plot(kind='bar', ax=ax, colormap='viridis')
+    
+    ax.set_title(f'Average Future Price Return (%) vs. {stats.name} Quintile', fontsize=16)
+    ax.set_ylabel('Average Future Return (%)')
+    ax.set_xlabel(f'{stats.name} Quintile (Q1=Lowest, Q5=Highest)')
+    ax.axhline(0, color='grey', linestyle='--', lw=1)
+    ax.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.xticks(rotation=0)
+    plt.tight_layout()
+    return fig
+
+def create_actionable_indicator_report(stats_results: pd.Series, output_file: str):
+    """
+    Generates a MULTI-PAGE PDF report with actionable statistics for a specific indicator.
+    """
+    # --- THIS IS YOUR CORRECT SUGGESTION ---
+    strategy = stats_results._strategy
+    equity_series = stats_results['_equity_curve']['Equity'] # This is the full pandas Series
+    price_series = strategy.data.df['Close']
+    # ----------------------------------------
+
+    indicator_name = "rsi"
+    indicator_series = strategy.indicator_service._get_series(indicator_name)
+    
+    if indicator_series is None or indicator_series.dropna().empty:
+        print(f"Skipping report: No data for '{indicator_name}'")
+        return
+
+    stats = IndicatorStatistics(indicator_series, indicator_name.upper())
+
+    # ... (The rest of your PDF generation code remains unchanged and should now work) ...
+    pdf = FPDF()
+    pdf.set_auto_page_break(auto=True, margin=15)
+    
+    # --- PAGE 1: Future Returns Analysis ---
+    pdf.add_page()
+    pdf.set_font("Arial", 'B', 16)
+    pdf.cell(0, 10, f'Actionable Report: {stats.name} - Future Returns', 0, 1, 'C')
+    pdf.ln(10)
+
+    fig1 = plot_future_returns(stats, price_series)
+    if fig1:
+        path1 = "temp_report_page1.png"
+        fig1.savefig(path1)
+        plt.close(fig1)
+        pdf.image(path1, x=10, y=None, w=190)
+        pdf.ln(5)
+        os.remove(path1)
+
+    pdf.set_font("Arial", '', 10)
+    pdf.multi_cell(0, 5, 
+        "Insight: This chart shows if the indicator has predictive power. For a mean-reversion "
+        "strategy, you want to see positive returns after Q1 (oversold) and negative returns "
+        "after Q5 (overbought). The DOGEUSDT 1m chart shows a MOMENTUM signature (the opposite), "
+        "indicating a flawed strategy assumption for this market.")
+    pdf.ln(5)
+
+    # --- PAGE 2: Drawdown Behavior Analysis ---
+    pdf.add_page()
+    pdf.set_font("Arial", 'B', 16)
+    pdf.cell(0, 10, f'Actionable Report: {stats.name} - Drawdown Behavior', 0, 1, 'C')
+    pdf.ln(10)
+
+    fig2 = plot_drawdown_behavior(stats, equity_series)
+    if fig2:
+        path2 = "temp_report_page2.png"
+        fig2.savefig(path2)
+        plt.close(fig2)
+        pdf.image(path2, x=10, y=None, w=190)
+        pdf.ln(5)
+        os.remove(path2)
+
+    pdf.set_font("Arial", '', 10)
+    pdf.multi_cell(0, 5, 
+        "Insight: This chart shows what the indicator was doing during the worst periods for the "
+        "strategy. The density plot shows where the indicator's values are concentrated when the "
+        "equity is falling. If the average indicator value in a drawdown (red line) is significantly "
+        "different from the average value outside a drawdown (green line), it may be a useful risk management tool.")
+    pdf.ln(5)
+
+    # --- PAGE 3: Volatility Regime Analysis ---
+    pdf.add_page()
+    pdf.set_font("Arial", 'B', 16)
+    pdf.cell(0, 10, f'Actionable Report: {stats.name} - Volatility Regimes', 0, 1, 'C')
+    pdf.ln(10)
+
+    fig3 = plot_volatility_regime(stats, price_series)
+    if fig3:
+        path3 = "temp_report_page3.png"
+        fig3.savefig(path3)
+        plt.close(fig3)
+        pdf.image(path3, x=10, y=None, w=190)
+        pdf.ln(5)
+        os.remove(path3)
+
+    pdf.set_font("Arial", '', 10)
+    pdf.multi_cell(0, 5, 
+        "Insight: This chart shows if the indicator's readings correspond to different levels of "
+        "future volatility. If Q1 and Q5 (the extremes) show high future volatility, it means the indicator "
+        "is good at identifying unstable market conditions. If a clear pattern exists, you could adjust your "
+        "take-profit or stop-loss based on the indicator's reading.")
+    pdf.ln(5)
+
+    # --- Save the final PDF ---
+    try:
+        pdf.output(output_file)
+        print(f"✅ Actionable multi-page PDF report saved to: {output_file}")
+    except Exception as e:
+        print(f"❌ Error saving PDF report: {e}")
+
 import webbrowser
 import os
 import subprocess
@@ -546,13 +683,64 @@ def add_indicator_stats_to_quantstats(stats, strategy):
 
     return stats
 
+def plot_drawdown_behavior(stats: IndicatorStatistics, equity_series: pd.Series):
+    """
+    Plots the distribution of indicator values during drawdowns vs. non-drawdown periods.
+    """
+    analysis_data = stats.get_drawdown_behavior(equity_series)
+    if not analysis_data or 'in_drawdown_data' not in analysis_data or analysis_data['in_drawdown_data'].empty:
+        return None
 
-# Export functions for easy import
-__all__ = [
-    'create_indicator_correlation_heatmap',
-    'create_indicator_distribution_chart',
-    'create_temporal_patterns_chart',
-    'create_comprehensive_indicator_report',
-    'add_indicator_stats_to_quantstats',
-    'open_file_in_browser'
-]
+    in_dd_data = analysis_data['in_drawdown_data']
+
+    fig, ax = plt.subplots(figsize=(12, 7))
+
+    # Use a hexbin plot to show density
+    hb = ax.hexbin(
+        x=in_dd_data['indicator'], 
+        y=in_dd_data['drawdown'], 
+        gridsize=50, 
+        cmap='plasma', 
+        mincnt=1 # show bins with at least one data point
+    )
+    
+    cb = fig.colorbar(hb, ax=ax)
+    cb.set_label('Count of observations in bin')
+    ax.set_title(f'Equity Drawdown (%) vs. {stats.name} Value', fontsize=16)
+    ax.set_xlabel(f'{stats.name} Value')
+    ax.set_ylabel('Equity Drawdown (%)')
+    ax.grid(True, linestyle='--', alpha=0.6)
+    
+    # Add average lines
+    avg_in_dd = analysis_data.get('avg_indicator_in_dd')
+    if avg_in_dd:
+        ax.axvline(avg_in_dd, color='red', linestyle='--', lw=2, 
+                    label=f'Avg {stats.name} in DD: {avg_in_dd:.2f}')
+    
+    avg_not_in_dd = analysis_data.get('avg_indicator_not_in_dd')
+    if avg_not_in_dd:
+        ax.axvline(avg_not_in_dd, color='green', linestyle='--', lw=2, 
+                    label=f'Avg {stats.name} not in DD: {avg_not_in_dd:.2f}')
+
+    ax.legend()
+    plt.tight_layout()
+    return fig
+
+
+def plot_volatility_regime(stats: IndicatorStatistics, price_series: pd.Series):
+    """
+    Plots the average future volatility for each indicator quintile.
+    """
+    analysis_df = stats.get_volatility_regime_analysis(price_series)
+    if analysis_df.empty:
+        return None
+        
+    fig, ax = plt.subplots(figsize=(12, 7))
+    sns.barplot(data=analysis_df, x='quintile', y='future_vol', palette='coolwarm', ax=ax)
+    
+    ax.set_title(f'Future Price Volatility vs. {stats.name} Quintile', fontsize=16)
+    ax.set_ylabel('Average Annualized Future Volatility')
+    ax.set_xlabel(f'{stats.name} Quintile')
+    ax.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.tight_layout()
+    return fig

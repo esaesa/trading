@@ -59,6 +59,149 @@ class IndicatorStatistics:
         if len(self.series_clean) == 0:
             warnings.warn(f"No valid data in {name} series", UserWarning)
 
+    
+    def get_future_returns_analysis(self, price_series: pd.Series, periods=(5, 10, 20, 50)):
+        """
+        Calculates the average future returns for different periods, binned by indicator quintiles.
+        This version uses a robust, vectorized approach to avoid "jagged" data issues.
+        """
+        if self.series_clean.empty or len(self.series_clean) < max(periods):
+            # Not enough data to calculate future returns, return empty dict
+            return {}
+
+        # 1. Create a single DataFrame aligning the indicator and price series.
+        #    This is crucial to ensure data points match up correctly.
+        df = pd.DataFrame({'indicator': self.series_clean, 'price': price_series}).dropna()
+
+        if df.empty:
+            return {}
+
+        # 2. Bin the indicator values into quintiles.
+        try:
+            # 'duplicates=drop' handles cases where data is not distributed enough for 5 clean bins.
+            df['quintile'] = pd.qcut(df['indicator'], 5, labels=[f'Q{i}' for i in range(1, 6)], duplicates='drop')
+        except ValueError:
+            # If it still fails, we can't perform the analysis.
+            return {}
+
+        # 3. Calculate all future return columns in a vectorized way.
+        for n in periods:
+            # Use the aligned 'price' column for the calculation.
+            df[f'{n}p_ret'] = (df['price'].shift(-n) / df['price'] - 1) * 100
+
+        # 4. Perform a single groupby().mean() operation.
+        # This is the core of the fix. It produces a perfectly rectangular DataFrame,
+        # filling any missing quintile/period combinations with NaN automatically.
+        return_cols = [f'{n}p_ret' for n in periods]
+        analysis_df = df.groupby('quintile')[return_cols].mean()
+
+        # 5. Convert the clean DataFrame to a dictionary. This is now a safe operation.
+        return analysis_df.to_dict(orient='index')
+   
+   
+   
+    
+    def get_drawdown_behavior(self, equity_series: pd.Series) -> Dict[str, Any]:
+        """
+        Analyzes indicator behavior during the strategy's equity drawdowns.
+        Args:
+            equity_series: The portfolio equity curve from the backtest.
+        Returns:
+            A dictionary containing key stats about the indicator during drawdowns.
+        """
+        if self.series_clean.empty:
+            return {}
+
+        # 1. Calculate the drawdown series from the equity curve
+        peak = equity_series.cummax()
+        drawdown = (equity_series / peak - 1) * 100  # In percentage
+
+        # 2. Align the indicator with the equity curve and drawdown series
+        df = pd.DataFrame({
+            'indicator': self.series_clean,
+            'drawdown': drawdown
+        }).dropna()
+
+        # 3. Separate indicator values into two groups: during a drawdown and not.
+        in_drawdown_indicator = df[df['drawdown'] < 0]['indicator']
+        not_in_drawdown_indicator = df[df['drawdown'] == 0]['indicator']
+
+        if in_drawdown_indicator.empty:
+            return {
+                'avg_indicator_in_dd': None,
+                'avg_indicator_not_in_dd': not_in_drawdown_indicator.mean(),
+                'in_drawdown_data': pd.DataFrame(), # Return empty DataFrame
+            }
+
+        return {
+            'avg_indicator_in_dd': in_drawdown_indicator.mean(),
+            'avg_indicator_not_in_dd': not_in_drawdown_indicator.mean(),
+            # Return the raw data for plotting
+            'in_drawdown_data': df[df['drawdown'] < -0.1], # Only where DD is meaningful
+        }
+
+    def get_volatility_regime_analysis(self, price_series: pd.Series, vol_window: int = 20):
+        """
+        Analyzes the relationship between indicator value and future price volatility.
+        Args:
+            price_series: The close price series of the asset.
+            vol_window: The window for calculating future realized volatility.
+        Returns:
+            A DataFrame with indicator quintiles and their corresponding future volatility.
+        """
+        if self.series_clean.empty:
+            return pd.DataFrame()
+
+        # 1. Calculate future realized volatility of log returns (standard method)
+        log_returns = np.log(price_series / price_series.shift(1))
+        future_vol = log_returns.rolling(window=vol_window).std().shift(-vol_window) * np.sqrt(365*24*60) # Annualized for 1m data
+
+        # 2. Align data
+        df = pd.DataFrame({
+            'indicator': self.series_clean,
+            'future_vol': future_vol
+        }).dropna()
+
+        if df.empty:
+            return pd.DataFrame()
+
+        # 3. Bin indicator into quintiles
+        try:
+            df['quintile'] = pd.qcut(df['indicator'], 5, labels=[f'Q{i}' for i in range(1, 6)], duplicates='drop')
+        except ValueError:
+            return pd.DataFrame()
+            
+        # 4. Group by quintile and calculate the average future volatility
+        vol_by_quintile = df.groupby('quintile')['future_vol'].mean()
+        
+        return vol_by_quintile.reset_index()
+
+    def get_volatility_analysis(self, price_series: pd.Series, vol_window: int = 20) -> pd.DataFrame:
+        """
+        Analyzes the relationship between indicator value and future price volatility.
+
+        Args:
+            price_series: The close price series of the asset.
+            vol_window: The window for calculating future realized volatility.
+
+        Returns:
+            A DataFrame with indicator values and corresponding future volatility.
+        """
+        if len(self.series_clean) == 0:
+            return pd.DataFrame()
+
+        log_returns = np.log(price_series / price_series.shift(1))
+        
+        # Calculate future realized volatility
+        future_vol = log_returns.shift(-vol_window).rolling(window=vol_window).std() * np.sqrt(252) # Annualized
+        
+        combined = pd.DataFrame({
+            'indicator': self.series_clean,
+            'future_volatility': future_vol
+        }).dropna()
+        
+        return combined
+
     def get_descriptive_stats(self) -> Dict[str, float]:
         """Calculate basic descriptive statistics"""
         if len(self.series_clean) == 0:

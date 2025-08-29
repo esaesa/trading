@@ -1,174 +1,139 @@
 import os
-import quantstats as qs
-import pandas as pd
-from sambo.plot import plot_objective  # Import the SAMBO plotting function
-from backtesting.lib import plot_heatmaps
 import json
-from logger_config import logger  # Use centralized logger
-from config import backtest_params, optimization_params
-import quantstats as qs
-import pandas as pd
-from logger_config import logger  # Use centralized logger
 from datetime import datetime
 from typing import Any
 
-try:
-    from indicator_statistics_visualization import create_comprehensive_indicator_report
-except ImportError:
-    # Handle cases where the script is run from a different working directory
-    from backtest.indicator_statistics_visualization import create_comprehensive_indicator_report
+import pandas as pd
+import quantstats as qs
+from backtesting.lib import plot_heatmaps
+from sambo.plot import plot_objective
 
-def generate_indicator_report(strategy: Any, symbol: str, timeframe: str):
-    """Generate comprehensive indicator statistics report."""
-    logger.info("Generating indicator statistics report...")
+from config import backtest_params, optimization_params
+from logger_config import logger
+from indicator_statistics_visualization import create_comprehensive_indicator_report
+
+# --- CORRECTED: Import only the new actionable report generator ---
+# This is the function that creates the multi-page PDF with actionable insights.
+try:
+    from backtest.indicator_statistics_visualization import create_actionable_indicator_report
+except ImportError:
+    from indicator_statistics_visualization import create_actionable_indicator_report
+
+
+def generate_indicator_report(stats: pd.Series, symbol: str, timeframe: str):
+    """
+    Orchestrator for generating all statistical reports (HTML and PDF).
+    Accepts the full stats object from the backtest run.
+    """
+    strategy = stats._strategy
+
+    # --- 1. Generate the original Comprehensive HTML Report ---
+    logger.info("Generating comprehensive indicator statistics report (HTML)...")
     try:
-        report_file = f"indicator_analysis_{symbol}_{timeframe}_{datetime.now().strftime('%Y%m%d%H%M%S')}.html"
-        report_path = os.path.join(os.path.dirname(__file__), "backtest_results", report_file)
+        html_report_file = f"indicator_analysis_{symbol}_{timeframe}_{datetime.now().strftime('%Y%m%d%H%M%S')}.html"
+        html_report_path = os.path.join(os.path.dirname(__file__), "backtest_results", html_report_file)
+        
+        # This report only needs the strategy object, which we extract.
         create_comprehensive_indicator_report(
             strategy,
-            output_file=report_path,
+            output_file=html_report_path,
             title=f"Indicator Analysis Report - {symbol} {timeframe}"
         )
-        logger.info(f"Indicator statistics report saved: {report_file}")
     except Exception as e:
-        logger.error(f"Error generating indicator statistics: {e}")
+        logger.error(f"Failed to generate comprehensive HTML report: {e}", exc_info=True)
+
+    # --- 2. Generate the new Actionable PDF Report ---
+    logger.info("Generating actionable indicator statistics report (PDF)...")
+    try:
+        pdf_report_file = f"actionable_report_{symbol}_{timeframe}_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
+        pdf_report_path = os.path.join(os.path.dirname(__file__), "backtest_results", pdf_report_file)
+        
+        # This report needs the full stats object to access the equity curve.
+        create_actionable_indicator_report(
+            stats,  # Pass the full stats object
+            output_file=pdf_report_path
+        )
+    except Exception as e:
+        logger.error(f"Failed to generate actionable indicator report: {e}", exc_info=True)
 
 def unscale_parameter(value, param_name):
-    if optimization_params.get(param_name, {}).get('type') == 'float':
-        param_scale = optimization_params.get(param_name, {}).get('scaling_factor')
-        if param_scale is not None:
-            return value / param_scale
+    """Helper to unscale parameters after optimization."""
+    param_info = optimization_params.get(param_name, {})
+    if param_info.get('type') == 'float':
+        scale_factor = param_info.get('scaling_factor')
+        if scale_factor is not None:
+            return value / scale_factor
     return value
 
-def analyze_with_quantstats(stats):
-    """
-    Perform in-depth analysis using QuantStats on the backtest results.
 
-    Parameters:
-        stats: Backtest statistics object containing equity curve and trade data.
-    """
-    if not backtest_params["enable_quantstats_analysis"]:
+def analyze_with_quantstats(stats):
+    """Performs in-depth analysis using QuantStats."""
+    if not backtest_params.get("enable_quantstats_analysis", False):
         return
     try:
         logger.info("Running QuantStats analysis...")
-
-        # Extend pandas with QuantStats capabilities
         qs.extend_pandas()
-
-        # Extract the equity curve from backtest statistics
         equity_curve = stats['_equity_curve']['Equity']
-        # equity_curve.index = stats['_equity_curve'].index  # Ensure correct timestamps
-
-        # Generate and print full performance report
-        qs.reports.full(equity_curve, title="Backtest Performance Report")
-        logger.info("QuantStats report generated'")
+        
         # Save an HTML report
-        qs.reports.html(equity_curve, output="quantstats_report.html", title="Backtest Performance Report")
+        qs.reports.html(equity_curve, output="quantstats_report.html", title=f"QuantStats Report: {stats['_strategy']}")
         logger.info("QuantStats report saved as 'quantstats_report.html'")
-
-        # Generate and display performance snapshot
-        qs.plots.snapshot(equity_curve, title="Strategy Performance Snapshot", show=True)
-
     except Exception as e:
         logger.error(f"QuantStats analysis failed: {e}")
 
-def strategy_str_to_json(strategy_str,scaling_factor=1000):
-    """
-    Convert a string like:
-      "DCAStrategy(max_dca_levels=7,price_multiplier=1.1121534677123819,so_size_multiplier=6.0,entry_fraction=0.001,take_profit_percentage=0.15151337053315078,first_safety_order_multiplier=10.0,initial_deviation_percent=0.5)"
-    into a JSON string.
-    """
-    # Find the part inside the parentheses.
+
+def strategy_str_to_json(strategy_str):
+    """Converts the strategy's __str__ representation into a clean JSON."""
     start = strategy_str.find("(")
     end = strategy_str.rfind(")")
     if start == -1 or end == -1:
-        raise ValueError("Invalid strategy string format")
+        return json.dumps({"error": "Invalid strategy string format"}, indent=4)
     
-    content = strategy_str[start+1:end]  # everything between '(' and ')'
-    
-    # Split on commas. (Assumes parameter values do not contain commas.)
+    content = strategy_str[start+1:end]
     pairs = content.split(",")
-    
     params = {}
     for pair in pairs:
-        if "=" not in pair:
-            continue
+        if "=" not in pair: continue
         key, value = pair.split("=", 1)
         key = key.strip()
         value = value.strip()
-        
-        # Try to convert the value to int or float.
         try:
-            # If the value contains a dot or exponent indicator, parse as float.
-            if '.' in value or 'e' in value.lower():
-                converted = float(value)
-            else:
-                converted = int(value)
-            # Unscale the parameter if it was scaled during optimization
-            converted = unscale_parameter(converted, key)    
-            params[key] = converted
-        except Exception:
-            # Otherwise, leave it as a string.
+            converted = float(value) if '.' in value or 'e' in value.lower() else int(value)
+            params[key] = unscale_parameter(converted, key)
+        except ValueError:
             params[key] = value
-
     return json.dumps(params, indent=4)
+
 
 def visualize_results(stats, bt, optimize_result=None, param_names=None, show_optimization_graphs=False, heatmap=None):
     """
-    Visualize backtest results and optionally show optimization graphs.
-    
-    Parameters:
-        stats: Backtest statistics.
-        bt: Backtest instance.
-        optimize_result: (Optional) Optimization result data structure.
-        param_names: (Optional) List of parameter names for optimization.
-        show_optimization_graphs: Boolean flag to control displaying optimization graphs.
+    Main function to visualize all backtest results, including the primary plot,
+    QuantStats, and optimization charts.
     """
-    def unscale_parameter(self, key, value):
-        """
-        Unscale a parameter if optimization is enabled and it was originally a float.
-        """
-        if self.enable_optimization and optimization_params[key]['type'] == 'float':
-            return value / self.scaling_factor
-        return value
+    if backtest_params.get("enable_optimization", False):
+        strategy_json = strategy_str_to_json(str(stats._strategy))
+        logger.info("Best strategy parameters (JSON):\n" + strategy_json)
     
-    if backtest_params["enable_optimization"]:
-        strategy_str = str(stats._strategy)
-        json_output = strategy_str_to_json(strategy_str, backtest_params.get("scaling_factor", 1000))
-        logger.info("Strategy parameters in JSON format:")
-        logger.info(json_output)
-    
-    # Log backtest stats and strategy information as strings.
-
-    if backtest_params["debug"]:
+    if backtest_params.get("debug", False):
+        logger.info("--- Backtest Statistics ---")
         logger.info(str(stats))
-   
-        logger.info(str(stats._strategy))
-        # pd.set_option('display.precision', 10)
-        trades_table = stats["_trades"].set_index("EntryTime").sort_index()
-        
-        import pandas as pd
-
-        # pd.set_option('display.max_columns', None)  # Show all columns
-        # pd.set_option('display.max_rows', None)     # Show all rows
-        # pd.set_option('display.max_colwidth', None) # Show full column content
-        # pd.set_option('display.expand_frame_repr', False)  # Prevent wrapping
-
-        print(trades_table)
-    
+        logger.info("--- Trade Log ---")
+        # Use pandas to string for better formatting
+        trades_df = stats["_trades"].set_index("EntryTime").sort_index()
+        print(trades_df.to_string(max_rows=100)) # Print a good portion of trades
     
     if heatmap is not None:
         plot_heatmaps(heatmap, agg='mean')
-    # Run QuantStats analysis
+
+    # Run external analysis libraries
     analyze_with_quantstats(stats)
 
-    # Plot the standard backtest results (generates an HTML file).
-    plot_file_name = os.path.join(os.path.dirname(__file__), "backtest_results/"+"backtest_results.html")
+    # Plot the main backtest equity curve and trades
+    plot_file_name = os.path.join(os.path.dirname(__file__), "backtest_results", "backtest_results.html")
     
-    # Determine whether to resample based on the count of samples
+    # Resample for very large datasets to avoid plotting errors
     equity_curve = stats['_equity_curve']
-    sample_count = len(equity_curve)
-    should_resample = sample_count > 600000
+    should_resample = len(equity_curve) > 600000
 
     bt.plot(
         filename=plot_file_name,
@@ -176,14 +141,12 @@ def visualize_results(stats, bt, optimize_result=None, param_names=None, show_op
         plot_return=False,
         resample=should_resample,
         relative_equity=True,
-        plot_volume = False
-        
-    
-        
+        plot_volume=False,
+        open_browser=True # Convenience: automatically open the results
     )
-    
-    # Optionally, if an optimization result is provided and the flag is True, show optimization graphs.
+    logger.info(f"Main backtest plot saved to: {plot_file_name}")
+
+    # Plot optimization graphs if available
     if show_optimization_graphs and optimize_result is not None and param_names is not None:
-        logger.info("Optimization result:")
-        
+        logger.info("Displaying optimization objective plot...")
         _ = plot_objective(optimize_result, names=param_names, estimator='et')
