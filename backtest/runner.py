@@ -15,7 +15,7 @@ from config import (
     data_folder, symbols, timeframes,
 )
 from data_loader import load_data
-from visualization import visualize_results
+from visualization import visualize_results, generate_indicator_report
 try:
     from indicator_statistics_visualization import create_comprehensive_indicator_report
 except ImportError:
@@ -272,22 +272,12 @@ def handle_debug_and_persist(
         saved = save_backtest_results(results, symbol, timeframe, params, optimization_enabled=False)
         console.print(f"[bold green]Saved results to: {saved}[/bold green]")
 
-    # Generate standard visualizations and indicator statistics
+    # Generate standard visualizations
     visualize_results(stats, bt)
 
     # Generate comprehensive indicator statistics report
-    console.print("[bold cyan]Generating indicator statistics report...[/bold cyan]")
-    try:
-        report_file = f"indicator_analysis_{symbol}_{timeframe}_{datetime.now().strftime('%Y%m%d%H%M%S')}.html"
-        report_path = os.path.join(os.path.dirname(__file__), "backtest_results", report_file)
-        create_comprehensive_indicator_report(
-            stats._strategy,
-            output_file=report_path,
-            title=f"Indicator Analysis Report - {symbol} {timeframe}"
-        )
-        console.print(f"[bold green]Indicator statistics report saved: {report_file}[/bold green]")
-    except Exception as e:
-        console.print(f"[bold red]Error generating indicator statistics: {e}[/bold red]")
+    if backtest_params.get("generate_indicator_report", False):
+        generate_indicator_report(stats._strategy, symbol, timeframe)
 
 
 # ------------------------- Orchestrator (DIP-friendly) -------------------------
@@ -349,7 +339,6 @@ def run_backtest(
         is_optimization=is_opt,
         debug=debug,
     )
-
 
 
 def run_all_backtests(

@@ -68,9 +68,9 @@ def wire_strategy(strategy: Any, strategy_params: dict) -> None:
     safety_names = cfg.get("safety_conditions", [])
     exit_names   = cfg.get("exit_conditions", [])
 
-    strategy.entry_decider  = EntryRuleDecider(strategy, entry_names,  default_mode="any")
-    strategy.safety_decider = SafetyRuleDecider(strategy, safety_names, default_mode="all")
-    strategy.exit_decider   = ExitRuleDecider(strategy, exit_names,    default_mode="any")
+    strategy.entry_decider  = EntryRuleDecider(strategy, entry_names)
+    strategy.safety_decider = SafetyRuleDecider(strategy, safety_names)
+    strategy.exit_decider   = ExitRuleDecider(strategy, exit_names)
 
     strategy.price_engine   = _build_price_engine(strategy)
     strategy.size_engine    = _build_size_engine(strategy)

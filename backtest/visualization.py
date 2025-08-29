@@ -9,6 +9,29 @@ from config import backtest_params, optimization_params
 import quantstats as qs
 import pandas as pd
 from logger_config import logger  # Use centralized logger
+from datetime import datetime
+from typing import Any
+
+try:
+    from indicator_statistics_visualization import create_comprehensive_indicator_report
+except ImportError:
+    # Handle cases where the script is run from a different working directory
+    from backtest.indicator_statistics_visualization import create_comprehensive_indicator_report
+
+def generate_indicator_report(strategy: Any, symbol: str, timeframe: str):
+    """Generate comprehensive indicator statistics report."""
+    logger.info("Generating indicator statistics report...")
+    try:
+        report_file = f"indicator_analysis_{symbol}_{timeframe}_{datetime.now().strftime('%Y%m%d%H%M%S')}.html"
+        report_path = os.path.join(os.path.dirname(__file__), "backtest_results", report_file)
+        create_comprehensive_indicator_report(
+            strategy,
+            output_file=report_path,
+            title=f"Indicator Analysis Report - {symbol} {timeframe}"
+        )
+        logger.info(f"Indicator statistics report saved: {report_file}")
+    except Exception as e:
+        logger.error(f"Error generating indicator statistics: {e}")
 
 def unscale_parameter(value, param_name):
     if optimization_params.get(param_name, {}).get('type') == 'float':
@@ -132,9 +155,7 @@ def visualize_results(stats, bt, optimize_result=None, param_names=None, show_op
         # pd.set_option('display.expand_frame_repr', False)  # Prevent wrapping
 
         print(trades_table)
-    # Add comprehensive indicator statistics report
-    from indicator_statistics_visualization import create_comprehensive_indicator_report
-    create_comprehensive_indicator_report(stats._strategy, "indicator_analysis_report.html")
+    
     
     if heatmap is not None:
         plot_heatmaps(heatmap, agg='mean')
@@ -147,7 +168,7 @@ def visualize_results(stats, bt, optimize_result=None, param_names=None, show_op
     # Determine whether to resample based on the count of samples
     equity_curve = stats['_equity_curve']
     sample_count = len(equity_curve)
-    should_resample = sample_count > 800000
+    should_resample = sample_count > 600000
 
     bt.plot(
         filename=plot_file_name,

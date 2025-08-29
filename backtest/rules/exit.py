@@ -9,10 +9,10 @@ import warnings
 from indicators import Indicators
 
 # Import for class-based rules
-from .base_rule import Rule
+from .base_decision_rule import DecisionRule
 
 # Class-based ATRTakeProfitReached rule
-class ATRTakeProfitReached(Rule):
+class ATRTakeProfitReached(DecisionRule):
     """Exit rule: TP dynamically set from ATR%."""
 
     def __init__(self, strategy, rule_name='ATRTakeProfitReached'):
@@ -63,7 +63,7 @@ class ATRTakeProfitReached(Rule):
         return True
 
 # Class-based TakeProfitReached rule
-class TakeProfitReached(Rule):
+class TakeProfitReached(DecisionRule):
     """Exit rule based on fixed take profit percentage."""
 
     def __init__(self, strategy, rule_name='TakeProfitReached'):
@@ -91,7 +91,7 @@ class TakeProfitReached(Rule):
         return True
 
 # Class-based TPDecayReached rule
-class TPDecayReached(Rule):
+class TPDecayReached(DecisionRule):
     """Exit rule using decaying take profit logic."""
 
     def __init__(self, strategy, rule_name='TPDecayReached'):
@@ -134,7 +134,7 @@ class TPDecayReached(Rule):
         return True
 
 # Class-based StopLossReached rule
-class StopLossReached(Rule):
+class StopLossReached(DecisionRule):
     """Exit rule for stop loss."""
 
     def __init__(self, strategy, rule_name='StopLossReached'):
@@ -157,7 +157,7 @@ class StopLossReached(Rule):
         return True
 
 # Class-based TrailingStopReached rule
-class TrailingStopReached(Rule):
+class TrailingStopReached(DecisionRule):
     """Exit rule for trailing stop."""
 
     def __init__(self, strategy, rule_name='TrailingStopReached'):
@@ -261,78 +261,31 @@ from .rule_factory import RuleFactory
 
 class ExitRuleDecider(ExitDecider):
     """
-    Builds its own RuleChain from config (strings or nested ANY/ALL dicts).
-    Uses RuleFactory for all rule management.
+    Builds a potentially nested rule structure from config.
     """
-    def __init__(self, strategy, names, default_mode: str = "any") -> None:
-        # Validate rule configurations before building the chain
-        rule_names = self._extract_rule_names(names)
-        for rule_name in rule_names:
-            RuleFactory.validate_rule_config(rule_name, strategy.config)
-
-        # Create rule instances using RuleFactory
-        rule_instances = {}
-        for rule_name in rule_names:
-            rule_instances[rule_name] = RuleFactory.create_rule(rule_name, strategy)
-
-        # Build rule chain using class-based rules
-        self._chain = self._build_rule_chain_from_instances(rule_instances, names, default_mode)
-        # Store the rule names for indicator detection
-        self._rule_names = rule_names
-        # Store strategy reference for indicator detection
+    def __init__(self, strategy, spec) -> None:
         self.strategy = strategy
-
-    def _build_rule_chain_from_instances(self, rule_instances, spec, mode: str = "any"):
-        """Build a rule chain from rule instances based on specification."""
-        if isinstance(spec, str):
-            # Single rule
-            return RuleChain([rule_instances[spec]], mode="any")
-        elif isinstance(spec, (list, tuple)):
-            # List of rules - combine based on mode
-            return RuleChain([rule_instances[name] for name in spec], mode=mode)
-        elif isinstance(spec, dict):
-            # Nested specification - for now, flatten to simple list
-            # This can be enhanced later if complex nesting is needed
-            rules = []
-            for key, value in spec.items():
-                if key in ("any", "all"):
-                    if isinstance(value, (list, tuple)):
-                        rules.extend([rule_instances[name] for name in value])
-                    elif isinstance(value, str):
-                        rules.append(rule_instances[value])
-                else:
-                    # Single rule in dict
-                    rules.append(rule_instances[key])
-            return RuleChain(rules, mode=mode)
-        else:
-            raise ValueError(f"Invalid rule specification: {spec}")
-
-    def _extract_rule_names(self, spec) -> set[str]:
-        """Extract all rule names from the spec."""
-        names = set()
-        if isinstance(spec, str):
-            names.add(spec)
-        elif isinstance(spec, (list, tuple)):
-            for item in spec:
-                names.update(self._extract_rule_names(item))
-        elif isinstance(spec, dict):
-            for key, value in spec.items():
-                if key in ("any", "all"):
-                    names.update(self._extract_rule_names(value))
-        return names
+        # The entire building process is now handled by the recursive builder.
+        from .rule_builder import build_rule_from_spec
+        self._rule_structure = build_rule_from_spec(strategy, spec)
+        # For indicator detection
+        self._required_indicators = self._extract_indicators(self._rule_structure)
 
     def ok(self, ctx):
-        return self._chain.ok(ctx)
+        # The ok() method now just calls evaluate() on the top-level rule structure.
+        return self._rule_structure.evaluate(ctx)
 
     def get_required_indicators(self) -> set[str]:
-        """Return set of indicators required by all rules in this decider."""
+        return self._required_indicators
+
+    def _extract_indicators(self, rule) -> set[str]:
+        """Recursively traverses the rule structure to find all required indicators."""
         required = set()
-
-        # Use RuleFactory to get required indicators from class-based rules
-        for rule_name in self._rule_names:
-            rule_indicators = RuleFactory.get_required_indicators(rule_name, self.strategy.config)
-            required.update(rule_indicators)
-
+        if hasattr(rule, 'get_required_indicators'):
+            required.update(rule.get_required_indicators())
+        if hasattr(rule, 'rules'): # It's a RuleChain
+            for sub_rule in rule.rules:
+                required.update(self._extract_indicators(sub_rule))
         return required
 
     # ok() now returns (bool, str) tuple directly

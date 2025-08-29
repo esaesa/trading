@@ -10,14 +10,14 @@
         "enable_optimization": false,
         "debug": true,
         "debug_loop": false,
-        "start_date": "2024-06-16 19:47",
-        "end_date":   "2025-09-19 12:40:00",
-    
+        "start_date": "2025-06-16 19:47",
+        "end_date": "2025-09-19 12:40:00",
         "cash": 1000,
         "commission": 0.0005,
         "show_optimization_graphs": false,
         "slippage_probability": 0.0,
-        "enable_quantstats_analysis": false
+        "enable_quantstats_analysis": false,
+        "generate_indicator_report": true
     },
     "strategy_params": {
         "entry_conditions": {"all":["EntryFundsAndNotional"]},
@@ -39,8 +39,12 @@
         "first_safety_order_multiplier": 1.9,
         "initial_deviation_percent": 5.0,
         "price_multiplier": 1.0,
-        "safety_order_price_mode": "static",
-        "safety_order_mode": "value",
+        "safety_order_price_mode": {
+          "min": ["static", "dynamic"]
+        },
+        "safety_order_mode": {
+          "max": ["value", "volume"]
+        },
         "minimum_notional": 0.0,
 
         "rules": {

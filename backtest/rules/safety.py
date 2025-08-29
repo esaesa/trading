@@ -10,10 +10,10 @@ from indicators import Indicators
 
 
 # Import for class-based rules
-from .base_rule import Rule
+from .base_decision_rule import DecisionRule
 
 # Class-based RSIUnderDynamicThreshold rule
-class RSIUnderDynamicThreshold(Rule):
+class RSIUnderDynamicThreshold(DecisionRule):
     """RSI under dynamic threshold rule with wave reset capability."""
 
     def __init__(self, strategy, rule_name='RSIUnderDynamicThreshold'):
@@ -104,7 +104,7 @@ class RSIUnderDynamicThreshold(Rule):
         return True
 
 # Class-based RSIReversalStaticThreshold rule
-class RSIReversalStaticThreshold(Rule):
+class RSIReversalStaticThreshold(DecisionRule):
     """RSI reversal from static threshold rule."""
 
     def __init__(self, strategy, rule_name='RSIReversalStaticThreshold'):
@@ -174,7 +174,7 @@ class RSIReversalStaticThreshold(Rule):
         return True
 
 # Class-based RSIUnderStaticThreshold rule
-class RSIUnderStaticThreshold(Rule):
+class RSIUnderStaticThreshold(DecisionRule):
     """RSI under static threshold rule with wave reset capability."""
 
     def __init__(self, strategy, rule_name='RSIUnderStaticThreshold'):
@@ -253,7 +253,7 @@ class RSIUnderStaticThreshold(Rule):
         return True
 
 # Class-based RSIReversalDynamicThreshold rule
-class RSIReversalDynamicThreshold(Rule):
+class RSIReversalDynamicThreshold(DecisionRule):
     """RSI reversal from dynamic threshold rule."""
 
     def __init__(self, strategy, rule_name='RSIReversalDynamicThreshold'):
@@ -324,7 +324,7 @@ class RSIReversalDynamicThreshold(Rule):
         return True
 
 # Class-based CooldownBetweenSOs rule
-class CooldownBetweenSOs(Rule):
+class CooldownBetweenSOs(DecisionRule):
     """Enforce cooldown between safety orders."""
 
     def __init__(self, strategy, rule_name='CooldownBetweenSOs'):
@@ -359,7 +359,7 @@ class CooldownBetweenSOs(Rule):
         return True
 
 # Class-based MaxLevelsNotReached rule
-class MaxLevelsNotReached(Rule):
+class MaxLevelsNotReached(DecisionRule):
     """Check if maximum DCA levels have not been reached."""
 
     def __init__(self, strategy, rule_name='MaxLevelsNotReached'):
@@ -383,7 +383,7 @@ class MaxLevelsNotReached(Rule):
         return True
 
 # Class-based SufficientFundsAndNotional rule
-class SufficientFundsAndNotional(Rule):
+class SufficientFundsAndNotional(DecisionRule):
     """Check if sufficient funds and notional requirements are met."""
 
     def __init__(self, strategy, rule_name='SufficientFundsAndNotional'):
@@ -508,7 +508,7 @@ class SafetyRuleDecider(SafetyDecider):
         return names
 
     def ok(self, ctx):
-        return self._chain.ok(ctx)
+        return self._chain.evaluate(ctx)
 
     def get_required_indicators(self) -> set[str]:
         """Return set of indicators required by all rules in this decider."""

@@ -1,13 +1,19 @@
 from abc import ABC, abstractmethod
-from typing import Tuple, Set, Dict, Any, TYPE_CHECKING
+from typing import Tuple, Set, Dict, Any, TYPE_CHECKING, Protocol
 from contracts import Ctx
 from indicators import Indicators
 
 if TYPE_CHECKING:
     from strategy import DCAStrategy
 
-class Rule(ABC):
-    """Base class for all trading rules with standardized interface."""
+# --- NEW: The Unified Interface ---
+class IEvaluable(Protocol):
+    """A unified interface for any object that can be evaluated to a bool/reason."""
+    def evaluate(self, ctx: Ctx) -> Tuple[bool, str]:
+        ...
+
+class DecisionRule(ABC, IEvaluable):
+    """Base class for all trading decision rules with standardized interface."""
 
     def __init__(self, strategy: 'DCAStrategy', rule_name: str):
         self.strategy = strategy

@@ -1,18 +1,18 @@
 from typing import Dict, Type, Any
-from .base_rule import Rule
+from .base_decision_rule import DecisionRule
 
 class RuleFactory:
     """Factory for creating and validating rule instances."""
-    
-    _rule_classes: Dict[str, Type[Rule]] = {}
-    
+
+    _rule_classes: Dict[str, Type[DecisionRule]] = {}
+
     @classmethod
-    def register_rule(cls, rule_name: str, rule_class: Type[Rule]):
+    def register_rule(cls, rule_name: str, rule_class: Type[DecisionRule]):
         """Register a rule class with the factory."""
         cls._rule_classes[rule_name] = rule_class
-    
+
     @classmethod
-    def create_rule(cls, rule_name: str, strategy) -> Rule:
+    def create_rule(cls, rule_name: str, strategy) -> DecisionRule:
         """Create a rule instance after validating its configuration."""
         if rule_name not in cls._rule_classes:
             # For backward compatibility, we'll handle this gracefully

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union, Dict, List, Any
 import numpy as np
 from contracts import Ctx
 from reporting import render_cycle_plan_table, render_exit_summary_table
@@ -12,6 +12,30 @@ if TYPE_CHECKING:
 
 # Constants
 MARGIN_BUFFER_FACTOR = 0.99
+
+
+def _uses_dynamic_pricing(price_mode_config: Union[str, Dict[str, Any]]) -> bool:
+    """Check if dynamic pricing is used anywhere in the configuration.
+
+    Args:
+        price_mode_config: Either a string ("static", "dynamic") or a dict composite spec
+
+    Returns:
+        True if dynamic pricing is used anywhere in the specification
+    """
+    if isinstance(price_mode_config, str):
+        return price_mode_config.lower() == "dynamic"
+    elif isinstance(price_mode_config, dict):
+        # Recursively search through composite specifications
+        for operation, engine_specs in price_mode_config.items():
+            if isinstance(engine_specs, list):
+                for spec in engine_specs:
+                    if _uses_dynamic_pricing(spec):
+                        return True
+        return False
+    else:
+        return False
+
 
 class TradeProcessor:
     def __init__(self, strategy: 'DCAStrategy'):
@@ -94,7 +118,7 @@ class TradeProcessor:
 
         self.strategy.last_safety_order_time = current_time
         self.strategy.dca_level += 1
-        if self.strategy.config.safety_order_price_mode.lower() == "dynamic":
+        if _uses_dynamic_pricing(self.strategy.config.safety_order_price_mode):
             self.strategy.last_filled_price = price
         if self.strategy.config.debug_trade and order is not None:
             log_trade_info(self.strategy, "DCA", order, price, size_to_buy * price)
