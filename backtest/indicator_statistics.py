@@ -23,6 +23,7 @@ from typing import Dict, Any, List, Optional, Union, Tuple
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 import warnings
+from scipy.stats import gmean, hmean
 
 @dataclass
 class IndicatorStatsSummary:
@@ -205,7 +206,7 @@ class IndicatorStatistics:
     def get_descriptive_stats(self) -> Dict[str, float]:
         """Calculate basic descriptive statistics"""
         if len(self.series_clean) == 0:
-            return {k: np.nan for k in ['count', 'mean', 'std', 'min', 'max', 'median', 'q25', 'q75', 'iqr', 'range', 'skewness', 'kurtosis']}
+            return {k: np.nan for k in ['count', 'mean', 'std', 'min', 'max', 'median', 'q25', 'q75', 'iqr', 'range', 'skewness', 'kurtosis', 'p05', 'p95', 'gmean', 'hmean', 'mad']}
 
         desc = self.series_clean.describe()
 
@@ -221,7 +222,12 @@ class IndicatorStatistics:
             'iqr': self.series_clean.quantile(0.75) - self.series_clean.quantile(0.25),
             'range': self.series_clean.max() - self.series_clean.min(),
             'skewness': self.series_clean.skew(),
-            'kurtosis': self.series_clean.kurtosis()
+            'kurtosis': self.series_clean.kurtosis(),
+            'p05': self.series_clean.quantile(0.05), # 5th percentile
+            'p95': self.series_clean.quantile(0.95), # 95th percentile
+            'gmean': gmean(self.series_clean[self.series_clean > 0]), # Geometric Mean (must be positive values)
+            'hmean': hmean(self.series_clean[self.series_clean > 0]), # Harmonic Mean (must be positive values)
+            'mad': (self.series_clean - self.series_clean.mean()).abs().mean(), # Mean Absolute Deviation
         }
 
     def get_distribution_stats(self, bins: Optional[List[float]] = None) -> Dict[str, Any]:
@@ -256,32 +262,37 @@ class IndicatorStatistics:
         }
 
     def get_volatility_stats(self) -> Dict[str, float]:
-        """Calculate volatility and variability measures"""
-        if len(self.series_clean) == 0:
-            return {k: np.nan for k in ['rolling_std_mean', 'coefficient_variation', 'noise_ratio']}
+        """Calculate volatility, variability, and signal-to-noise measures."""
+        if len(self.series_clean) < 2: # Need at least 2 points for most calcs
+            keys = ['rolling_std_mean', 'coefficient_variation', 'noise_ratio', 'signal_to_noise']
+            return {k: np.nan for k in keys}
+            
+        s = self.series_clean
+        mean_val = s.mean()
+        std_val = s.std()
 
         # Rolling standard deviation (20-period default)
-        rolling_std = self.series_clean.rolling(window=20, min_periods=5).std()
-        rolling_std_mean = rolling_std.mean()
-
+        rolling_std_mean = s.rolling(window=20, min_periods=5).std().mean()
+        
         # Coefficient of variation
-        mean_val = self.series_clean.mean()
-        std_val = self.series_clean.std()
         cv = (std_val / abs(mean_val)) * 100 if mean_val != 0 else np.inf
 
         # Noise ratio (high frequency changes)
-        if len(self.series_clean) > 1:
-            changes = self.series_clean.pct_change().abs()
-            noise_ratio = changes.mean() * 100 if len(changes.dropna()) > 0 else np.nan
-        else:
-            noise_ratio = np.nan
+        changes = s.pct_change().abs()
+        noise_ratio = changes.mean() * 100 if len(changes.dropna()) > 0 else np.nan
+
+        # --- NEW STATISTIC ---
+        # Signal-to-Noise Ratio
+        signal_to_noise = abs(mean_val / std_val) if std_val != 0 else np.inf
 
         return {
             'rolling_std_mean': rolling_std_mean,
             'coefficient_variation': cv,
-            'noise_ratio': noise_ratio
+            'noise_ratio': noise_ratio,
+            'signal_to_noise': signal_to_noise,
         }
 
+    
     def get_temporal_stats(self) -> Dict[str, Any]:
         """Analyze temporal patterns and trends"""
         if len(self.series_clean) == 0:
