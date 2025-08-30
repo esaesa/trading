@@ -33,7 +33,7 @@ def plot_future_returns(stats: IndicatorStatistics, price_series: pd.Series, per
             "type": "bar",
             "name": str(period),
             "x": df.index.tolist(),
-            "y": df[f"{period}p_ret"].tolist(),
+            "y": df[period].tolist(),
             "marker": {"color": colors[i]}
         }
         for i, period in enumerate(periods)
@@ -325,182 +325,6 @@ def create_temporal_patterns_chart(stats_summary: IndicatorStatsSummary,
 
 
 
-def create_comprehensive_indicator_report(strategy,
-                                        output_file: str = "indicator_analysis_report.html",
-                                        title: str = "Indicator Analysis Report"):
-    """
-    Create a comprehensive HTML report for all indicators, now with extended statistics.
-    """
-    try:
-        from indicator_statistics import get_all_indicator_stats, IndicatorAnalyzer
-
-        all_stats = get_all_indicator_stats(strategy)
-        analyzer = IndicatorAnalyzer(strategy.indicator_service)
-        correlations = analyzer.get_indicator_correlations()
-
-        if not all_stats:
-            print("❌ No indicator data available for report")
-            return
-
-        # Helper to generate a stat item safely, handling missing data
-        def make_stat_item(label, value, formatter="{:,.4f}"):
-            if value is None or np.isnan(value):
-                val_str = "N/A"
-            else:
-                try:
-                    val_str = formatter.format(value)
-                except (ValueError, TypeError):
-                    val_str = str(value)
-
-            return f"""
-            <div class="stat-item">
-                <div class="stat-value">{val_str}</div>
-                <div class="stat-label">{label.upper()}</div>
-            </div>"""
-
-        # Start building HTML content
-        html_content = f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>{title}</title>
-            <style>
-                body {{ font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }}
-                .header {{ text-align: center; color: #2c3e50; margin-bottom: 30px; }}
-                .indicator-section {{ background: white; margin: 20px 0; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow-x: auto; }}
-                .stats-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 15px 0; }}
-                .stat-item {{ background: #f8f9fa; padding: 10px; border-radius: 5px; text-align: center; }}
-                .stat-value {{ font-size: 16px; font-weight: bold; color: #007bff; }}
-                .stat-label {{ font-size: 11px; color: #6c757d; text-transform: uppercase; }}
-                table {{ width: 100%; border-collapse: collapse; margin: 20px 0; min-width: 600px; }}
-                th, td {{ padding: 10px; text-align: left; border-bottom: 1px solid #ddd; font-size: 14px; }}
-                th {{ background-color: #007bff; color: white; }}
-                .highlight {{ background-color: #fff3cd; }}
-                .correlation-table td {{ text-align: center; }}
-                .range-bar {{ display: inline-block; height: 18px; border-radius: 3px; margin: 2px; vertical-align: middle; }}
-            </style>
-        </head>
-        <body>
-            <div class="header">
-                <h1>{title}</h1>
-                <p>Analysis of {len(all_stats)} indicators</p>
-            </div>
-        """
-
-        # Define the order and formatting for all stats we want to display
-        stat_display_order = [
-            ('Data Points', 'count', "{:,.0f}"), ('Mean', 'mean', "{:,.4f}"), ('Median', 'median', "{:,.4f}"),
-            ('Std Dev', 'std', "{:,.4f}"), ('MAD', 'mad', "{:,.4f}"), ('Min', 'min', "{:,.4f}"),
-            ('Max', 'max', "{:,.4f}"), ('Range', 'range', "{:,.4f}"), ('P05 (Extreme Low)', 'p05', "{:,.4f}"),
-            ('P95 (Extreme High)', 'p95', "{:,.4f}"), ('Q25', 'q25', "{:,.4f}"), ('Q75', 'q75', "{:,.4f}"),
-            ('IQR', 'iqr', "{:,.4f}"), ('Skewness', 'skewness', "{:,.3f}"), ('Kurtosis', 'kurtosis', "{:,.3f}"),
-            ('Geometric Mean', 'gmean', "{:,.4f}"), ('Harmonic Mean', 'hmean', "{:,.4f}")
-        ]
-
-        for indicator_name, stats_summary in all_stats.items():
-            desc = stats_summary.descriptive_stats
-            vol = stats_summary.volatility_stats
-            dist = stats_summary.distribution_stats
-            temp = stats_summary.temporal_stats
-            range_data = stats_summary.range_analysis
-
-            html_content += f"""
-            <div class="indicator-section">
-                <h2>{indicator_name.upper()}</h2>
-                <div class="stats-grid">"""
-            
-            # Loop through our defined order to create the grid dynamically
-            for label, key, fmt in stat_display_order:
-                html_content += make_stat_item(label, desc.get(key), formatter=fmt)
-
-            html_content += """
-                </div>
-                <h3>Time Distribution</h3>
-                <table>
-                    <tr>
-                        <th>Range Category</th>
-                        <th>Time Spent (%)</th>
-                        <th>Average Value</th>
-                        <th>Data Points</th>
-                    </tr>"""
-
-            for range_name, data in range_data['default_ranges'].items():
-                pct_clamped = min(100, max(0, data['percentage']))
-                bar_width = int(pct_clamped)
-                html_content += f"""
-                    <tr>
-                        <td>{range_name.replace('_', ' ').title()}</td>
-                        <td>
-                            {data['percentage']:.1f}%
-                            <div class="range-bar" style="width: {bar_width}px; background: #007bff;"></div>
-                        </td>
-                        <td>{data['average']:.4f}</td>
-                        <td>{data['count']:,}</td>
-                    </tr>"""
-
-            html_content += f"""
-                </table>
-                <div class="stats-grid">
-                    <div class="stat-item highlight">
-                        <div class="stat-value">{vol.get('coefficient_variation', 0):.2f}%</div>
-                        <div class="stat-label">Volatility (CV)</div>
-                    </div>
-                     <div class="stat-item highlight">
-                        <div class="stat-value">{vol.get('signal_to_noise', 0):.3f}</div>
-                        <div class="stat-label">Signal-to-Noise</div>
-                    </div>
-                    <div class="stat-item highlight">
-                        <div class="stat-value">{dist.get('distribution_type', 'N/A')}</div>
-                        <div class="stat-label">Distribution</div>
-                    </div>
-                    <div class="stat-item highlight">
-                        <div class="stat-value">{temp.get('stability_periods', 0):,}</div>
-                        <div class="stat-label">Stable Periods</div>
-                    </div>
-                </div>
-            </div>"""
-
-        # Correlation section (remains the same)
-        if not correlations.empty:
-            html_content += """
-            <div class="indicator-section">
-                <h2>Cross-Indicator Correlations</h2>
-                <table class="correlation-table">
-                    <tr>
-                        <th>Indicator Pair</th>
-                        <th>Correlation</th>
-                        <th>Strength</th>
-                    </tr>"""
-            corr_unstack = correlations.unstack()
-            shown = set()
-            for idx_pair, corr_val in corr_unstack.abs().sort_values(ascending=False).items():
-                if idx_pair[0] != idx_pair[1] and (idx_pair[1], idx_pair[0]) not in shown:
-                    shown.add(idx_pair)
-                    if len(shown) > 20: break
-                    strength = "Strong" if abs(corr_val) > 0.7 else "Moderate" if abs(corr_val) > 0.3 else "Weak"
-                    color = "#28a745" if abs(corr_val) > 0.5 else "#ffc107" if abs(corr_val) > 0.2 else "#dc3545"
-                    html_content += f"""
-                        <tr>
-                            <td>{idx_pair[0]} ↔ {idx_pair[1]}</td>
-                            <td style="color: {color};">{corr_val:.3f}</td>
-                            <td>{strength}</td>
-                        </tr>"""
-            html_content += "</table></div>"
-
-        html_content += "</body></html>"
-
-        # Write to file and open (remains the same)
-        with open(output_file, 'w', encoding='utf-8') as f:
-            f.write(html_content)
-        print(f"✅ Comprehensive indicator report saved to: {output_file}")
-        if open_file_in_browser(output_file):
-            print("🌐 Opening report in browser...")
-        else:
-            print(f"💡 Tip: Open the report manually by navigating to: {os.path.abspath(output_file)}")
-
-    except Exception as e:
-        print(f"❌ Error creating report: {e}")
-
 # Quick integration functions for existing visualization system
 def add_indicator_stats_to_quantstats(stats, strategy):
     """
@@ -519,23 +343,16 @@ def add_indicator_stats_to_quantstats(stats, strategy):
 
     return stats
 
-
-# backtest/indicator_statistics_visualization.py
-
 def plot_drawdown_behavior(stats: IndicatorStatistics, equity_series: pd.Series):
     """
     Plots the distribution of indicator values during drawdowns vs. non-drawdown periods.
     """
-    import logging
-    logger = logging.getLogger(__name__)
-    logger.info(f"Starting plot_drawdown_behavior for {stats.name}")
-
     analysis_data = stats.get_drawdown_behavior(equity_series)
     if not analysis_data or 'in_drawdown_data' not in analysis_data or analysis_data['in_drawdown_data'].empty:
         return None
 
     in_dd_data = analysis_data['in_drawdown_data']
-    
+
     # Create 2D histogram to get binned data for density plot approximation
     H, xedges, yedges = np.histogram2d(
         in_dd_data['indicator'],
@@ -567,86 +384,81 @@ def plot_drawdown_behavior(stats: IndicatorStatistics, equity_series: pd.Series)
             "y": y_centers.tolist(),
             "marker": {
                 "color": counts.tolist(),
-                # --- POLISH: Use a cleaner, more intuitive color scale ---
-                "colorscale": "Reds", 
+                "colorscale": "Plasma",
                 "showscale": True,
-                "colorbar": {"title": "Count in bin"},
-                "size": 10,
-                # --- POLISH: Add slight opacity for better visual depth ---
-                "opacity": 0.9 
-            },
-            "showlegend": False
+                "colorbar": {"title": "Count of observations in bin"},
+                "size": 10
+            }
         }
     ]
 
     shapes = []
+    annotations = []
+
     # Add average lines
     avg_in_dd = analysis_data.get('avg_indicator_in_dd')
     if avg_in_dd:
         shapes.append({
-            "type": "line", "x0": avg_in_dd, "x1": avg_in_dd, "y0": 0, "y1": 1,
-            "xref": "x", "yref": "paper", "line": {"color": "red", "dash": "dash", "width": 2}
+            "type": "line",
+            "x0": avg_in_dd,
+            "x1": avg_in_dd,
+            "y0": 0,
+            "y1": 1,
+            "xref": "x",
+            "yref": "paper",
+            "line": {"color": "red", "dash": "dash", "width": 2}
+        })
+        annotations.append({
+            "x": avg_in_dd,
+            "y": 0.95,
+            "xref": "x",
+            "yref": "paper",
+            "text": f'Avg {stats.name} in DD: {avg_in_dd:.2f}',
+            "showarrow": False,
+            "font": {"color": "red"}
         })
 
     avg_not_in_dd = analysis_data.get('avg_indicator_not_in_dd')
     if avg_not_in_dd:
         shapes.append({
-            "type": "line", "x0": avg_not_in_dd, "x1": avg_not_in_dd, "y0": 0, "y1": 1,
-            "xref": "x", "yref": "paper", "line": {"color": "green", "dash": "dash", "width": 2}
+            "type": "line",
+            "x0": avg_not_in_dd,
+            "x1": avg_not_in_dd,
+            "y0": 0,
+            "y1": 1,
+            "xref": "x",
+            "yref": "paper",
+            "line": {"color": "green", "dash": "dash", "width": 2}
+        })
+        annotations.append({
+            "x": avg_not_in_dd,
+            "y": 0.95,
+            "xref": "x",
+            "yref": "paper",
+            "text": f'Avg {stats.name} not in DD: {avg_not_in_dd:.2f}',
+            "showarrow": False,
+            "font": {"color": "green"}
         })
 
-    # Add dummy traces for legend
-    if avg_in_dd:
-        data.append({
-            "type": "scatter", "mode": "lines", "x": [None], "y": [None],
-            "line": {"color": "red", "dash": "dash", "width": 2},
-            # --- POLISH: Shorten legend text for a cleaner look ---
-            "name": f'Avg in DD: {avg_in_dd:.2f}', 
-        })
-
-    if avg_not_in_dd:
-        data.append({
-            "type": "scatter", "mode": "lines", "x": [None], "y": [None],
-            "line": {"color": "green", "dash": "dash", "width": 2},
-            # --- POLISH: Shorten legend text for a cleaner look ---
-            "name": f'Avg not in DD: {avg_not_in_dd:.2f}', 
-        })
-    
     layout = {
-        # --- POLISH: Give title more space and slightly larger font ---
         "title": {
             "text": f'Equity Drawdown (%) vs. {stats.name} Value',
-            "font": {"size": 18},
-            "y": 0.96,
-            "x": 0.5,
-            "xanchor": 'center',
-            "yanchor": 'top'
+            "font": {"size": 16}
         },
         "xaxis": {
             "title": f'{stats.name} Value',
             "showgrid": True,
-            "gridcolor": "rgba(0,0,0,0.05)" # Lighter grid lines
+            "gridcolor": "rgba(0,0,0,0.1)"
         },
         "yaxis": {
             "title": 'Equity Drawdown (%)',
             "showgrid": True,
-            "gridcolor": "rgba(0,0,0,0.05)" # Lighter grid lines
+            "gridcolor": "rgba(0,0,0,0.1)"
         },
         "shapes": shapes,
-        "showlegend": True,
-        "legend": {
-            "yanchor": "top",
-            "y": 0.94, # Pull legend down slightly from the very top
-            "xanchor": "right",
-            "x": 0.98,
-            "bgcolor": "rgba(255, 255, 255, 0.8)", # Slightly more opaque background
-            "bordercolor": "#E2E2E2", # Softer border color
-            "borderwidth": 1
-        },
-        # --- POLISH: Increase top margin to ensure title has room ---
-        "margin": {"t": 80, "r": 20, "b": 50, "l": 60} 
+        "annotations": annotations,
+        "showlegend": False
     }
-    
     return {"data": data, "layout": layout}
 
 
@@ -962,17 +774,6 @@ def create_unified_html_report(indicator_statistics: Dict[str, Any],
             renderChart('chart-volatility-{indicator_name}', 'data-volatility-{indicator_name}', 'Volatility Regime');"""
 
     html_content += """
-// --- FIX START: Add window resize listener to make charts responsive ---
-window.addEventListener('resize', function() {
-    // Select all chart divs on the page
-    var allChartDivs = document.querySelectorAll('.chart-div');
-
-    // Loop through each chart and tell Plotly to resize it
-    allChartDivs.forEach(function(div) {
-        Plotly.Plots.resize(div);
-    });
-});
-// --- FIX END ---
         });
     </script>
 </body>

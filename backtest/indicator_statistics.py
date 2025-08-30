@@ -94,8 +94,8 @@ class IndicatorStatistics:
         # This is the core of the fix. It produces a perfectly rectangular DataFrame,
         # filling any missing quintile/period combinations with NaN automatically.
         return_cols = [f'{n}p_ret' for n in periods]
-        analysis_df = df.groupby('quintile')[return_cols].mean()
-
+        analysis_df = df.groupby('quintile', observed=False)[return_cols].mean()
+       
         # 5. Convert the clean DataFrame to a dictionary. This is now a safe operation.
         return analysis_df.to_dict(orient='index')
    
@@ -173,7 +173,7 @@ class IndicatorStatistics:
             return pd.DataFrame()
             
         # 4. Group by quintile and calculate the average future volatility
-        vol_by_quintile = df.groupby('quintile')['future_vol'].mean()
+        vol_by_quintile = df.groupby('quintile', observed=False)['future_vol'].mean()
         
         return vol_by_quintile.reset_index()
 

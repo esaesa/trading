@@ -11,48 +11,62 @@ from sambo.plot import plot_objective
 
 from config import backtest_params, optimization_params
 from logger_config import logger
-from indicator_statistics_visualization import create_comprehensive_indicator_report
-
-# --- CORRECTED: Import only the new actionable report generator ---
-# This is the function that creates the multi-page PDF with actionable insights.
-from indicator_statistics_visualization import create_actionable_indicator_report
+from indicator_statistics import IndicatorStatistics, get_all_indicator_stats
+from indicator_statistics_visualization import create_unified_html_report, plot_future_returns, plot_drawdown_behavior, plot_volatility_regime
 
 
 def generate_indicator_report(stats: pd.Series, symbol: str, timeframe: str):
     """
-    Orchestrator for generating all statistical reports (HTML and PDF).
+    Orchestrator for generating unified HTML indicator statistics report.
     Accepts the full stats object from the backtest run.
     """
     strategy = stats._strategy
+    price_series = strategy.data.df['Close']
+    equity_series = stats['_equity_curve']['Equity']
 
-    # --- 1. Generate the original Comprehensive HTML Report ---
-    logger.info("Generating comprehensive indicator statistics report (HTML)...")
+    logger.info("Generating unified indicator statistics report (HTML)...")
     try:
+        all_indicator_stats = get_all_indicator_stats(strategy)
+
+        chart_data = {}
+        for indicator_name, stats_summary in all_indicator_stats.items():
+            indicator_series = strategy.indicator_service._get_series(indicator_name.lower())
+
+            if indicator_series is None or indicator_series.dropna().empty:
+                continue
+
+            ind_stats = IndicatorStatistics(indicator_series, indicator_name.upper())
+
+            ind_chart_data = {}
+
+            # Future returns chart
+            future_data = plot_future_returns(ind_stats, price_series)
+            if future_data:
+                ind_chart_data['future_returns'] = future_data
+
+            # Drawdown behavior chart
+            drawdown_data = plot_drawdown_behavior(ind_stats, equity_series)
+            if drawdown_data:
+                ind_chart_data['drawdown_behavior'] = drawdown_data
+
+            # Volatility regime chart
+            vol_data = plot_volatility_regime(ind_stats, price_series)
+            if vol_data:
+                ind_chart_data['volatility_regime'] = vol_data
+
+            chart_data[indicator_name] = ind_chart_data
+
         html_report_file = f"indicator_analysis_{symbol}_{timeframe}_{datetime.now().strftime('%Y%m%d%H%M%S')}.html"
         html_report_path = os.path.join(os.path.dirname(__file__), "backtest_results", html_report_file)
-        
-        # This report only needs the strategy object, which we extract.
-        create_comprehensive_indicator_report(
-            strategy,
+
+        create_unified_html_report(
+            indicator_statistics=all_indicator_stats,
+            chart_data=chart_data,
             output_file=html_report_path,
             title=f"Indicator Analysis Report - {symbol} {timeframe}"
         )
     except Exception as e:
-        logger.error(f"Failed to generate comprehensive HTML report: {e}", exc_info=True)
-
-    # --- 2. Generate the new Actionable PDF Report ---
-    logger.info("Generating actionable indicator statistics report (PDF)...")
-    try:
-        pdf_report_file = f"actionable_report_{symbol}_{timeframe}_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
-        pdf_report_path = os.path.join(os.path.dirname(__file__), "backtest_results", pdf_report_file)
-        
-        # This report needs the full stats object to access the equity curve.
-        create_actionable_indicator_report(
-            stats,  # Pass the full stats object
-            output_file=pdf_report_path
-        )
-    except Exception as e:
-        logger.error(f"Failed to generate actionable indicator report: {e}", exc_info=True)
+        logger.error(f"Failed to generate unified HTML report: {e}", exc_info=True)
 
 def unscale_parameter(value, param_name):
     """Helper to unscale parameters after optimization."""
