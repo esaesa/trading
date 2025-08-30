@@ -196,46 +196,9 @@ class DCAStrategy(Strategy):
         self.cycle_cash_records = []  
 
         
-        debug_any = (self.config.debug_backtest or self.config.debug_loop or self.config.debug_trade or self.config.debug_process)
-        self.console = Console(record=debug_any, no_color=True)
 
-        if not isinstance(self.data.index, pd.DatetimeIndex):
-            self.data.index = pd.to_datetime(self.data.index)
 
-        # Apply scaling if optimization is enabled
-        if self.enable_optimization:
-            for key in self.__dict__:
-                if key in optimization_params:
-                    setattr(self, key, self.unscale_parameter(key, getattr(self, key)))
 
-        # Internal state
-        self.completed_processes = []
-        self.process_metrics = {}
-        self.dca_level = 0
-        self.base_order_quantity = None
-        self.base_order_price = None
-        self.initial_investment = 0
-        self.last_filled_price = None
-        self.base_order_value = None
-        self.on_trade_success_callbacks = []
-
-        # Time tracking
-        self.base_order_time = None
-        self.last_safety_order_time = None
-
-        init_overlays(self)
-        # Wire rules/engines/providers first (creates deciders needed for indicator detection)
-        wire_strategy(self, strategy_params)
-        # Initialize indicators via bootstrap (now deciders exist for dynamic detection)
-        IndicatorsBootstrap(strategy_params).run(self)
-        self.completed_processes = []
-        # NEW: minimal runtime buffer
-        self._cycle = None
-        # in DCAStrategy.init() after other state inits
-        self._cycle_cash_entry = 0.0
-        self._cycle_invested = 0.0
-        self._cycle_peak_invested = 0.0
-        self.cycle_cash_records = []  
 
     def add_on_trade_success_callback(self, callback):
         self.on_trade_success_callbacks.append(callback)

@@ -17,7 +17,7 @@
         "show_optimization_graphs": false,
         "slippage_probability": 0.0,
         "enable_quantstats_analysis": false,
-        "generate_indicator_report": true
+        "generate_indicator_report": false
     },
     "strategy_params": {
         "entry_conditions": {"all":["EntryFundsAndNotional"]},
@@ -138,7 +138,7 @@
         "show_indicators": {
         "dynamic_rsi": true,
         "rsi": true,
-        "bbw": false,
+        "bbw": true,
         "atr": true,
         "ema": false,
         "laguerre": false,

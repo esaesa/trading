@@ -188,33 +188,6 @@ class IndicatorManager:
         return cv_calc
 
     # ----------------------------------------------------------------
-    # BBW (guarded)
-    # ----------------------------------------------------------------
-    def compute_bbw(self, window: int = 20, num_std: int = 2, resample_interval: str = None) -> pd.Series:
-        df = self.data[['Close']]
-        df_res = self._resample_ohlc(df, resample_interval)
-
-        if len(df_res) < max(2, int(window or 1)):
-            return self._nan_series_like_data()
-
-        try:
-            bb = BollingerBands(close=df_res['Close'], window=window, window_dev=num_std)
-            upper_band = bb.bollinger_hband()
-            lower_band = bb.bollinger_lband()
-            middle_band = bb.bollinger_mavg()
-            bbw = (upper_band - lower_band) / middle_band * 100.0
-        except Exception:
-            return self._nan_series_like_data()
-
-        if resample_interval:
-            bbw = bbw.reindex(self.data.index).ffill()
-
-        self.bbw_series = bbw
-        return bbw
-
-
-
-    # ----------------------------------------------------------------
     # Laguerre RSI
     # ----------------------------------------------------------------
     def compute_laguerre_rsi(self, gamma: float = 0.5, resample_interval: str = None) -> pd.Series:

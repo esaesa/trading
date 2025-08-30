@@ -7,7 +7,7 @@ __all__ = [
     'IndicatorStatistics',
     'IndicatorAnalyzer',
     'IndicatorStatsSummary',
-    'create_comprehensive_indicator_report',
+
     'get_all_indicator_stats',
     'open_file_in_browser',
     'analyze_indicator'
