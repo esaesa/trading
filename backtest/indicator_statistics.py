@@ -24,6 +24,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 import warnings
 from scipy.stats import gmean, hmean
+from indicators import Indicators
 
 @dataclass
 class IndicatorStatsSummary:
@@ -432,10 +433,8 @@ class IndicatorAnalyzer:
             indicator_service: Strategy's indicator service for accessing indicator series
         """
         self.indicator_service = indicator_service
-        self.available_indicators = [
-            "rsi", "dynamic_rsi_threshold", "atr_pct", "ema",
-            "laguerre_rsi", "cv", "bbw"
-        ]
+        # Dynamic generation from centralized Indicators enum
+        self.available_indicators = [indicator.value for indicator in Indicators]
 
     def get_indicator_correlations(self) -> pd.DataFrame:
         """Calculate correlation matrix for all available indicators"""
