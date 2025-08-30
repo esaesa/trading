@@ -1,5 +1,6 @@
 # backtest/indicator_statistics_visualization.py
 
+import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -38,7 +39,7 @@ def plot_future_returns(stats: IndicatorStatistics, price_series: pd.Series, per
 
 def create_actionable_indicator_report(stats_results: pd.Series, output_file: str):
     """
-    Generates a MULTI-PAGE PDF report with actionable statistics for a specific indicator.
+    Generates a MULTI-PAGE PDF report with actionable statistics for ALL available indicators.
     """
     # --- THIS IS YOUR CORRECT SUGGESTION ---
     strategy = stats_results._strategy
@@ -46,94 +47,128 @@ def create_actionable_indicator_report(stats_results: pd.Series, output_file: st
     price_series = strategy.data.df['Close']
     # ----------------------------------------
 
-    indicator_name = "rsi"
-    indicator_series = strategy.indicator_service._get_series(indicator_name)
-    
-    if indicator_series is None or indicator_series.dropna().empty:
-        print(f"Skipping report: No data for '{indicator_name}'")
+    # --- IMPORT REQUIRED FUNCTIONS ---
+    try:
+        from indicator_statistics import get_all_indicator_stats
+    except ImportError:
+        print("❌ Could not import get_all_indicator_stats")
         return
 
-    stats = IndicatorStatistics(indicator_series, indicator_name.upper())
+    # --- GET ALL AVAILABLE INDICATORS ---
+    all_indicator_stats = get_all_indicator_stats(strategy)
 
-    # ... (The rest of your PDF generation code remains unchanged and should now work) ...
+    if not all_indicator_stats:
+        print("❌ No indicator data available for report")
+        return
+
+    print(f"📊 Generating actionable PDF report for {len(all_indicator_stats)} indicators...")
+
+    # Create PDF with pages for each indicator
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
-    
-    # --- PAGE 1: Future Returns Analysis ---
-    pdf.add_page()
-    pdf.set_font("Arial", 'B', 16)
-    pdf.cell(0, 10, f'Actionable Report: {stats.name} - Future Returns', 0, 1, 'C')
-    pdf.ln(10)
 
-    fig1 = plot_future_returns(stats, price_series)
-    if fig1:
-        path1 = "temp_report_page1.png"
-        fig1.savefig(path1)
-        plt.close(fig1)
-        pdf.image(path1, x=10, y=None, w=190)
+    # Loop through each available indicator
+    processed_indicators = 0
+    for indicator_name, stats_summary in all_indicator_stats.items():
+        # Get the indicator series
+        indicator_series = strategy.indicator_service._get_series(indicator_name.lower())
+
+        if indicator_series is None or indicator_series.dropna().empty:
+            print(f"⚠️ Skipping '{indicator_name}': No data available")
+            continue
+
+        # Create IndicatorStatistics object
+        stats = IndicatorStatistics(indicator_series, indicator_name.upper())
+        processed_indicators += 1
+
+        # --- PAGE 1: Future Returns Analysis ---
+        pdf.add_page()
+        pdf.set_font("Arial", 'B', 16)
+        pdf.cell(0, 10, f'Actionable Report: {stats.name} - Future Returns', 0, 1, 'C')
+        pdf.ln(10)
+
+        fig1 = plot_future_returns(stats, price_series)
+        if fig1:
+            path1 = f"temp_report_{indicator_name}_page1.png"
+            fig1.savefig(path1)
+            plt.close(fig1)
+            pdf.image(path1, x=10, y=None, w=190)
+            pdf.ln(5)
+            try:
+                os.remove(path1)
+            except OSError:
+                pass
+
+        pdf.set_font("Arial", '', 10)
+        pdf.multi_cell(0, 5,
+            "Insight: This chart shows if the indicator has predictive power. For a mean-reversion "
+            "strategy, you want to see positive returns after Q1 (oversold) and negative returns "
+            "after Q5 (overbought). If patterns differ significantly from this expectation, "
+            "it may indicate the strategy assumptions need adjustment for this market.")
         pdf.ln(5)
-        os.remove(path1)
 
-    pdf.set_font("Arial", '', 10)
-    pdf.multi_cell(0, 5, 
-        "Insight: This chart shows if the indicator has predictive power. For a mean-reversion "
-        "strategy, you want to see positive returns after Q1 (oversold) and negative returns "
-        "after Q5 (overbought). The DOGEUSDT 1m chart shows a MOMENTUM signature (the opposite), "
-        "indicating a flawed strategy assumption for this market.")
-    pdf.ln(5)
+        # --- PAGE 2: Drawdown Behavior Analysis ---
+        pdf.add_page()
+        pdf.set_font("Arial", 'B', 16)
+        pdf.cell(0, 10, f'Actionable Report: {stats.name} - Drawdown Behavior', 0, 1, 'C')
+        pdf.ln(10)
 
-    # --- PAGE 2: Drawdown Behavior Analysis ---
-    pdf.add_page()
-    pdf.set_font("Arial", 'B', 16)
-    pdf.cell(0, 10, f'Actionable Report: {stats.name} - Drawdown Behavior', 0, 1, 'C')
-    pdf.ln(10)
+        fig2 = plot_drawdown_behavior(stats, equity_series)
+        if fig2:
+            path2 = f"temp_report_{indicator_name}_page2.png"
+            fig2.savefig(path2)
+            plt.close(fig2)
+            pdf.image(path2, x=10, y=None, w=190)
+            pdf.ln(5)
+            try:
+                os.remove(path2)
+            except OSError:
+                pass
 
-    fig2 = plot_drawdown_behavior(stats, equity_series)
-    if fig2:
-        path2 = "temp_report_page2.png"
-        fig2.savefig(path2)
-        plt.close(fig2)
-        pdf.image(path2, x=10, y=None, w=190)
+        pdf.set_font("Arial", '', 10)
+        pdf.multi_cell(0, 5,
+            "Insight: This chart shows what the indicator was doing during the worst periods for the "
+            "strategy. The density plot shows where the indicator's values are concentrated when the "
+            "equity is falling. If the average indicator value in a drawdown (red line) is significantly "
+            "different from the average value outside a drawdown (green line), it may be a useful risk management tool.")
         pdf.ln(5)
-        os.remove(path2)
 
-    pdf.set_font("Arial", '', 10)
-    pdf.multi_cell(0, 5, 
-        "Insight: This chart shows what the indicator was doing during the worst periods for the "
-        "strategy. The density plot shows where the indicator's values are concentrated when the "
-        "equity is falling. If the average indicator value in a drawdown (red line) is significantly "
-        "different from the average value outside a drawdown (green line), it may be a useful risk management tool.")
-    pdf.ln(5)
+        # --- PAGE 3: Volatility Regime Analysis ---
+        pdf.add_page()
+        pdf.set_font("Arial", 'B', 16)
+        pdf.cell(0, 10, f'Actionable Report: {stats.name} - Volatility Regimes', 0, 1, 'C')
+        pdf.ln(10)
 
-    # --- PAGE 3: Volatility Regime Analysis ---
-    pdf.add_page()
-    pdf.set_font("Arial", 'B', 16)
-    pdf.cell(0, 10, f'Actionable Report: {stats.name} - Volatility Regimes', 0, 1, 'C')
-    pdf.ln(10)
+        fig3 = plot_volatility_regime(stats, price_series)
+        if fig3:
+            path3 = f"temp_report_{indicator_name}_page3.png"
+            fig3.savefig(path3)
+            plt.close(fig3)
+            pdf.image(path3, x=10, y=None, w=190)
+            pdf.ln(5)
+            try:
+                os.remove(path3)
+            except OSError:
+                pass
 
-    fig3 = plot_volatility_regime(stats, price_series)
-    if fig3:
-        path3 = "temp_report_page3.png"
-        fig3.savefig(path3)
-        plt.close(fig3)
-        pdf.image(path3, x=10, y=None, w=190)
+        pdf.set_font("Arial", '', 10)
+        pdf.multi_cell(0, 5,
+            "Insight: This chart shows if the indicator's readings correspond to different levels of "
+            "future volatility. If Q1 and Q5 (the extremes) show high future volatility, it means the indicator "
+            "is good at identifying unstable market conditions. If a clear pattern exists, you could adjust your "
+            "take-profit or stop-loss based on the indicator's reading.")
         pdf.ln(5)
-        os.remove(path3)
-
-    pdf.set_font("Arial", '', 10)
-    pdf.multi_cell(0, 5, 
-        "Insight: This chart shows if the indicator's readings correspond to different levels of "
-        "future volatility. If Q1 and Q5 (the extremes) show high future volatility, it means the indicator "
-        "is good at identifying unstable market conditions. If a clear pattern exists, you could adjust your "
-        "take-profit or stop-loss based on the indicator's reading.")
-    pdf.ln(5)
 
     # --- Save the final PDF ---
-    try:
-        pdf.output(output_file)
-        print(f"✅ Actionable multi-page PDF report saved to: {output_file}")
-    except Exception as e:
-        print(f"❌ Error saving PDF report: {e}")
+    if processed_indicators > 0:
+        try:
+            pdf.output(output_file)
+            print(f"✅ Actionable multi-page PDF report saved to: {output_file}")
+            print(f"📄 Generated analysis for {processed_indicators} of {len(all_indicator_stats)} indicators")
+        except Exception as e:
+            print(f"❌ Error saving PDF report: {e}")
+    else:
+        print("❌ No indicators had sufficient data for analysis")
 
 import webbrowser
 import os

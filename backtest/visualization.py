@@ -1,9 +1,10 @@
 import os
 import json
 from datetime import datetime
-from typing import Any
-
 import pandas as pd
+# typing Any removed - unused
+
+# pandas removed - unused
 import quantstats as qs
 from backtesting.lib import plot_heatmaps
 from sambo.plot import plot_objective
@@ -14,10 +15,7 @@ from indicator_statistics_visualization import create_comprehensive_indicator_re
 
 # --- CORRECTED: Import only the new actionable report generator ---
 # This is the function that creates the multi-page PDF with actionable insights.
-try:
-    from backtest.indicator_statistics_visualization import create_actionable_indicator_report
-except ImportError:
-    from indicator_statistics_visualization import create_actionable_indicator_report
+from indicator_statistics_visualization import create_actionable_indicator_report
 
 
 def generate_indicator_report(stats: pd.Series, symbol: str, timeframe: str):
